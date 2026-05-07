@@ -10,52 +10,55 @@ export function renderHistory() {
 
   if (!arr.length) {
     list.innerHTML = `
-      <div class="text-center py-16 text-slate-500">
-        <div class="inline-flex w-14 h-14 rounded-2xl bg-slate-100 items-center justify-center mb-3">
-          <svg viewBox="0 0 24 24" class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="flex flex-col items-center justify-center py-20 text-center">
+        <div class="w-16 h-16 rounded-3xl bg-slate-100 flex items-center justify-center mb-4">
+          <svg viewBox="0 0 24 24" class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" stroke-width="1.8">
             <circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 7v5l3 2"/>
           </svg>
         </div>
-        <p class="text-sm">Aucun diagnostic terminé pour le moment.</p>
+        <p class="font-bold text-slate-400 text-sm">Aucun diagnostic terminé</p>
+        <p class="text-xs text-slate-300 mt-1">Les diagnostics complétés apparaîtront ici</p>
       </div>`;
     return;
   }
 
-  // Mini statistiques
   const total    = arr.length;
   const resolved = arr.filter(x => x.outcome === 'resolved').length;
   const rate     = Math.round((resolved / total) * 100);
 
   const stats = `
-    <div class="grid grid-cols-3 gap-2 mb-4">
-      <div class="bg-white rounded-2xl p-3 border border-slate-200 text-center">
-        <div class="text-xl font-bold text-slate-900">${total}</div>
-        <div class="text-[10px] text-slate-500 uppercase tracking-wider">Total</div>
+    <div class="grid grid-cols-3 gap-2.5 mb-5">
+      <div class="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-sm text-center">
+        <div class="text-2xl font-black text-slate-900">${total}</div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Total</div>
       </div>
-      <div class="bg-white rounded-2xl p-3 border border-slate-200 text-center">
-        <div class="text-xl font-bold text-emerald-600">${resolved}</div>
-        <div class="text-[10px] text-slate-500 uppercase tracking-wider">Résolus</div>
+      <div class="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-sm text-center">
+        <div class="text-2xl font-black text-emerald-500">${resolved}</div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Résolus</div>
       </div>
-      <div class="bg-white rounded-2xl p-3 border border-slate-200 text-center">
-        <div class="text-xl font-bold text-brand-600">${rate}%</div>
-        <div class="text-[10px] text-slate-500 uppercase tracking-wider">Taux</div>
+      <div class="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-sm text-center">
+        <div class="text-2xl font-black text-brand-600">${rate}%</div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Taux</div>
       </div>
     </div>`;
 
   list.innerHTML = stats + arr.map(h => {
-    const sym = findSymptom(h.symptomId);
+    const sym  = findSymptom(h.symptomId);
+    const pill = outcomePill(h.outcome);
     return `
-      <div class="bg-white border border-slate-200 rounded-2xl p-3.5 mb-2">
-        <div class="flex items-center justify-between gap-2">
-          <div class="font-semibold text-slate-900 text-sm">${sym ? sym.title : h.symptomId}</div>
-          <span class="text-[11px] ${outcomePill(h.outcome)} px-2 py-0.5 rounded-full whitespace-nowrap">
+      <div class="bg-white border border-slate-100 rounded-2xl p-4 mb-2.5 shadow-sm">
+        <div class="flex items-start justify-between gap-2">
+          <div class="font-bold text-slate-900 text-sm leading-snug flex-1">${sym ? sym.title : h.symptomId}</div>
+          <span class="text-[10px] font-black ${pill} px-2.5 py-1 rounded-full shrink-0">
             ${h.outcome === 'resolved' ? 'Résolu' : h.outcome === 'sav' ? 'SAV' : 'Pièce'}
           </span>
         </div>
-        <div class="text-[11px] text-slate-500 mt-0.5">${formatDate(h.date)} · ${h.path.length} étapes</div>
-        ${h.answers && h.answers.length ? `
-          <div class="mt-2 flex flex-wrap gap-1">
-            ${h.answers.slice(-4).map(a => `<span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">${a}</span>`).join('')}
+        <div class="text-[11px] text-slate-400 font-medium mt-1">${formatDate(h.date)} · ${h.path.length} étapes</div>
+        ${h.answers?.length ? `
+          <div class="mt-2.5 flex flex-wrap gap-1">
+            ${h.answers.slice(-4).map(a =>
+              `<span class="text-[10px] bg-slate-100 text-slate-500 font-medium px-2 py-0.5 rounded-lg">${a}</span>`
+            ).join('')}
           </div>` : ''}
       </div>`;
   }).join('');
