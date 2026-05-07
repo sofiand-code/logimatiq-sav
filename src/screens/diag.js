@@ -305,7 +305,9 @@ function wireEvents(n, navFn) {
     });
 
   document.getElementById('btn-sav')
-    ?.addEventListener('click', () => alert('Ouverture du formulaire ticket SAV (à brancher)'));
+    ?.addEventListener('click', () => {
+      window.location.href = 'tel:0745284483';
+    });
   document.getElementById('btn-restart')
     ?.addEventListener('click', () => startDiagnostic(STATE.symptomId, navFn));
   document.getElementById('btn-home')

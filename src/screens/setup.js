@@ -123,14 +123,14 @@ const PHASES = [
       {
         id: 'p4_1',
         title: 'Se connecter à l\'extranet EPIMAT',
-        detail: 'Depuis n\'importe quel navigateur web, aller sur https://epimat.logimatiq.com/client\nSe connecter avec l\'identifiant et le mot de passe fournis par Logimatiq.',
-        warn: 'Identifiants fournis par Logimatiq à la livraison. En cas de perte → contacter le SAV.',
+        detail: 'Depuis n\'importe quel navigateur web, aller sur https://epimat.logimatiq.com/client\nSe connecter avec l\'identifiant et le mot de passe fournis par Logimatiq à la livraison.',
+        warn: 'La base de données client (machine, articles, profils) est créée et configurée par Logimatiq avant la livraison. En cas de problème de connexion → contacter le SAV au 07 45 28 44 83.',
       },
       {
         id: 'p4_2',
-        title: 'Créer / vérifier la machine dans le système',
-        detail: 'Aller dans le menu "Machines". Vérifier que la machine est présente (elle peut être pré-créée par Logimatiq). Si absent : créer une nouvelle machine en renseignant le numéro de série et le modèle (EPIMAT 36 ou 62 colonnes).',
-        warn: null,
+        title: 'Vérifier que la machine est bien présente',
+        detail: 'Aller dans le menu "Machines". La machine doit déjà être présente dans le système — Logimatiq l\'a pré-créée avant livraison. Vérifier le numéro de série affiché et le modèle (EPIMAT 36 ou 62 colonnes).',
+        warn: 'Si la machine n\'apparaît pas dans l\'extranet → contacter Logimatiq au 07 45 28 44 83.',
       },
       {
         id: 'p4_3',

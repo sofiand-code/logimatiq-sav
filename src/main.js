@@ -85,7 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Bouton SAV flottant */
   document.getElementById('fab-sav')
-    ?.addEventListener('click', () => alert('Contacter le SAV Logimatiq\n📞 +33 X XX XX XX XX'));
+    ?.addEventListener('click', () => {
+      window.location.href = 'tel:0745284483';
+    });
 
   /* Bottom nav & tous les boutons data-nav */
   document.querySelectorAll('[data-nav]').forEach(btn => {
