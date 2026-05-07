@@ -54,352 +54,294 @@ export const DATA = {
 
     s_debut: {
       type: 'question',
-      title: 'La machine est-elle allumée ?',
-      help: 'Vérifier le voyant d\'alimentation sur le boîtier.',
+      title: 'La machine est-elle branchée au secteur ?',
+      help: 'Vérifier que le câble d\'alimentation principal est bien connecté à la multiprise.',
       answers: [
-        { label: 'Oui, allumée',  next: 's_ecran_affiche' },
-        { label: 'Non, éteinte',  next: 's_alim_check'    },
+        { label: 'Oui, branchée',   next: 's_led_ecran'  },
+        { label: 'Non, débranchée', next: 's_brancher'   },
       ],
     },
 
-    /* --- Machine éteinte --- */
-    s_alim_check: {
-      type: 'question',
-      title: 'Le câble d\'alimentation est-il branché ?',
-      media: { type: 'photo', label: 'Vue arrière — prise secteur' },
-      answers: [
-        { label: 'Oui, branché',   next: 's_multiprise'    },
-        { label: 'Non, débranché', next: 's_brancher_cable' },
-      ],
-    },
-    s_brancher_cable: {
+    s_brancher: {
       type: 'action',
-      title: 'Brancher le câble secteur',
+      title: 'Brancher la machine au secteur',
       steps: [
-        'Vérifier que la prise murale fonctionne (brancher un autre appareil)',
-        'Brancher fermement le câble côté machine et côté secteur',
-        'Allumer la machine avec le bouton façade',
+        'Vérifier que la multiprise est allumée (voyant rouge allumé)',
+        'Brancher fermement le câble d\'alimentation côté machine',
+        'Brancher l\'autre extrémité dans la multiprise',
+        'Patienter 10 secondes',
       ],
-      next: 's_alim_ok',
-    },
-    s_multiprise: {
-      type: 'question',
-      title: 'Le voyant de la multiprise est-il allumé ?',
-      help: 'La multiprise alimente la machine, l\'écran et le PC.',
-      answers: [
-        { label: 'Oui, allumé',   next: 's_reset_machine' },
-        { label: 'Non, éteint',   next: 'sol_disjoncteur'  },
-      ],
-    },
-    s_reset_machine: {
-      type: 'action',
-      title: 'Réinitialiser la machine',
-      steps: [
-        'Débrancher la machine de la multiprise',
-        'Attendre 30 secondes',
-        'Rebrancher et allumer',
-        'Ouvrir le capot de la machine',
-      ],
-      media: { type: 'video', label: "Procédure d'ouverture (45 s)" },
-      next: 's_alim_ok',
-    },
-    s_alim_ok: {
-      type: 'question',
-      title: 'La machine s\'est-elle allumée ?',
-      answers: [
-        { label: 'Oui',  next: 's_ecran_affiche'   },
-        { label: 'Non',  next: 's_voyant_ecran'     },
-      ],
+      next: 's_led_ecran',
     },
 
-    /* --- Machine allumée, que voit-on sur l'écran ? --- */
-    s_ecran_affiche: {
-      type: 'question',
-      title: 'Que voit-on sur l\'écran ?',
-      answers: [
-        { label: 'Écran totalement noir',       next: 's_voyant_ecran'   },
-        { label: 'Message "No sync"',           next: 's_reset_nosync'   },
-        { label: 'Image instable / scintille',  next: 's_image_instable' },
-        { label: 'Résolution incorrecte',       next: 's_resolution'     },
-        { label: 'Bureau Windows visible',      next: 's_bureau_ok'      },
-      ],
-    },
-
-    /* Voyant LED de l'écran */
-    s_voyant_ecran: {
+    /* ---- LED écran : branche principale ---- */
+    s_led_ecran: {
       type: 'question',
       title: 'Quelle est la couleur du voyant LED de l\'écran ?',
-      help: 'Petite LED en façade du moniteur (bas ou côté).',
+      help: 'Petit voyant situé en façade du moniteur, en bas ou sur le côté.',
       answers: [
-        { label: 'Vert — écran en veille',  next: 's_led_pc',        color: 'green' },
-        { label: 'Rouge — écran en erreur', next: 's_rouge_pc_led',  color: 'red'   },
-        { label: 'Éteint — aucune LED',     next: 's_fusible',       color: 'gray'  },
+        { label: 'Rouge',                      next: 's_rouge_pc_led',   color: 'red'   },
+        { label: 'Éteint (aucune LED)',        next: 's_eteint_cable',   color: 'gray'  },
+        { label: 'Vert (image visible, autre problème)', next: 's_vert_symptome', color: 'green' },
       ],
     },
 
-    /* Rouge : d'abord vérifier si le PC est allumé */
+
+    /* ==================================================================
+       BRANCHE ROUGE — LED écran rouge
+       ================================================================== */
+
     s_rouge_pc_led: {
       type: 'question',
       title: 'La LED du PC est-elle allumée ?',
-      help: 'Voyant vert ou bleu sur la façade du boîtier PC intégré.',
+      help: 'Voyant lumineux sur la façade du boîtier PC intégré dans la machine.',
       answers: [
-        { label: 'Oui, PC allumé',   next: 's_changer_alim_ecran' },
-        { label: 'Non, PC éteint',   next: 's_rouge_bouton_power' },
-      ],
-    },
-    s_rouge_bouton_power: {
-      type: 'action',
-      title: 'Appuyer sur le bouton Power du PC',
-      steps: [
-        'Repérer le bouton Power en façade du boîtier PC',
-        'Appuyer une fois dessus et attendre 10 secondes',
-        'Observer si la LED du PC s\'allume',
-      ],
-      media: { type: 'photo', label: 'Bouton Power façade du PC' },
-      next: 's_rouge_pc_demarre',
-    },
-    s_rouge_pc_demarre: {
-      type: 'question',
-      title: 'Le PC a-t-il démarré ?',
-      answers: [
-        { label: 'Oui, LED PC allumée',   next: 's_rouge_voyant_vert' },
-        { label: 'Non, toujours éteint',  next: 's_rouge_switch'      },
+        { label: 'Oui, LED PC allumée',  next: 's_rouge_rebrancher_vga', color: 'green' },
+        { label: 'Non, PC éteint',       next: 's_rouge_pc_ventilo',     color: 'red'   },
       ],
     },
 
-    /* PC ne démarre pas → vérifier le switch arrière */
-    s_rouge_switch: {
+    /* PC éteint : ventilo + switch arrière + bouton power */
+    s_rouge_pc_ventilo: {
       type: 'action',
-      title: 'Vérifier le switch alimentation arrière du PC',
+      title: 'Vérifier l\'alimentation du PC',
       steps: [
-        'Aller derrière le boîtier PC',
-        'Repérer le petit interrupteur ON/OFF à côté de la prise secteur',
-        'Passer ce switch sur OFF, attendre 5 secondes',
-        'Remettre le switch sur ON',
-        'Revenir en façade et appuyer sur le bouton Power',
+        'Écouter ou regarder si le ventilateur du PC tourne (grilles d\'aération)',
+        'Aller à l\'arrière du boîtier PC',
+        'Repérer le petit interrupteur ON/OFF près de la prise secteur du PC',
+        'Passer ce switch sur OFF, attendre 5 secondes, puis remettre sur ON',
+        'Revenir en façade et appuyer sur le bouton Power du PC',
         'Attendre 15 secondes',
       ],
-      media: { type: 'photo', label: 'Switch ON/OFF arrière du boîtier PC' },
-      next: 's_rouge_switch_result',
+      next: 's_rouge_pc_demarre',
     },
-    s_rouge_switch_result: {
+
+    s_rouge_pc_demarre: {
       type: 'question',
-      title: 'Le PC démarre maintenant ?',
+      title: 'Le PC a-t-il démarré ? (LED allumée)',
       answers: [
-        { label: 'Oui, LED PC allumée',   next: 's_rouge_voyant_vert' },
-        { label: 'Non, toujours éteint',  next: 'sol_changer_pc'      },
+        { label: 'Oui, LED allumée',     next: 's_rouge_rebrancher_vga', color: 'green' },
+        { label: 'Non, toujours éteint', next: 'sol_changer_pc',         color: 'red'   },
       ],
     },
 
-    /* PC démarré : est-ce que l'écran est passé au vert ? */
-    s_rouge_voyant_vert: {
-      type: 'question',
-      title: 'Le voyant de l\'écran est-il passé au vert ?',
-      help: 'Le démarrage du PC peut prendre 1 à 2 minutes — attendre avant de répondre.',
-      answers: [
-        { label: 'Oui, voyant vert — image affichée',  next: 'sol_resolved'         },
-        { label: 'Non, toujours rouge',                next: 's_changer_alim_ecran' },
-      ],
-    },
-
-    /* Vert : vérifier le PC */
-    s_led_pc: {
-      type: 'question',
-      title: 'La LED du PC (ou du lecteur de badge) est-elle allumée ?',
-      help: 'LED verte ou bleue sur la facade du PC intégré.',
-      answers: [
-        { label: 'Oui, LED allumée',  next: 's_vga'          },
-        { label: 'Non, PC éteint',    next: 's_allumer_pc'   },
-      ],
-    },
-    s_vga: {
+    /* PC allumé : rebrancher VGA */
+    s_rouge_rebrancher_vga: {
       type: 'action',
-      title: 'Vérifier le câble vidéo VGA',
+      title: 'Débrancher et rebrancher le câble VGA',
       steps: [
-        'Débrancher puis rebrancher le câble VGA côté écran',
-        'Débrancher puis rebrancher le câble VGA côté PC',
-        'S\'assurer que les vis moletées sont serrées',
-        'Si le câble est abîmé ou pincé, le remplacer',
+        'Localiser le câble VGA (connecteur bleu à vis) entre l\'écran et le PC',
+        'Débrancher le câble côté écran, puis côté PC',
+        'Rebrancher fermement des deux côtés et serrer les vis moletées',
+        'Attendre 10 secondes',
       ],
-      media: { type: 'photo', label: 'Connecteur VGA — côté PC et écran' },
-      next: 's_vga_result',
+      next: 's_rouge_vga_result',
     },
-    s_vga_result: {
+
+    s_rouge_vga_result: {
       type: 'question',
-      title: 'L\'écran affiche maintenant ?',
+      title: 'L\'image est-elle revenue sur l\'écran ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'           },
-        { label: 'Non',  next: 'sol_changer_pc_ecran'   },
-      ],
-    },
-    s_allumer_pc: {
-      type: 'action',
-      title: 'Allumer le PC manuellement',
-      steps: [
-        'Appuyer sur le bouton d\'allumage en façade du boîtier PC',
-        'Si rien ne se passe, vérifier aussi le bouton arrière du PC',
-        'Attendre 1 minute le démarrage complet de Windows',
-      ],
-      media: { type: 'photo', label: 'Boutons façade et arrière du PC' },
-      next: 's_pc_demarre',
-    },
-    s_pc_demarre: {
-      type: 'question',
-      title: 'Le PC s\'est-il allumé ?',
-      answers: [
-        { label: 'Oui, Windows démarre',  next: 'sol_resolved'    },
-        { label: 'Non, toujours éteint',  next: 'sol_changer_pc'  },
+        { label: 'Oui, image OK',  next: 'sol_resolved',         color: 'green' },
+        { label: 'Non, toujours rouge', next: 's_rouge_changer_vga', color: 'red' },
       ],
     },
 
-    /* Rouge : alimentation écran */
-    s_changer_alim_ecran: {
+    s_rouge_changer_vga: {
+      type: 'action',
+      title: 'Remplacer le câble VGA',
+      steps: [
+        'Débrancher l\'ancien câble VGA des deux côtés',
+        'Brancher un câble VGA neuf côté PC, puis côté écran',
+        'Serrer les vis moletées',
+        'Attendre le retour de l\'image (10 secondes)',
+      ],
+      next: 's_rouge_apres_changer_vga',
+    },
+
+    s_rouge_apres_changer_vga: {
+      type: 'question',
+      title: 'L\'image est-elle maintenant visible ?',
+      answers: [
+        { label: 'Oui, image OK',      next: 'sol_resolved',    color: 'green' },
+        { label: 'Non, écran rouge',   next: 'sol_changer_ecran', color: 'red' },
+      ],
+    },
+
+
+    /* ==================================================================
+       BRANCHE ÉTEINT — LED écran éteinte
+       ================================================================== */
+
+    s_eteint_cable: {
+      type: 'question',
+      title: 'Le câble d\'alimentation de l\'écran est-il bien branché ?',
+      help: 'Vérifier le câble reliant l\'écran à la multiprise ou au bloc d\'alimentation.',
+      answers: [
+        { label: 'Oui, branché',      next: 's_eteint_multiprise',     color: 'green' },
+        { label: 'Non, débranché',    next: 's_eteint_brancher_cable',  color: 'red'   },
+      ],
+    },
+
+    s_eteint_brancher_cable: {
+      type: 'action',
+      title: 'Brancher le câble alimentation de l\'écran',
+      steps: [
+        'Localiser le câble d\'alimentation de l\'écran',
+        'Brancher fermement l\'extrémité côté écran',
+        'Brancher l\'autre extrémité dans la multiprise',
+      ],
+      next: 's_eteint_multiprise',
+    },
+
+    s_eteint_multiprise: {
+      type: 'question',
+      title: 'La LED rouge de la multiprise est-elle allumée ?',
+      help: 'La multiprise doit afficher un voyant rouge pour indiquer qu\'elle est sous tension.',
+      answers: [
+        { label: 'Oui, LED rouge allumée',  next: 's_eteint_changer_alim', color: 'green' },
+        { label: 'Non, multiprise éteinte', next: 'sol_disjoncteur',        color: 'red'   },
+      ],
+    },
+
+    s_eteint_changer_alim: {
       type: 'action',
       title: 'Remplacer l\'alimentation de l\'écran',
       steps: [
-        'Localiser le bloc d\'alimentation de l\'écran (boîte noire sur le câble)',
-        'Débrancher le bloc défaillant',
-        'Brancher un bloc neuf de référence identique',
+        'Localiser le bloc d\'alimentation de l\'écran (boîtier noir sur le câble)',
+        'Débrancher l\'alimentation défaillante',
+        'Brancher une alimentation neuve de même référence',
         'Rallumer l\'écran',
       ],
-      media: { type: 'pdf', label: 'Fiche réf. alimentation écran 17"', file: 'tuto EPIMAT.pdf' },
-      next: 's_alim_ecran_result',
+      next: 's_eteint_alim_result',
     },
-    s_alim_ecran_result: {
+
+    s_eteint_alim_result: {
       type: 'question',
-      title: 'L\'écran fonctionne maintenant ?',
+      title: 'L\'écran s\'est-il allumé ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'       },
-        { label: 'Non',  next: 'sol_changer_ecran'  },
+        { label: 'Oui, écran allumé', next: 'sol_resolved',    color: 'green' },
+        { label: 'Non, toujours éteint', next: 'sol_changer_ecran', color: 'red' },
       ],
     },
 
-    /* Éteint : fusible */
-    s_fusible: {
-      type: 'action',
-      title: 'Remplacer le fusible du bloc alimentation',
-      steps: [
-        'Repérer le bloc d\'alimentation à l\'intérieur de la machine',
-        'Localiser le porte-fusible (tiroir ou vis)',
-        'Extraire le fusible grillé',
-        'Installer un fusible neuf de même calibre (inscrit sur le boîtier)',
-      ],
-      media: { type: 'photo', label: 'Emplacement fusible sur bloc alim' },
-      next: 's_fusible_result',
-    },
-    s_fusible_result: {
+
+    /* ==================================================================
+       BRANCHE VERT — image visible, autre problème
+       ================================================================== */
+
+    s_vert_symptome: {
       type: 'question',
-      title: 'L\'écran s\'est allumé après remplacement ?',
+      title: 'Quel est le problème exact ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'      },
-        { label: 'Non',  next: 'sol_changer_alim'  },
+        { label: 'Scintillement ou problème de couleur',    next: 's_vert_vga'        },
+        { label: 'Écran tactile ne répond pas',             next: 's_vert_usb'        },
+        { label: 'DistEPI n\'est pas lancé (bureau visible)', next: 's_vert_distepi'  },
+        { label: 'Mauvaise résolution d\'affichage',        next: 's_vert_resolution' },
+        { label: 'Écran figé / gelé / bloqué',             next: 's_vert_redemarrer' },
       ],
     },
 
-    /* No sync */
-    s_reset_nosync: {
+    /* Scintillement → VGA */
+    s_vert_vga: {
       type: 'action',
-      title: 'Réinitialiser pour corriger "No sync"',
+      title: 'Vérifier le câble VGA',
       steps: [
-        'Débrancher la machine',
-        'Attendre 20 secondes',
-        'Rebrancher et rallumer',
+        'Localiser le câble VGA (connecteur bleu) entre l\'écran et le PC',
+        'Débrancher et rebrancher fermement des deux côtés',
+        'Serrer les vis moletées',
       ],
-      next: 's_nosync_result',
+      next: 's_vert_vga_result',
     },
-    s_nosync_result: {
+    s_vert_vga_result: {
       type: 'question',
-      title: 'Le message "No sync" a disparu ?',
+      title: 'Le problème d\'image a-t-il disparu ?',
       answers: [
-        { label: 'Oui, affichage normal',    next: 'sol_resolved'       },
-        { label: 'Non, toujours "No sync"',  next: 's_nosync_vga'       },
-      ],
-    },
-    s_nosync_vga: {
-      type: 'question',
-      title: 'Le câble VGA est-il bien branché des deux côtés ?',
-      answers: [
-        { label: 'Non / douteux',  next: 's_vga'            },
-        { label: 'Oui, branché',   next: 'sol_changer_ecran' },
+        { label: 'Oui, image stable',      next: 'sol_resolved',     color: 'green' },
+        { label: 'Non, problème persiste', next: 'sol_changer_ecran', color: 'red'  },
       ],
     },
 
-    /* Image instable */
-    s_image_instable: {
-      type: 'question',
-      title: 'Le problème apparaît-il en permanence ?',
-      answers: [
-        { label: 'Oui, tout le temps',         next: 's_vga'              },
-        { label: 'Non, par intermittence',      next: 's_chaleur'          },
-      ],
-    },
-    s_chaleur: {
+    /* Tactile → USB */
+    s_vert_usb: {
       type: 'action',
-      title: 'Vérifier la ventilation et la chaleur',
+      title: 'Vérifier le câble USB entre l\'écran et le PC',
       steps: [
-        'S\'assurer que les grilles d\'aération ne sont pas obstruées',
-        'Dépoussiérer les grilles avec de l\'air comprimé',
-        'S\'assurer que la machine n\'est pas exposée à la lumière directe ou à une source de chaleur',
-        'Laisser la machine refroidir 10 minutes puis tester',
+        'Localiser le câble USB reliant l\'écran au PC (nécessaire pour le tactile)',
+        'Débrancher et rebrancher fermement des deux côtés',
+        'Si possible, essayer un autre port USB sur le PC',
       ],
-      next: 's_chaleur_result',
+      next: 's_vert_usb_result',
     },
-    s_chaleur_result: {
+    s_vert_usb_result: {
       type: 'question',
-      title: 'L\'image est-elle stable maintenant ?',
+      title: 'L\'écran tactile répond-il maintenant ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'       },
-        { label: 'Non',  next: 'sol_changer_ecran'  },
+        { label: 'Oui, tactile OK',        next: 'sol_resolved',     color: 'green' },
+        { label: 'Non, toujours inactif',  next: 'sol_changer_ecran', color: 'red'  },
       ],
     },
 
-    /* Résolution incorrecte */
-    s_resolution: {
+    /* DistEPI non lancé */
+    s_vert_distepi: {
       type: 'action',
-      title: 'Corriger la résolution d\'affichage',
+      title: 'Lancer le logiciel DistEPI',
       steps: [
-        'Faire un clic droit sur le bureau Windows',
-        'Choisir "Résolution d\'écran" ou "Paramètres d\'affichage"',
-        'Sélectionner la résolution recommandée (généralement 1280×1024)',
-        'Cliquer sur "Appliquer" puis "Conserver les modifications"',
-      ],
-      next: 's_resolution_result',
-    },
-    s_resolution_result: {
-      type: 'question',
-      title: 'L\'affichage est-il correct maintenant ?',
-      answers: [
-        { label: 'Oui',  next: 'sol_resolved'       },
-        { label: 'Non',  next: 'sol_changer_ecran'  },
-      ],
-    },
-
-    /* Bureau visible : autre problème */
-    s_bureau_ok: {
-      type: 'question',
-      title: 'Quel autre problème observez-vous ?',
-      answers: [
-        { label: 'Logiciel EPIMAT ne démarre pas',  next: 's_relancer_logiciel' },
-        { label: 'Pas de connexion internet',        next: 'i_debut'             },
-        { label: 'Problème de badge',                next: 'b_debut'             },
-      ],
-    },
-    s_relancer_logiciel: {
-      type: 'action',
-      title: 'Relancer le logiciel EPIMAT',
-      steps: [
-        'Fermer toutes les fenêtres EPIMAT ouvertes',
-        'Double-cliquer sur l\'icône EPIMAT sur le bureau',
+        'Sur le bureau Windows, trouver l\'icône DistEPI',
+        'Double-cliquer dessus pour lancer l\'application',
         'Attendre le chargement complet (environ 30 secondes)',
       ],
-      next: 's_logiciel_result',
+      next: 's_vert_distepi_result',
     },
-    s_logiciel_result: {
+    s_vert_distepi_result: {
       type: 'question',
-      title: 'Le logiciel fonctionne ?',
+      title: 'DistEPI s\'est-il lancé correctement ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'         },
-        { label: 'Non',  next: 'sol_redemarrer_pc'    },
+        { label: 'Oui, DistEPI lancé',     next: 'sol_resolved',     color: 'green' },
+        { label: 'Non, ne s\'ouvre pas',   next: 'sol_redemarrer_pc', color: 'red'  },
+      ],
+    },
+
+    /* Mauvaise résolution */
+    s_vert_resolution: {
+      type: 'action',
+      title: 'Corriger la résolution (1280 × 720)',
+      steps: [
+        'Faire un clic droit sur le bureau Windows',
+        'Cliquer sur "Paramètres d\'affichage"',
+        'Dans Résolution, sélectionner 1280 × 720',
+        'Cliquer sur "Conserver les modifications"',
+      ],
+      next: 's_vert_resolution_result',
+    },
+    s_vert_resolution_result: {
+      type: 'question',
+      title: 'La résolution est-elle correcte maintenant ?',
+      answers: [
+        { label: 'Oui, affichage correct',  next: 'sol_resolved',      color: 'green' },
+        { label: 'Non, toujours incorrecte', next: 'sol_redemarrer_pc', color: 'red'  },
+      ],
+    },
+
+    /* Figé / gelé */
+    s_vert_redemarrer: {
+      type: 'action',
+      title: 'Redémarrer la machine',
+      steps: [
+        'Cliquer sur Démarrer → Arrêter → Redémarrer',
+        'Si l\'écran est figé : maintenir le bouton Power 5 secondes pour forcer l\'arrêt',
+        'Rallumer avec le bouton Power',
+        'Attendre le redémarrage complet de Windows',
+        'Vérifier que DistEPI se relance automatiquement',
+      ],
+      next: 's_vert_redemarrer_result',
+    },
+    s_vert_redemarrer_result: {
+      type: 'question',
+      title: 'La machine fonctionne-t-elle correctement après redémarrage ?',
+      answers: [
+        { label: 'Oui, tout est OK',        next: 'sol_resolved',  color: 'green' },
+        { label: 'Non, problème persiste',  next: 'sol_changer_pc', color: 'red'  },
       ],
     },
 
