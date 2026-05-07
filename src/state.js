@@ -10,6 +10,7 @@ export const STATE = {
   history:        [],   // pile des nodeIds visités (cette session)
   answers:        [],   // réponses choisies (label)
   estimatedSteps: 6,    // approximation pour la barre de progression
+  profile:        null, // 'client' | 'tech_reseller' | 'tech_logimatiq'
 };
 
 /**

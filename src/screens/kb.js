@@ -1,6 +1,7 @@
 /* ============================================================================
-   KB — Base de connaissances
+   KB — Base de connaissances (Fiches PDF + Codes erreur)
    ========================================================================== */
+import { renderErrors } from './errors.js';
 
 const KB_ENTRIES = [
   { id: 'kb1', title: 'Manuel maintenance EPIMAT',       tags: ['epimat', 'maintenance', 'pdf'], type: 'pdf', file: 'Manuel Maintenance EPIMAT_eng.pdf' },
@@ -12,7 +13,52 @@ const KB_ENTRIES = [
   { id: 'kb7', title: 'Manuel utilisateur EPIMAT (EN)',   tags: ['epimat', 'installation', 'user'], type: 'pdf', file: 'User & installation Manual EPIMAT EN.pdf' },
 ];
 
+let activeTab = 'fiches'; // 'fiches' | 'erreurs'
+
 export function renderKB() {
+  renderTabBar();
+  if (activeTab === 'fiches') renderFiches();
+  else renderErrorsTab();
+}
+
+/* ------------------------------------------------------------------ */
+function renderTabBar() {
+  const bar = document.getElementById('kb-tabs');
+  if (!bar) return;
+  bar.innerHTML = `
+    <button data-tab="fiches"
+      class="flex-1 py-2 text-xs font-black rounded-xl transition-all
+             ${activeTab === 'fiches'
+               ? 'bg-brand-600 text-white shadow-sm'
+               : 'text-slate-400 hover:text-slate-600'}">
+      📄 Fiches PDF
+    </button>
+    <button data-tab="erreurs"
+      class="flex-1 py-2 text-xs font-black rounded-xl transition-all
+             ${activeTab === 'erreurs'
+               ? 'bg-brand-600 text-white shadow-sm'
+               : 'text-slate-400 hover:text-slate-600'}">
+      🔴 Codes erreur
+    </button>`;
+
+  bar.querySelectorAll('[data-tab]').forEach(btn =>
+    btn.addEventListener('click', () => {
+      activeTab = btn.dataset.tab;
+      /* Bascule placeholder de la recherche */
+      const input = document.getElementById('kb-search');
+      if (input) {
+        input.placeholder = activeTab === 'fiches'
+          ? 'écran noir, modem, badge…'
+          : 'ERR_SYNC, badge, réseau…';
+        input.value = '';
+      }
+      renderKB();
+    })
+  );
+}
+
+/* ---- Onglet Fiches PDF ---- */
+function renderFiches() {
   const q = (document.getElementById('kb-search')?.value || '').toLowerCase().trim();
   const filtered = KB_ENTRIES.filter(e =>
     !q || e.title.toLowerCase().includes(q) || e.tags.some(t => t.includes(q))
@@ -51,4 +97,10 @@ export function renderKB() {
         <path stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/>
       </svg>
     </button>`).join('');
+}
+
+/* ---- Onglet Codes erreur ---- */
+function renderErrorsTab() {
+  const q = document.getElementById('kb-search')?.value || '';
+  renderErrors(q);
 }

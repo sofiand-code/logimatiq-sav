@@ -4,6 +4,7 @@
 import { DATA } from '../data/tree.js';
 import { ICONS } from '../components/icons.js';
 import { loadHistory, outcomePill, formatDate } from '../components/history-store.js';
+import { getProfileMeta } from './profile.js';
 
 const MACHINE_STYLES = {
   epimat:   { bg: '#0F4C81', light: '#EFF5FB', text: '#0F4C81' },
@@ -11,8 +12,21 @@ const MACHINE_STYLES = {
   vetimat:  { bg: '#059669', light: '#ECFDF5', text: '#059669' },
 };
 
-export function renderHome(onOpenMachine, onRestartSymptom) {
-  /* Grille machines */
+export function renderHome(onOpenMachine, onRestartSymptom, onSetup) {
+  /* ---- Badge profil dans le header ---- */
+  const profileMeta = getProfileMeta();
+  const profileBadge = document.getElementById('home-profile-badge');
+  if (profileBadge && profileMeta) {
+    profileBadge.style.background = profileMeta.color + '18';
+    profileBadge.style.color      = profileMeta.color;
+    profileBadge.title            = profileMeta.label;
+    profileBadge.innerHTML = `
+      <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="${profileMeta.iconPath}"/>
+      </svg>`;
+  }
+
+  /* ---- Grille machines ---- */
   const grid = document.getElementById('machine-grid');
   grid.innerHTML = DATA.machines.map(m => {
     const s = MACHINE_STYLES[m.id] || MACHINE_STYLES.epimat;
@@ -36,7 +50,13 @@ export function renderHome(onOpenMachine, onRestartSymptom) {
     btn.addEventListener('click', () => onOpenMachine(btn.dataset.machine))
   );
 
-  /* Récents */
+  /* ---- Carte Guide de mise en service ---- */
+  const setupCard = document.getElementById('setup-card');
+  if (setupCard) {
+    setupCard.addEventListener('click', () => onSetup?.());
+  }
+
+  /* ---- Récents ---- */
   const recents = loadHistory().slice(0, 2);
   const list = document.getElementById('recent-list');
   if (!recents.length) {

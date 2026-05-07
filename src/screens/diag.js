@@ -5,6 +5,7 @@ import { DATA } from '../data/tree.js';
 import { STATE } from '../state.js';
 import { renderMedia } from '../components/media.js';
 import { saveDiagnostic } from '../components/history-store.js';
+import { findSymptom } from './home.js';
 
 function estimateDepth(rootId) {
   let max = 0;
@@ -65,6 +66,10 @@ export function renderDiag(navFn) {
       + (i < stepN ? 'bg-brand-600' : 'bg-slate-200');
     bar.appendChild(seg);
   }
+
+  /* Bouton SAV flottant — visible sauf sur solution */
+  const fab = document.getElementById('fab-sav');
+  if (fab) fab.style.display = n?.type === 'solution' ? 'none' : 'flex';
 
   const body = document.getElementById('diag-body');
   if (!n) { body.innerHTML = '<p class="text-slate-400 text-sm">Nœud introuvable.</p>'; return; }
@@ -159,9 +164,7 @@ function renderSolution(n) {
   const isOK  = n.outcome === 'resolved';
   const isSav = !!n.sav;
 
-  const headerStyle = isOK
-    ? 'background:#0F4C81;'
-    : 'background:#DC2626;';
+  const headerStyle = isOK ? 'background:#0F4C81;' : 'background:#DC2626;';
 
   const iconOK = `<svg viewBox="0 0 24 24" class="w-10 h-10 text-white" fill="none" stroke="currentColor" stroke-width="2.5">
     <circle cx="12" cy="12" r="9"/>
@@ -173,9 +176,10 @@ function renderSolution(n) {
   </svg>`;
 
   const pathLabels = STATE.answers.filter(Boolean).slice(-6);
+  const reportText = generateReport(n);
 
   return `
-    <!-- Bloc résultat -->
+    <!-- Résultat -->
     <div class="rounded-3xl overflow-hidden mb-5 shadow-md" style="${headerStyle}">
       <div class="px-6 pt-6 pb-5 text-white text-center">
         <div class="w-16 h-16 rounded-2xl mx-auto mb-4 flex items-center justify-center"
@@ -188,7 +192,7 @@ function renderSolution(n) {
     </div>
 
     ${pathLabels.length ? `
-    <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-5 shadow-sm">
+    <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-4 shadow-sm">
       <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2.5">
         Cheminement du diagnostic
       </p>
@@ -199,13 +203,31 @@ function renderSolution(n) {
       </div>
     </div>` : ''}
 
+    <!-- Rapport partageable -->
+    <button id="btn-share-report"
+      data-report="${encodeURIComponent(reportText)}"
+      class="w-full bg-white border-2 border-slate-200 rounded-2xl py-3.5 mb-4
+             flex items-center justify-center gap-2 text-sm font-bold text-slate-600 shadow-sm tap-card">
+      <svg viewBox="0 0 24 24" class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342
+             m0 2.684a3 3 0 1 1 0-2.684m0 2.684 6.632 3.316m-6.632-6 6.632-3.316
+             m0 0a3 3 0 1 0 5.367-2.684 3 3 0 0 0-5.367 2.684zm0 9.316a3 3 0 1 0 5.368 2.684
+             3 3 0 0 0-5.368-2.684z"/>
+      </svg>
+      <span id="share-btn-label">Copier le rapport</span>
+    </button>
+
     <div class="space-y-2.5">
       ${isSav ? `
       <button id="btn-sav"
         class="w-full text-white font-bold py-4 rounded-2xl text-sm shadow-sm flex items-center justify-center gap-2"
         style="background:#DC2626;">
         <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+          <path stroke-linecap="round"
+            d="M3 5a2 2 0 0 1 2-2h3.28a1 1 0 0 1 .948.684l1.498 4.493a1 1 0 0 1-.502 1.21
+               l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502
+               l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
         </svg>
         Contacter le SAV Logimatiq
       </button>` : ''}
@@ -221,6 +243,37 @@ function renderSolution(n) {
 }
 
 /* ------------------------------------------------------------------ */
+/* Génération du rapport texte                                         */
+/* ------------------------------------------------------------------ */
+function generateReport(n) {
+  const sym  = findSymptom(STATE.symptomId);
+  const machine = DATA.machines?.find(m => m.id === STATE.machineId);
+  const now  = new Date().toLocaleString('fr-FR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+  const steps = STATE.answers.filter(Boolean);
+
+  return [
+    '🔧 RAPPORT DIAGNOSTIC LOGIMATIQ',
+    '─────────────────────────────',
+    `Machine  : ${machine?.name || STATE.machineId || 'N/A'}`,
+    `Problème : ${sym?.title || STATE.symptomId || 'N/A'}`,
+    `Date     : ${now}`,
+    '',
+    `📋 Étapes suivies (${steps.length}) :`,
+    ...steps.map((a, i) => `  ${i + 1}. ${a}`),
+    '',
+    '📌 Conclusion :',
+    n.title,
+    n.message,
+    '',
+    '─────────────────────────────',
+    'Généré par Logimatiq SAV App',
+  ].join('\n');
+}
+
+/* ------------------------------------------------------------------ */
 /* Événements                                                          */
 /* ------------------------------------------------------------------ */
 function wireEvents(n, navFn) {
@@ -229,6 +282,28 @@ function wireEvents(n, navFn) {
   );
   document.getElementById('btn-back')
     ?.addEventListener('click', () => diagBack(navFn));
+
+  /* Rapport partageable */
+  document.getElementById('btn-share-report')
+    ?.addEventListener('click', async (e) => {
+      const btn   = e.currentTarget;
+      const text  = decodeURIComponent(btn.dataset.report || '');
+      const label = document.getElementById('share-btn-label');
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: 'Rapport diagnostic Logimatiq', text });
+        } else {
+          await navigator.clipboard.writeText(text);
+          if (label) {
+            label.textContent = '✓ Copié !';
+            setTimeout(() => { label.textContent = 'Copier le rapport'; }, 2000);
+          }
+        }
+      } catch {
+        /* Annulé par l'utilisateur — ne rien faire */
+      }
+    });
+
   document.getElementById('btn-sav')
     ?.addEventListener('click', () => alert('Ouverture du formulaire ticket SAV (à brancher)'));
   document.getElementById('btn-restart')
