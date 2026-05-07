@@ -24,9 +24,9 @@ body {
   }
   #phone {
     width: 390px;
-    height: 844px;
+    height: 693px; /* ratio 9:16 exact */
     max-height: 96vh;
-    border-radius: 50px;
+    border-radius: 44px;
     box-shadow:
       0 0 0 1px #94A3B8,
       0 0 0 10px #1E293B,
