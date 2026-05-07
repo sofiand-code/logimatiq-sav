@@ -5,12 +5,9 @@
    ========================================================================== */
 export const DATA = {
   machines: [
-    { id: 'epimat',   name: 'EPIMAT',        icon: 'machine',  color: 'bg-brand-600' },
-    { id: 'distepi',  name: 'DistEPI',        icon: 'cabinet',  color: 'bg-brand-500' },
-    { id: 'gsm',      name: 'Routeur GSM',    icon: 'antenna',  color: 'bg-emerald-600' },
-    { id: 'pc',       name: 'PC',             icon: 'pc',       color: 'bg-slate-700' },
-    { id: 'badge',    name: 'Lecteur badge',  icon: 'badge',    color: 'bg-amber-600' },
-    { id: 'colonnes', name: 'Colonnes',       icon: 'pillar',   color: 'bg-rose-600' },
+    { id: 'epimat',   name: 'EPIMAT',          icon: 'machine', color: 'bg-brand-600'   },
+    { id: 'logiciel', name: 'Logiciel EPIMAT',  icon: 'pc',      color: 'bg-brand-500'   },
+    { id: 'vetimat',  name: 'VETIMAT',          icon: 'pillar',  color: 'bg-emerald-600' },
   ],
 
   symptoms: {
@@ -37,11 +34,15 @@ export const DATA = {
         icon: 'badge',
       },
     ],
-    distepi:  [{ id: 't.distepi.ph', title: 'À compléter', category: '—', rootNode: 'tbd', icon: 'cabinet' }],
-    gsm:      [{ id: 't.gsm.ph',     title: 'À compléter', category: '—', rootNode: 'tbd', icon: 'antenna' }],
-    pc:       [{ id: 't.pc.ph',      title: 'À compléter', category: '—', rootNode: 'tbd', icon: 'pc'      }],
-    badge:    [{ id: 't.badge.ph',   title: 'À compléter', category: '—', rootNode: 'tbd', icon: 'badge'   }],
-    colonnes: [{ id: 't.col.ph',     title: 'À compléter', category: '—', rootNode: 'tbd', icon: 'pillar'  }],
+    logiciel: [
+      { id: 't.log.demarrage',  title: 'Le logiciel ne démarre pas / plante', category: 'Logiciel', rootNode: 'tbd', icon: 'pc'      },
+      { id: 't.log.synchro',    title: 'Erreur de synchronisation logicielle', category: 'Logiciel', rootNode: 'tbd', icon: 'antenna' },
+      { id: 't.log.impression', title: 'Problème d\'impression',               category: 'Logiciel', rootNode: 'tbd', icon: 'screen'  },
+      { id: 't.log.config',     title: 'Configuration / paramétrage initial',  category: 'Config',   rootNode: 'tbd', icon: 'badge'   },
+    ],
+    vetimat: [
+      { id: 't.vet.ph', title: 'À compléter', category: '—', rootNode: 'tbd', icon: 'pillar' },
+    ],
   },
 
   nodes: {
