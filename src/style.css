@@ -2,62 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ---- Reset de base ---- */
+/* ---- Base ---- */
 html, body { height: 100%; }
 body {
-  background: #F1F5F9;
+  background: #E8EEF4;
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ---- Cadre téléphone (desktop uniquement) ---- */
+/* ---- Cadre téléphone desktop ---- */
 @media (min-width: 640px) {
   body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 24px;
-    min-height: 100vh;
-    background: radial-gradient(ellipse at 60% 40%, #1E3A5F 0%, #0B1220 70%);
+    padding: 32px;
+    background: #CBD5E1;
+    background-image:
+      radial-gradient(circle at 20% 20%, #94A3B8 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, #64748B 0%, transparent 50%);
   }
   #phone {
     width: 390px;
     height: 844px;
     max-height: 96vh;
-    border-radius: 52px;
+    border-radius: 50px;
     box-shadow:
-      0 0 0 10px #1a1a2e,
-      0 0 0 12px #2d2d44,
-      0 40px 100px -20px rgba(0,0,0,.8),
-      inset 0 1px 0 rgba(255,255,255,.08);
+      0 0 0 1px #94A3B8,
+      0 0 0 10px #1E293B,
+      0 0 0 12px #334155,
+      0 50px 120px -20px rgba(15,76,129,.4);
     overflow: hidden;
     position: relative;
-    background: #F8FAFC;
+    background: #F0F4F8;
   }
-  /* Encoche décorative */
   #phone::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 50%;
+    top: 0; left: 50%;
     transform: translateX(-50%);
-    width: 120px;
-    height: 32px;
-    background: #1a1a2e;
-    border-radius: 0 0 20px 20px;
+    width: 110px; height: 30px;
+    background: #1E293B;
+    border-radius: 0 0 18px 18px;
     z-index: 100;
   }
 }
 @media (max-width: 639px) {
-  #phone { width: 100%; height: 100vh; height: 100dvh; background: #F8FAFC; }
-  body { background: #F8FAFC; }
+  body { background: #F0F4F8; }
+  #phone { width: 100%; height: 100vh; height: 100dvh; background: #F0F4F8; }
 }
 
-/* ---- Gestion des écrans ---- */
+/* ---- Écrans ---- */
 .screen { display: none; flex-direction: column; height: 100%; }
 .screen.active { display: flex; }
-
-/* ---- Zone scrollable ---- */
 .scroll-area { overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .scroll-area::-webkit-scrollbar { width: 0; height: 0; }
 
@@ -65,17 +62,28 @@ body {
 .btn-primary {
   background: #0F4C81;
   color: #fff;
-  transition: transform .08s ease, background .15s ease;
+  transition: transform .08s ease, background .12s ease;
 }
 .btn-primary:active { transform: scale(.98); background: #0B3A63; }
 
+/* ---- Bouton accent (CTA orange) ---- */
+.btn-accent {
+  background: #F59E0B;
+  color: #fff;
+  transition: transform .08s ease, background .12s ease;
+}
+.btn-accent:active { transform: scale(.98); background: #D97706; }
+
+/* ---- Feedback tactile ---- */
+.tap-card { transition: background .1s ease, transform .08s ease, box-shadow .1s ease; }
+.tap-card:active { transform: scale(.99); box-shadow: none !important; }
+
 /* ---- Boutons de réponse ---- */
-.answer-btn { transition: all .12s ease; }
+.answer-btn {
+  transition: border-color .12s ease, background .12s ease, transform .08s ease;
+}
 .answer-btn:active { transform: scale(.98); }
+.answer-btn:hover { border-color: #0F4C81 !important; background: #EFF5FB !important; }
 
 /* ---- Barre de progression ---- */
 .progress-step { transition: background .3s ease; }
-
-/* ---- Feedback tactile sur les cartes ---- */
-.tap-card { transition: background .12s ease, transform .08s ease; }
-.tap-card:active { background: #EFF5FB; transform: scale(.99); }
