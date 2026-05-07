@@ -130,9 +130,74 @@ export const DATA = {
       title: 'Quelle est la couleur du voyant LED de l\'écran ?',
       help: 'Petite LED en façade du moniteur (bas ou côté).',
       answers: [
-        { label: 'Vert — écran en veille',  next: 's_led_pc',             color: 'green' },
-        { label: 'Rouge — écran en erreur', next: 's_changer_alim_ecran', color: 'red'   },
-        { label: 'Éteint — aucune LED',     next: 's_fusible',            color: 'gray'  },
+        { label: 'Vert — écran en veille',  next: 's_led_pc',        color: 'green' },
+        { label: 'Rouge — écran en erreur', next: 's_rouge_pc_led',  color: 'red'   },
+        { label: 'Éteint — aucune LED',     next: 's_fusible',       color: 'gray'  },
+      ],
+    },
+
+    /* Rouge : d'abord vérifier si le PC est allumé */
+    s_rouge_pc_led: {
+      type: 'question',
+      title: 'La LED du PC est-elle allumée ?',
+      help: 'Voyant vert ou bleu sur la façade du boîtier PC intégré.',
+      answers: [
+        { label: 'Oui, PC allumé',   next: 's_changer_alim_ecran' },
+        { label: 'Non, PC éteint',   next: 's_rouge_bouton_power' },
+      ],
+    },
+    s_rouge_bouton_power: {
+      type: 'action',
+      title: 'Appuyer sur le bouton Power du PC',
+      steps: [
+        'Repérer le bouton Power en façade du boîtier PC',
+        'Appuyer une fois dessus et attendre 10 secondes',
+        'Observer si la LED du PC s\'allume',
+      ],
+      media: { type: 'photo', label: 'Bouton Power façade du PC' },
+      next: 's_rouge_pc_demarre',
+    },
+    s_rouge_pc_demarre: {
+      type: 'question',
+      title: 'Le PC a-t-il démarré ?',
+      answers: [
+        { label: 'Oui, LED PC allumée',   next: 's_rouge_voyant_vert' },
+        { label: 'Non, toujours éteint',  next: 's_rouge_switch'      },
+      ],
+    },
+
+    /* PC ne démarre pas → vérifier le switch arrière */
+    s_rouge_switch: {
+      type: 'action',
+      title: 'Vérifier le switch alimentation arrière du PC',
+      steps: [
+        'Aller derrière le boîtier PC',
+        'Repérer le petit interrupteur ON/OFF à côté de la prise secteur',
+        'Passer ce switch sur OFF, attendre 5 secondes',
+        'Remettre le switch sur ON',
+        'Revenir en façade et appuyer sur le bouton Power',
+        'Attendre 15 secondes',
+      ],
+      media: { type: 'photo', label: 'Switch ON/OFF arrière du boîtier PC' },
+      next: 's_rouge_switch_result',
+    },
+    s_rouge_switch_result: {
+      type: 'question',
+      title: 'Le PC démarre maintenant ?',
+      answers: [
+        { label: 'Oui, LED PC allumée',   next: 's_rouge_voyant_vert' },
+        { label: 'Non, toujours éteint',  next: 'sol_changer_pc'      },
+      ],
+    },
+
+    /* PC démarré : est-ce que l'écran est passé au vert ? */
+    s_rouge_voyant_vert: {
+      type: 'question',
+      title: 'Le voyant de l\'écran est-il passé au vert ?',
+      help: 'Le démarrage du PC peut prendre 1 à 2 minutes — attendre avant de répondre.',
+      answers: [
+        { label: 'Oui, voyant vert — image affichée',  next: 'sol_resolved'         },
+        { label: 'Non, toujours rouge',                next: 's_changer_alim_ecran' },
       ],
     },
 
