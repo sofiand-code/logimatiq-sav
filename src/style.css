@@ -23,9 +23,9 @@ body {
       radial-gradient(circle at 80% 80%, #64748B 0%, transparent 50%);
   }
   #phone {
-    width: 390px;
-    height: 693px; /* ratio 9:16 exact */
-    max-height: 96vh;
+    aspect-ratio: 9 / 16;
+    height: min(96vh, 812px);
+    width: auto;
     border-radius: 44px;
     box-shadow:
       0 0 0 1px #94A3B8,
