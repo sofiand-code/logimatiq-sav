@@ -4,29 +4,37 @@
 import './style.css';
 import { nav, STATE } from './state.js';
 import { DATA } from './data/tree.js';
-import { renderHome, findSymptom } from './screens/home.js';
+import { getUser } from './data/user-store.js';
+import { renderHome } from './screens/home.js';
 import { renderSymptoms } from './screens/symptoms.js';
 import { startDiagnostic, diagBack, confirmAbort } from './screens/diag.js';
 import { renderKB } from './screens/kb.js';
 import { renderHistory } from './screens/history.js';
-import { renderProfile, getProfile } from './screens/profile.js';
 import { renderSetup } from './screens/setup.js';
+import { renderRegister } from './screens/register.js';
+import { renderMachineSelect } from './screens/machine-select.js';
+import { renderStats } from './screens/stats.js';
 
 /* ---- Fonction de navigation centrale ---- */
 function navigate(name) {
   nav(name, (screenName) => {
-    if (screenName === 'home')    renderHome(openMachine, restartSymptom, () => navigate('setup'));
+    if (screenName === 'home')    renderHome(openMachine, restartSymptom, () => navigate('setup'), () => navigate('stats'), editProfile);
     if (screenName === 'kb')      renderKB();
     if (screenName === 'history') renderHistory();
     if (screenName === 'setup')   renderSetup();
+    if (screenName === 'stats')   renderStats();
   });
 }
 
-/* ---- Ouvrir la liste des symptômes d'une machine ---- */
+/* ---- Ouvrir sélection de machine → symptômes ---- */
 function openMachine(machineId) {
   STATE.machineId = machineId;
-  renderSymptoms(machineId, (symptomId) => startDiagnostic(symptomId, navigate));
-  navigate('symptoms');
+  navigate('machine-select');
+  renderMachineSelect(machineId, (machine) => {
+    STATE.currentMachine = machine;
+    renderSymptoms(machineId, (symptomId) => startDiagnostic(symptomId, navigate));
+    navigate('symptoms');
+  });
 }
 
 /* ---- Relancer un diagnostic récent ---- */
@@ -38,36 +46,40 @@ function restartSymptom(symptomId) {
   startDiagnostic(symptomId, navigate);
 }
 
+/* ---- Modifier le profil ---- */
+function editProfile() {
+  navigate('register');
+  renderRegister((user) => {
+    STATE.profile = user?.role || null;
+    navigate('home');
+  });
+}
+
 /* ---- Événements globaux ---- */
 document.addEventListener('DOMContentLoaded', () => {
 
   /* Splash → vérifier si profil déjà défini */
   document.getElementById('btn-splash-start')?.addEventListener('click', () => {
-    if (getProfile()) {
+    if (getUser()) {
       navigate('home');
     } else {
-      navigate('profile');
-      renderProfile((profile) => {
-        STATE.profile = profile;
+      navigate('register');
+      renderRegister((user) => {
+        STATE.profile = user?.role || null;
         navigate('home');
       });
     }
   });
 
-  /* Bouton profil dans le header home → rechoisir son profil */
-  document.getElementById('home-profile-badge')?.addEventListener('click', () => {
-    navigate('profile');
-    renderProfile((profile) => {
-      STATE.profile = profile;
-      navigate('home');
-    });
-  });
+  /* Retour depuis machine-select */
+  document.getElementById('btn-machine-back')
+    ?.addEventListener('click', () => navigate('home'));
 
-  /* Bouton retour dans l'écran diagnostic */
+  /* Bouton retour dans le diagnostic */
   document.getElementById('btn-diag-back')
     ?.addEventListener('click', () => diagBack(navigate));
 
-  /* Bouton Quitter dans l'écran diagnostic */
+  /* Bouton Quitter dans le diagnostic */
   document.getElementById('btn-diag-quit')
     ?.addEventListener('click', () => confirmAbort(navigate));
 

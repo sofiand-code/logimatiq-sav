@@ -3,14 +3,15 @@
    ========================================================================== */
 
 export const STATE = {
-  currentScreen: 'splash',
-  machineId:      null,
+  currentScreen:  'splash',
+  machineId:      null,   // 'epimat' | 'vetimat' | ...
   symptomId:      null,
   treeRoot:       null,
-  history:        [],   // pile des nodeIds visités (cette session)
-  answers:        [],   // réponses choisies (label)
-  estimatedSteps: 6,    // approximation pour la barre de progression
-  profile:        null, // 'client' | 'tech_reseller' | 'tech_logimatiq'
+  history:        [],     // pile des nodeIds visités
+  answers:        [],     // réponses choisies (label)
+  estimatedSteps: 6,
+  profile:        null,   // legacy (remplacé par user-store)
+  currentMachine: null,   // { id, serialNumber, model, location, clientName }
 };
 
 /**

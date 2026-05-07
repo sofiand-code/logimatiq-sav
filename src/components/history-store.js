@@ -19,17 +19,36 @@ export function loadHistory() {
  * @param {{ outcome: string, title: string }} solutionNode
  */
 export function saveDiagnostic(state, solutionNode) {
+  /* Enrichissement avec les infos user + machine */
+  let companyName = null, staffName = null, userId = null;
+  let machineSerial = null, machineModelLabel = null, clientName = null;
+  try {
+    const user = JSON.parse(localStorage.getItem('logimatiq_user_v1'));
+    if (user) { companyName = user.companyName; staffName = user.staffName; userId = user.id; }
+  } catch { /* silencieux */ }
+  if (state.currentMachine) {
+    machineSerial     = state.currentMachine.serialNumber;
+    machineModelLabel = state.currentMachine.modelLabel;
+    clientName        = state.currentMachine.clientName;
+  }
+
   const arr = loadHistory();
   arr.unshift({
-    date:         new Date().toISOString(),
-    machineId:    state.machineId,
-    symptomId:    state.symptomId,
-    path:         [...state.history],
-    answers:      [...state.answers],
-    outcome:      solutionNode.outcome,
-    outcomeLabel: solutionNode.title,
+    date:             new Date().toISOString(),
+    machineId:        state.machineId,
+    machineSerial,
+    machineModelLabel,
+    clientName:       clientName || companyName,
+    symptomId:        state.symptomId,
+    path:             [...state.history],
+    answers:          [...state.answers],
+    outcome:          solutionNode.outcome,
+    outcomeLabel:     solutionNode.title,
+    companyName,
+    staffName,
+    userId,
   });
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr.slice(0, 50)));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr.slice(0, 100)));
 }
 
 /* Helpers de présentation */
