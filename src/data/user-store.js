@@ -1,6 +1,28 @@
 /* ============================================================================
    USER STORE — Profil utilisateur persistant (localStorage)
+   Comptes chargés depuis users.csv (éditable dans Excel)
    ========================================================================== */
+import usersCSV from './users.csv?raw';
+
+/* --- Parse CSV → tableau d'objets --- */
+function parseCSV(csv) {
+  const lines = csv.trim().split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.trim());
+  return lines.slice(1).map(line => {
+    const values = line.split(',').map(v => v.trim());
+    return Object.fromEntries(headers.map((h, i) => [h, values[i] ?? '']));
+  });
+}
+
+export const USERS = parseCSV(usersCSV);
+
+export function checkLogin(login, password) {
+  return USERS.find(
+    u => u.login.toLowerCase() === login.toLowerCase().trim()
+      && u.password === password.trim()
+  ) || null;
+}
 
 const KEY = 'logimatiq_user_v1';
 

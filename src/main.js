@@ -4,21 +4,21 @@
 import './style.css';
 import { nav, STATE } from './state.js';
 import { DATA } from './data/tree.js';
-import { getUser } from './data/user-store.js';
+import { getUser, clearUser } from './data/user-store.js';
 import { renderHome } from './screens/home.js';
 import { renderSymptoms } from './screens/symptoms.js';
 import { startDiagnostic, diagBack, confirmAbort } from './screens/diag.js';
 import { renderKB } from './screens/kb.js';
 import { renderHistory } from './screens/history.js';
 import { renderSetup } from './screens/setup.js';
-import { renderRegister } from './screens/register.js';
+import { renderLogin } from './screens/login.js';
 import { renderMachineSelect } from './screens/machine-select.js';
 import { renderStats } from './screens/stats.js';
 
 /* ---- Fonction de navigation centrale ---- */
 function navigate(name) {
   nav(name, (screenName) => {
-    if (screenName === 'home')    renderHome(openMachine, restartSymptom, () => navigate('setup'), () => navigate('stats'), editProfile);
+    if (screenName === 'home')    renderHome(openMachine, restartSymptom, () => navigate('setup'), () => navigate('stats'), logout);
     if (screenName === 'kb')      renderKB();
     if (screenName === 'history') renderHistory();
     if (screenName === 'setup')   renderSetup();
@@ -46,25 +46,28 @@ function restartSymptom(symptomId) {
   startDiagnostic(symptomId, navigate);
 }
 
-/* ---- Modifier le profil ---- */
-function editProfile() {
-  navigate('register');
-  renderRegister((user) => {
-    STATE.profile = user?.role || null;
-    navigate('home');
-  });
+/* ---- Déconnexion ---- */
+function logout() {
+  if (confirm('Se déconnecter ?')) {
+    clearUser();
+    navigate('register');
+    renderLogin((user) => {
+      STATE.profile = user?.role || null;
+      navigate('home');
+    });
+  }
 }
 
 /* ---- Événements globaux ---- */
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* Splash → vérifier si profil déjà défini */
+  /* Splash → vérifier si déjà connecté */
   document.getElementById('btn-splash-start')?.addEventListener('click', () => {
     if (getUser()) {
       navigate('home');
     } else {
       navigate('register');
-      renderRegister((user) => {
+      renderLogin((user) => {
         STATE.profile = user?.role || null;
         navigate('home');
       });
