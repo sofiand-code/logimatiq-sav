@@ -563,261 +563,280 @@ export const DATA = {
 
     b_debut: {
       type: 'question',
+      title: 'La LED du lecteur de badge est-elle allumée ?',
+      help: 'Le lecteur est branché en USB sur le PC — si LED éteinte, le PC est probablement éteint.',
+      answers: [
+        { label: 'Oui, LED allumée',   next: 'b_symptome',   color: 'green' },
+        { label: 'Non, LED éteinte',   next: 'b_pc_led',     color: 'red'   },
+      ],
+    },
+
+    /* ==================================================================
+       BRANCHE LED ÉTEINTE
+       ================================================================== */
+
+    b_pc_led: {
+      type: 'question',
+      title: 'La LED du PC est-elle allumée ?',
+      help: 'Voyant lumineux sur la façade du boîtier PC intégré.',
+      answers: [
+        { label: 'Non, PC éteint',      next: 'b_allumer_pc',   color: 'red'   },
+        { label: 'Oui, PC allumé',      next: 'b_usb_rebranch', color: 'green' },
+      ],
+    },
+
+    b_allumer_pc: {
+      type: 'action',
+      title: 'Allumer le PC',
+      steps: [
+        'Appuyer sur le bouton Power en façade du boîtier PC',
+        'Si rien ne se passe, aller à l\'arrière du PC',
+        'Vérifier le switch ON/OFF et le passer sur ON',
+        'Revenir en façade et réappuyer sur le bouton Power',
+        'Attendre 15 secondes',
+      ],
+      next: 'b_usb_rebranch',
+    },
+
+    b_usb_rebranch: {
+      type: 'action',
+      title: 'Débrancher et rebrancher le câble USB du lecteur',
+      steps: [
+        'Débrancher le câble USB du lecteur côté PC',
+        'Attendre 5 secondes',
+        'Rebrancher fermement sur le même port USB',
+        'Observer si la LED du lecteur s\'allume',
+      ],
+      next: 'b_led_apres_usb',
+    },
+
+    b_led_apres_usb: {
+      type: 'question',
+      title: 'La LED du lecteur est-elle maintenant allumée ?',
+      answers: [
+        { label: 'Oui, LED allumée',      next: 'b_symptome',       color: 'green' },
+        { label: 'Non, toujours éteinte', next: 'b_autre_port_usb', color: 'red'   },
+      ],
+    },
+
+    b_autre_port_usb: {
+      type: 'action',
+      title: 'Essayer un autre port USB',
+      steps: [
+        'Débrancher le câble USB du lecteur',
+        'Le brancher sur un autre port USB du PC',
+        'Observer si la LED du lecteur s\'allume',
+      ],
+      next: 'b_led_autre_port',
+    },
+
+    b_led_autre_port: {
+      type: 'question',
+      title: 'La LED s\'est-elle allumée sur le nouveau port ?',
+      answers: [
+        { label: 'Oui, LED allumée',      next: 'b_symptome',        color: 'green' },
+        { label: 'Non, toujours éteinte', next: 'sol_changer_lecteur', color: 'red' },
+      ],
+    },
+
+    /* ==================================================================
+       BRANCHE LED ALLUMÉE — Quel est le problème ?
+       ================================================================== */
+
+    b_symptome: {
+      type: 'question',
       title: 'Quel est le problème avec le badge ?',
       answers: [
-        { label: 'Le badge n\'est pas lu du tout',        next: 'b_lecteur_led'     },
-        { label: 'Le badge affiche un mauvais numéro',    next: 'b_mauvais_numero'  },
-        { label: 'Lecture aléatoire / intermittente',     next: 'b_lecture_alea'    },
-        { label: 'Le lecteur ne s\'allume pas',           next: 'b_alim'            },
+        { label: 'Badge non lu — aucune réaction',         next: 'b_port_com'      },
+        { label: 'Badge lu mais mauvais numéro affiché',   next: 'b_mauvais_notepad' },
+        { label: 'Lecture aléatoire / intermittente',      next: 'b_alea_badge'    },
       ],
     },
 
-    /* --- Badge non lu --- */
-    b_lecteur_led: {
-      type: 'question',
-      title: 'La LED du lecteur de badge est-elle allumée ?',
-      help: 'LED verte ou rouge visible sur la face du lecteur.',
-      answers: [
-        { label: 'Oui, allumée',   next: 'b_type_badge'    },
-        { label: 'Non, éteinte',   next: 'b_alim'          },
-      ],
-    },
-    b_alim: {
-      type: 'question',
-      title: 'Le câble du lecteur est-il bien branché au PC ?',
-      answers: [
-        { label: 'Oui, branché',      next: 'b_port_com'           },
-        { label: 'Non / douteux',     next: 'b_rebrancher_lecteur' },
-      ],
-    },
-    b_rebrancher_lecteur: {
-      type: 'action',
-      title: 'Rebrancher le lecteur de badge',
-      steps: [
-        'Débrancher le câble USB ou RJ45 du lecteur sur le PC',
-        'Attendre 5 secondes',
-        'Rebrancher fermement',
-        'Vérifier que la LED du lecteur s\'allume',
-      ],
-      next: 'b_led_apres_rebranchement',
-    },
-    b_led_apres_rebranchement: {
-      type: 'question',
-      title: 'La LED du lecteur est maintenant allumée ?',
-      answers: [
-        { label: 'Oui',  next: 'b_type_badge'          },
-        { label: 'Non',  next: 'sol_changer_lecteur'   },
-      ],
-    },
+    /* --- Badge non lu : port COM → Notepad --- */
+
     b_port_com: {
       type: 'action',
-      title: 'Vérifier le port COM du lecteur',
+      title: 'Vérifier le port COM (Gestionnaire de périphériques)',
       steps: [
-        'Vérifier le câble RJ45 entre le lecteur et le port COM4 du PC',
-        'Débrancher / rebrancher le câble RJ45',
-        'Si un câble USB est utilisé, l\'essayer sur un autre port USB',
-        'Redémarrer le logiciel EPIMAT après rebranchement',
+        'Clic droit sur "Ce PC" → Gérer → Gestionnaire de périphériques',
+        'Ouvrir "Ports (COM & LPT)" → noter le numéro COM du lecteur (ex : COM1)',
+        'Ouvrir le fichier AUTOMAT INI sur le bureau',
+        'Dans la section [port com], vérifier que "port lecteur badge" = même numéro',
+        'Si différent, corriger le numéro et sauvegarder AUTOMAT INI',
       ],
-      media: { type: 'pdf', label: 'Schéma câblage lecteur badge', file: 'Manuel Maintenance EPIMAT_eng.pdf' },
-      next: 'b_port_result',
+      media: { type: 'photo', label: 'Gestionnaire périphériques & AUTOMAT INI (photos à venir)' },
+      next: 'b_port_com_result',
     },
-    b_port_result: {
+
+    b_port_com_result: {
       type: 'question',
-      title: 'Le lecteur est maintenant reconnu ?',
+      title: 'Le lecteur est-il maintenant reconnu (réaction au passage du badge) ?',
       answers: [
-        { label: 'Oui, LED allumée',   next: 'b_type_badge'        },
-        { label: 'Non',               next: 'sol_changer_lecteur'  },
+        { label: 'Oui',  next: 'b_notepad_langue', color: 'green' },
+        { label: 'Non',  next: 'b_notepad_langue',               },
       ],
     },
 
-    /* Type de badge */
-    b_type_badge: {
-      type: 'question',
-      title: 'Quel type de badge utilisez-vous ?',
-      answers: [
-        { label: 'Badge Kalistrut (gris/blanc, fourni Logimatiq)',  next: 'b_approche'        },
-        { label: 'Badge Mifare / autre technologie',                next: 'b_compatible'      },
-        { label: 'Je ne sais pas',                                  next: 'b_approche'        },
-      ],
-    },
-    b_compatible: {
-      type: 'question',
-      title: 'Le badge est-il de technologie 125 kHz HID ?',
-      help: 'Vérifier l\'inscription sur le badge ou sa fiche produit.',
-      answers: [
-        { label: 'Oui, 125 kHz HID',      next: 'b_approche'           },
-        { label: 'Non / autre technologie', next: 'sol_badge_incompatible' },
-        { label: 'Inconnu',               next: 'b_approche'           },
-      ],
-    },
-    b_approche: {
-      type: 'question',
-      title: 'Comment présentez-vous le badge au lecteur ?',
-      answers: [
-        { label: 'À moins de 5 cm, face au lecteur',     next: 'b_nettoyer'    },
-        { label: 'À plus de 10 cm',                       next: 'b_distance'   },
-        { label: 'De côté ou de dos',                     next: 'b_orientation' },
-      ],
-    },
-    b_distance: {
+    b_notepad_langue: {
       type: 'action',
-      title: 'Ajuster la distance de lecture',
+      title: 'Préparer le test Notepad — passer le clavier en anglais',
       steps: [
-        'Approcher le badge à 3-8 cm du centre du lecteur',
-        'Tenir le badge face au lecteur (côté imprimé vers vous)',
-        'Maintenir immobile pendant 1 à 2 secondes',
-        'Un bip et la LED verte indiquent une lecture réussie',
+        'Cliquer sur la langue en bas à droite de la barre des tâches Windows',
+        'Sélectionner "ENG" (anglais) comme langue de saisie',
+        'Ouvrir le Bloc-notes (Notepad) : Démarrer → Notepad',
+        'Cliquer dans la zone de texte du Bloc-notes',
       ],
-      next: 'b_distance_result',
+      next: 'b_notepad_test',
     },
-    b_distance_result: {
-      type: 'question',
-      title: 'Le badge est-il maintenant lu ?',
-      answers: [
-        { label: 'Oui',  next: 'sol_resolved'         },
-        { label: 'Non',  next: 'b_nettoyer'           },
-      ],
-    },
-    b_orientation: {
+
+    b_notepad_test: {
       type: 'action',
-      title: 'Corriger l\'orientation du badge',
+      title: 'Tester la lecture du badge sur Notepad',
       steps: [
-        'Tenir le badge horizontalement, face imprimée vers vous',
-        'Le présenter face au lecteur (pas de biais, pas de dos)',
-        'Distance : 3-8 cm',
-        'Attendre 1-2 secondes sans bouger',
+        'Dans le Bloc-notes (clavier en anglais), passer le badge devant le lecteur',
+        'Observer ce qui s\'affiche dans la zone de texte',
       ],
-      next: 'b_orientation_result',
+      next: 'b_notepad_result',
     },
-    b_orientation_result: {
+
+    b_notepad_result: {
       type: 'question',
-      title: 'Le badge est-il lu ?',
+      title: 'Que s\'affiche-t-il dans le Bloc-notes ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'       },
-        { label: 'Non',  next: 'b_nettoyer'         },
+        { label: 'Des caractères hex apparaissent (ex: 3A8F12B4)', next: 'b_admin_base',  color: 'green' },
+        { label: 'Rien ne s\'affiche',                             next: 'b_reprogrammer', color: 'red'   },
       ],
     },
-    b_nettoyer: {
+
+    b_admin_base: {
       type: 'action',
-      title: 'Nettoyer le lecteur et le badge',
+      title: 'Corriger le nombre de caractères dans Admin Base',
       steps: [
-        'Éteindre la machine',
-        'Essuyer la surface du lecteur avec un chiffon microfibre sec',
-        'Nettoyer également le badge (surtout les zones de contact)',
-        'Rallumer et réessayer',
+        'Dans DistEPI, aller dans "Admin Base"',
+        'Repérer le paramètre nombre de caractères du badge',
+        'Compter le nombre de caractères lus dans le Bloc-notes',
+        'Corriger le paramètre pour qu\'il corresponde (ex : mettre 8 si Notepad lit 8 caractères)',
+        'Sauvegarder et redémarrer DistEPI',
       ],
-      next: 'b_nettoyer_result',
+      media: { type: 'photo', label: 'Admin Base — paramètre nb caractères (photos à venir)' },
+      next: 'b_admin_result',
     },
-    b_nettoyer_result: {
+
+    b_admin_result: {
       type: 'question',
-      title: 'Le badge est-il lu après nettoyage ?',
+      title: 'Le badge est-il maintenant reconnu dans DistEPI ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'        },
-        { label: 'Non',  next: 'sol_changer_lecteur' },
+        { label: 'Oui, badge OK',          next: 'sol_resolved',        color: 'green' },
+        { label: 'Non, toujours ignoré',   next: 'sol_changer_lecteur', color: 'red'   },
+      ],
+    },
+
+    b_reprogrammer: {
+      type: 'action',
+      title: 'Reprogrammer le lecteur de badge',
+      steps: [
+        'Ouvrir le logiciel de programmation du lecteur',
+        'Suivre la procédure de reprogrammation',
+        'Retester avec le Bloc-notes après reprogrammation',
+      ],
+      media: { type: 'photo', label: 'Procédure reprogrammation lecteur (tuto à venir)' },
+      next: 'b_reprogrammer_result',
+    },
+
+    b_reprogrammer_result: {
+      type: 'question',
+      title: 'Le lecteur lit-il correctement sur le Bloc-notes ?',
+      answers: [
+        { label: 'Oui, caractères visibles', next: 'b_admin_base',        color: 'green' },
+        { label: 'Non, toujours rien',        next: 'sol_changer_lecteur', color: 'red'  },
       ],
     },
 
     /* --- Mauvais numéro --- */
-    b_mauvais_numero: {
-      type: 'question',
-      title: 'Le numéro affiché correspond-il à l\'étiquette du badge ?',
-      help: 'Comparer le numéro à l\'écran avec celui imprimé sur le badge.',
-      answers: [
-        { label: 'Non, numéro différent',    next: 'b_distepi'          },
-        { label: 'Oui, numéro identique',    next: 'b_reassigner'       },
-      ],
-    },
-    b_distepi: {
+
+    b_mauvais_notepad: {
       type: 'action',
-      title: 'Corriger le numéro dans DISTEPI',
+      title: 'Vérifier le numéro lu — test Notepad (clavier anglais)',
       steps: [
-        'Sur le bureau Windows, double-cliquer sur l\'icône DISTEPI',
-        'Aller dans AUTOMAT INI',
-        'Sélectionner CHANGER NUMERO BADGE',
-        'Saisir le numéro correct (inscrit sur le badge)',
-        'Valider et fermer',
+        'Passer le clavier Windows en anglais (barre des tâches → ENG)',
+        'Ouvrir le Bloc-notes et passer le badge devant le lecteur',
+        'Comparer le numéro affiché avec celui imprimé sur le badge',
       ],
-      media: { type: 'pdf', label: 'Initialisation badges Kalistrut', file: 'initialisation badges kalistrut .pdf' },
-      next: 'b_distepi_result',
+      next: 'b_mauvais_result',
     },
-    b_reassigner: {
-      type: 'action',
-      title: 'Réassigner le badge à ce poste',
-      steps: [
-        'Sur le bureau Windows, double-cliquer sur l\'icône DISTEPI',
-        'Aller dans AUTOMAT INI',
-        'Sélectionner ASSIGNER BADGE',
-        'Approcher le badge du lecteur quand demandé',
-        'Confirmer l\'assignation',
-      ],
-      media: { type: 'pdf', label: 'Initialisation badges Kalistrut', file: 'initialisation badges kalistrut .pdf' },
-      next: 'b_distepi_result',
-    },
-    b_distepi_result: {
+
+    b_mauvais_result: {
       type: 'question',
-      title: 'Le badge est-il maintenant correctement reconnu ?',
+      title: 'Le numéro lu dans le Bloc-notes correspond-il au badge ?',
       answers: [
-        { label: 'Oui',                            next: 'sol_resolved'        },
-        { label: 'Non, problème persiste',         next: 'b_reboot_distepi'   },
-      ],
-    },
-    b_reboot_distepi: {
-      type: 'action',
-      title: 'Redémarrer DISTEPI et le PC',
-      steps: [
-        'Fermer complètement le logiciel DISTEPI',
-        'Redémarrer le PC (Démarrer → Redémarrer)',
-        'Après redémarrage, rouvrir DISTEPI',
-        'Réessayer la lecture du badge',
-      ],
-      next: 'b_reboot_result',
-    },
-    b_reboot_result: {
-      type: 'question',
-      title: 'Le badge fonctionne après redémarrage ?',
-      answers: [
-        { label: 'Oui',  next: 'sol_resolved'        },
-        { label: 'Non',  next: 'sol_changer_lecteur' },
+        { label: 'Oui, même numéro — mal renseigné en BDD', next: 'b_corriger_bdd',  color: 'green' },
+        { label: 'Non, numéro différent — lecteur à reprogrammer', next: 'b_reprogrammer', color: 'red' },
       ],
     },
 
-    /* --- Lecture aléatoire --- */
-    b_lecture_alea: {
-      type: 'question',
-      title: 'Dans quelles circonstances la lecture échoue-t-elle ?',
-      answers: [
-        { label: 'Avec ce badge uniquement',        next: 'b_test_autre_badge' },
-        { label: 'Avec tous les badges',            next: 'b_nettoyer'         },
-        { label: 'Lecture en double (2 bips)',      next: 'b_lecture_double'   },
-      ],
-    },
-    b_test_autre_badge: {
-      type: 'question',
-      title: 'Pouvez-vous tester avec un autre badge Kalistrut ?',
-      answers: [
-        { label: 'Oui → l\'autre badge fonctionne',   next: 'sol_badge_defaillant' },
-        { label: 'Oui → l\'autre badge échoue aussi', next: 'b_nettoyer'           },
-        { label: 'Non, pas d\'autre badge disponible', next: 'b_nettoyer'          },
-      ],
-    },
-    b_lecture_double: {
+    b_corriger_bdd: {
       type: 'action',
-      title: 'Corriger la lecture en double',
+      title: 'Corriger le numéro dans la base de données',
       steps: [
-        'Présenter le badge une seule fois, brièvement (1 seconde)',
-        'Retirer immédiatement après le premier bip',
-        'Ne pas maintenir le badge contre le lecteur',
-        'Si le problème persiste, vérifier le paramètre "anti-double lecture" dans DISTEPI',
+        'Dans DistEPI, aller dans "Admin Base"',
+        'Trouver le salarié concerné',
+        'Corriger le numéro de badge enregistré avec le numéro exact du badge physique',
+        'Sauvegarder et retester',
       ],
-      media: { type: 'pdf', label: 'Initialisation badges Kalistrut', file: 'initialisation badges kalistrut .pdf' },
-      next: 'b_double_result',
+      next: 'b_bdd_result',
     },
-    b_double_result: {
+
+    b_bdd_result: {
       type: 'question',
-      title: 'La lecture en double a disparu ?',
+      title: 'Le badge est-il maintenant correctement reconnu ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'        },
-        { label: 'Non',  next: 'sol_changer_lecteur' },
+        { label: 'Oui',  next: 'sol_resolved',        color: 'green' },
+        { label: 'Non',  next: 'sol_changer_lecteur', color: 'red'   },
+      ],
+    },
+
+    /* --- Lecture aléatoire / intermittente --- */
+
+    b_alea_badge: {
+      type: 'action',
+      title: 'Tester avec un autre badge',
+      steps: [
+        'Prendre un autre badge Kalistrut disponible',
+        'Le passer devant le lecteur',
+        'Observer si la lecture est stable avec cet autre badge',
+      ],
+      next: 'b_alea_badge_result',
+    },
+
+    b_alea_badge_result: {
+      type: 'question',
+      title: 'L\'autre badge fonctionne-t-il correctement ?',
+      answers: [
+        { label: 'Oui, lecture stable',            next: 'sol_badge_defaillant', color: 'green' },
+        { label: 'Non, même problème',             next: 'b_alea_usb',           color: 'red'   },
+        { label: 'Pas d\'autre badge disponible',  next: 'b_alea_usb'                           },
+      ],
+    },
+
+    b_alea_usb: {
+      type: 'action',
+      title: 'Vérifier le câble USB du lecteur',
+      steps: [
+        'Débrancher le câble USB du lecteur',
+        'Inspecter le câble (pliures, dommages visibles)',
+        'Rebrancher fermement ou remplacer le câble si abîmé',
+        'Tester la lecture de plusieurs badges',
+      ],
+      next: 'b_alea_usb_result',
+    },
+
+    b_alea_usb_result: {
+      type: 'question',
+      title: 'La lecture est-elle stable maintenant ?',
+      answers: [
+        { label: 'Oui, lecture stable',     next: 'sol_resolved',        color: 'green' },
+        { label: 'Non, toujours aléatoire', next: 'sol_changer_lecteur', color: 'red'   },
       ],
     },
 
