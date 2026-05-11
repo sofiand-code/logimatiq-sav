@@ -1,13 +1,13 @@
 @echo off
 echo.
-echo  Mise a jour de l'application Logimatiq SAV...
+echo  Publication de toutes les modifications...
 echo  ------------------------------------------------
 cd /d "%~dp0"
-git add src/data/users.csv
-git commit -m "Mise a jour utilisateurs"
+git add -A
+git commit -m "Mise a jour"
 git push origin master
 echo.
 echo  Deploiement en cours sur Cloudflare (1-2 min)...
-echo  L'app sera disponible sur : https://logimatiq-sav.pages.dev/
+echo  https://logimatiq-sav.pages.dev/
 echo.
 pause
