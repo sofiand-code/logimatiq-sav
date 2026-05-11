@@ -353,259 +353,205 @@ export const DATA = {
 
     i_debut: {
       type: 'question',
-      title: 'Quel est le problème de connexion ?',
+      title: 'Quel est le problème ?',
+      help: 'Regarder la LED bleue "online" sur le modem Four-Faith F3827.',
       answers: [
-        { label: 'Pas de connexion du tout',          next: 'i_voyant_online'    },
-        { label: 'Connexion lente ou instable',        next: 'i_lente_cause'     },
-        { label: 'Déconnexions fréquentes',            next: 'i_signal'          },
-        { label: 'Message "No sync" sur l\'écran',    next: 'i_nosync_reset'    },
+        { label: 'LED "online" du modem éteinte',                 next: 'i_reboot_modem',      color: 'red'   },
+        { label: 'LED "online" allumée mais erreur synchro DistEPI', next: 'i_connexion_distante' },
+        { label: 'Déconnexions fréquentes / signal instable',     next: 'i_signal_faible',     color: 'gray'  },
       ],
     },
 
-    /* --- Pas de connexion --- */
-    i_voyant_online: {
-      type: 'question',
-      title: 'Le voyant "online" du modem GSM est-il allumé ?',
-      help: 'LED verte ou bleue étiquetée "online" ou "WAN" sur le routeur.',
-      media: { type: 'photo', label: 'LED online du routeur GSM' },
-      answers: [
-        { label: 'Oui, LED online allumée',   next: 'i_logiciel_ouvert'   },
-        { label: 'Non, LED online éteinte',   next: 'i_voyant_power'      },
-        { label: 'Modem absent / introuvable', next: 'i_rj45'             },
-      ],
-    },
-    i_voyant_power: {
-      type: 'question',
-      title: 'Le modem est-il alimenté ? (LED "power" allumée)',
-      answers: [
-        { label: 'Oui, LED power allumée',   next: 'i_attente_connexion' },
-        { label: 'Non, modem éteint',        next: 'i_alim_modem'        },
-      ],
-    },
-    i_alim_modem: {
-      type: 'action',
-      title: 'Vérifier l\'alimentation du modem',
-      steps: [
-        'Vérifier que le câble d\'alimentation du modem est bien branché',
-        'Vérifier la prise ou la multiprise utilisée',
-        'Si le modem a un interrupteur, le passer sur ON',
-      ],
-      next: 'i_modem_allume',
-    },
-    i_modem_allume: {
-      type: 'question',
-      title: 'Le modem s\'est allumé ?',
-      answers: [
-        { label: 'Oui',  next: 'i_attente_connexion' },
-        { label: 'Non',  next: 'sol_changer_modem'   },
-      ],
-    },
-    i_attente_connexion: {
-      type: 'action',
-      title: 'Attendre la connexion GSM',
-      steps: [
-        'Le modem peut prendre 2 à 3 minutes pour se connecter au réseau',
-        'Observer la LED "online" : elle doit clignoter puis devenir fixe',
-        'Ne pas éteindre ou débrancher pendant cette phase',
-      ],
-      next: 'i_online_apres_attente',
-    },
-    i_online_apres_attente: {
-      type: 'question',
-      title: 'La LED "online" est-elle maintenant allumée ?',
-      answers: [
-        { label: 'Oui, LED allumée',        next: 'i_logiciel_ouvert'   },
-        { label: 'Non, toujours éteinte',   next: 'i_sim'               },
-      ],
-    },
-    i_sim: {
-      type: 'question',
-      title: 'La carte SIM est-elle correctement insérée dans le modem ?',
-      answers: [
-        { label: 'Oui, SIM insérée',    next: 'i_sim_reinsertion'   },
-        { label: 'Non / incertain',     next: 'i_inserer_sim'       },
-      ],
-    },
-    i_inserer_sim: {
-      type: 'action',
-      title: 'Insérer la carte SIM',
-      steps: [
-        'Éteindre le modem',
-        'Localiser le slot SIM (souvent sous un cache ou sur le côté)',
-        'Insérer la carte SIM en respectant l\'orientation (encoche)',
-        'Rallumer le modem et attendre 3 minutes',
-      ],
-      media: { type: 'pdf', label: 'Procédure remplacement SIM', file: 'SIM Card Replacement and APN Setup Procedure.pdf' },
-      next: 'i_online_apres_attente',
-    },
-    i_sim_reinsertion: {
-      type: 'action',
-      title: 'Réinsérer la carte SIM',
-      steps: [
-        'Éteindre le modem',
-        'Retirer délicatement la carte SIM',
-        'Nettoyer les contacts dorés avec un chiffon sec',
-        'Réinsérer la SIM et rallumer le modem',
-        'Attendre 3 minutes',
-      ],
-      next: 'i_online_apres_reinsertion',
-    },
-    i_online_apres_reinsertion: {
-      type: 'question',
-      title: 'La connexion est rétablie ?',
-      answers: [
-        { label: 'Oui',  next: 'sol_resolved'      },
-        { label: 'Non',  next: 'sol_changer_modem' },
-      ],
-    },
+    /* ==================================================================
+       BRANCHE LED ONLINE ÉTEINTE
+       ================================================================== */
 
-    /* LED online allumée mais pas de connexion logicielle */
-    i_logiciel_ouvert: {
-      type: 'question',
-      title: 'Le logiciel EPIMAT est-il lancé sur le PC ?',
-      answers: [
-        { label: 'Oui, il tourne',     next: 'i_rj45'               },
-        { label: 'Non, fermé',         next: 'i_demarrer_logiciel'  },
-      ],
-    },
-    i_demarrer_logiciel: {
+    i_reboot_modem: {
       type: 'action',
-      title: 'Démarrer le logiciel EPIMAT',
+      title: 'Redémarrer le modem',
       steps: [
-        'Double-cliquer sur l\'icône EPIMAT sur le bureau',
-        'Attendre le chargement complet',
-        'Vérifier que la barre de statut indique "Connecté"',
-      ],
-      next: 'i_logiciel_result',
-    },
-    i_logiciel_result: {
-      type: 'question',
-      title: 'La connexion est rétablie dans EPIMAT ?',
-      answers: [
-        { label: 'Oui',  next: 'sol_resolved' },
-        { label: 'Non',  next: 'i_rj45'       },
-      ],
-    },
-    i_rj45: {
-      type: 'action',
-      title: 'Vérifier le câble RJ45 (PC ↔ Modem)',
-      steps: [
-        'Repérer le câble RJ45 reliant le PC au modem',
-        'Débrancher puis rebrancher aux deux extrémités jusqu\'au clic',
-        'Vérifier également le port COM4 (lecteur de badge) sur le PC',
-        'Si le câble est endommagé, le remplacer',
-      ],
-      media: { type: 'pdf', label: 'Schéma de câblage EPIMAT', file: 'Manuel Maintenance EPIMAT_eng.pdf' },
-      next: 'i_rj45_result',
-    },
-    i_rj45_result: {
-      type: 'question',
-      title: 'La connexion fonctionne maintenant ?',
-      answers: [
-        { label: 'Oui',  next: 'sol_resolved'         },
-        { label: 'Non',  next: 'i_reboot_pc'           },
-      ],
-    },
-    i_reboot_pc: {
-      type: 'action',
-      title: 'Redémarrer le PC',
-      steps: [
-        'Démarrer → Arrêter → Redémarrer',
-        'Attendre le redémarrage complet de Windows',
-        'Relancer le logiciel EPIMAT',
-        'Patienter 1 minute et vérifier la connexion',
+        'Localiser l\'interrupteur ON/OFF sur le boîtier d\'alimentation du modem',
+        'Passer le switch sur OFF (ou débrancher la prise secteur)',
+        'Attendre 30 secondes',
+        'Rallumer (switch sur ON ou rebrancher)',
+        'Attendre 2 à 3 minutes que le modem se reconnecte au réseau GSM',
       ],
       next: 'i_reboot_result',
     },
     i_reboot_result: {
       type: 'question',
-      title: 'La connexion est rétablie après redémarrage ?',
+      title: 'La LED "online" est-elle maintenant allumée ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'      },
-        { label: 'Non',  next: 'sol_changer_modem' },
+        { label: 'Oui, LED bleue allumée',  next: 'sol_resolved',     color: 'green' },
+        { label: 'Non, toujours éteinte',   next: 'i_antennes_check', color: 'red'   },
       ],
     },
 
-    /* --- Connexion lente --- */
-    i_lente_cause: {
-      type: 'question',
-      title: 'Depuis quand la connexion est-elle lente ?',
-      answers: [
-        { label: 'Depuis l\'installation (toujours lente)', next: 'i_apn'        },
-        { label: 'Depuis peu (était rapide avant)',          next: 'i_reboot_pc'  },
-        { label: 'Après une coupure de courant',             next: 'i_rj45'      },
-      ],
-    },
-    i_apn: {
+    i_antennes_check: {
       type: 'action',
-      title: 'Vérifier la configuration APN du modem',
+      title: 'Vérifier les 2 antennes du modem',
       steps: [
-        'Ouvrir un navigateur internet sur le PC',
-        'Saisir l\'adresse 192.168.1.1 (ou celle du modem)',
-        'Se connecter à l\'interface d\'administration',
-        'Vérifier les paramètres APN selon votre opérateur (voir fiche)',
-        'Sauvegarder et redémarrer le modem',
+        'Vérifier que les 2 antennes GSM sont bien vissées sur le modem',
+        'Si une antenne est desserrée, la revisser fermement',
+        'Attendre 1 minute et observer la LED online',
       ],
-      media: { type: 'pdf', label: 'Procédure APN & SIM', file: 'SIM Card Replacement and APN Setup Procedure.pdf' },
-      next: 'i_apn_result',
+      next: 'i_antennes_result',
     },
-    i_apn_result: {
+    i_antennes_result: {
       type: 'question',
-      title: 'La connexion est-elle normale maintenant ?',
+      title: 'La LED "online" s\'est-elle allumée ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved'      },
-        { label: 'Non',  next: 'sol_changer_modem' },
+        { label: 'Oui, LED allumée',      next: 'sol_resolved',  color: 'green' },
+        { label: 'Non, toujours éteinte', next: 'i_sim_led',     color: 'red'   },
       ],
     },
 
-    /* --- Déconnexions fréquentes --- */
-    i_signal: {
+    i_sim_led: {
       type: 'question',
-      title: 'Y a-t-il du réseau GSM dans le bâtiment ?',
-      help: 'Tester avec un téléphone mobile dans la même pièce.',
+      title: 'La LED SIM du modem est-elle allumée ?',
+      help: 'Voyant indiquant que la carte SIM est bien détectée par le modem.',
       answers: [
-        { label: 'Oui, bon signal mobile',     next: 'i_antenne_modem' },
-        { label: 'Signal faible ou absent',    next: 'sol_antenne_ext' },
-      ],
-    },
-    i_antenne_modem: {
-      type: 'action',
-      title: 'Vérifier et orienter l\'antenne du modem',
-      steps: [
-        'Vérifier que l\'antenne GSM est bien vissée sur le modem',
-        'Redresser l\'antenne verticalement',
-        'Si possible, rapprocher le modem d\'une fenêtre',
-        'Tester sur 10 minutes',
-      ],
-      next: 'i_antenne_result',
-    },
-    i_antenne_result: {
-      type: 'question',
-      title: 'Les déconnexions ont diminué ?',
-      answers: [
-        { label: 'Oui, connexion stable',    next: 'sol_resolved'      },
-        { label: 'Non, toujours instable',   next: 'sol_changer_modem' },
+        { label: 'Oui, LED SIM allumée',  next: 'i_setup_grizzly',  color: 'green' },
+        { label: 'Non, LED SIM éteinte',  next: 'i_reinsertion_sim', color: 'red'  },
       ],
     },
 
-    /* --- No sync via internet --- */
-    i_nosync_reset: {
+    i_reinsertion_sim: {
       type: 'action',
-      title: 'Réinitialiser la machine (No sync)',
+      title: 'Réinsérer la carte SIM',
       steps: [
-        'Éteindre l\'EPIMAT complètement',
-        'Attendre 30 secondes',
-        'Rallumer et attendre le démarrage complet',
-        'Vérifier que le modem "online" est allumé',
+        'Éteindre le modem',
+        'Localiser le petit trou d\'éjection SIM sur le modem',
+        'Insérer un pin, rivet ou bout de bille de stylo dans le trou pour faire ressortir la SIM',
+        'Retirer la SIM et nettoyer les contacts dorés avec un chiffon sec',
+        'Réinsérer la SIM et rallumer le modem',
+        'Attendre 2 à 3 minutes',
       ],
-      next: 'i_nosync_result',
+      next: 'i_sim_result',
     },
-    i_nosync_result: {
+    i_sim_result: {
       type: 'question',
-      title: 'Le message "No sync" a disparu ?',
+      title: 'La LED SIM est-elle maintenant allumée ?',
       answers: [
-        { label: 'Oui',    next: 'sol_resolved'      },
-        { label: 'Non',    next: 'i_voyant_online'   },
+        { label: 'Oui, LED SIM allumée',  next: 'i_setup_grizzly', color: 'green' },
+        { label: 'Non, toujours éteinte', next: 'sol_changer_modem', color: 'red' },
+      ],
+    },
+
+    i_setup_grizzly: {
+      type: 'action',
+      title: 'Lancer le setup Grizzly (setup17)',
+      steps: [
+        'Sur le bureau Windows, ouvrir le programme Grizzly Setup17',
+        'Suivre la procédure de reconfiguration — le programme remet automatiquement l\'APN (wbdata / matooma / orange)',
+        'Attendre la fin du setup et le redémarrage automatique du modem si demandé',
+        'Attendre 2 à 3 minutes puis observer la LED online',
+      ],
+      media: { type: 'photo', label: 'Procédure Grizzly Setup17 (photos à venir)' },
+      next: 'i_setup_result',
+    },
+    i_setup_result: {
+      type: 'question',
+      title: 'La LED "online" est-elle maintenant allumée ?',
+      answers: [
+        { label: 'Oui, LED bleue allumée',  next: 'sol_resolved',      color: 'green' },
+        { label: 'Non, toujours éteinte',   next: 'sol_changer_modem', color: 'red'   },
+      ],
+    },
+
+    /* ==================================================================
+       BRANCHE ERREUR SYNCHRO DISTEPI (LED online allumée)
+       ================================================================== */
+
+    i_connexion_distante: {
+      type: 'question',
+      title: 'Peut-on se connecter à distance au PC de la machine ?',
+      help: 'Si la connexion à distance fonctionne, le câble RJ45 n\'est pas en cause.',
+      answers: [
+        { label: 'Oui, connexion distance OK',  next: 'i_clientsynch',  color: 'green' },
+        { label: 'Non, pas de connexion distance', next: 'i_rj45_check', color: 'red'  },
+      ],
+    },
+
+    i_rj45_check: {
+      type: 'action',
+      title: 'Vérifier le câble RJ45 (PC ↔ Modem)',
+      steps: [
+        'Localiser le câble RJ45 reliant le PC au modem',
+        'Débrancher et rebrancher aux deux extrémités jusqu\'au clic',
+        'Vérifier que le PC Windows indique bien une connexion internet',
+      ],
+      next: 'i_rj45_result',
+    },
+    i_rj45_result: {
+      type: 'question',
+      title: 'Le PC Windows a-t-il maintenant accès à internet ?',
+      answers: [
+        { label: 'Oui, internet OK',         next: 'i_clientsynch',    color: 'green' },
+        { label: 'Non, toujours sans réseau', next: 'sol_changer_modem', color: 'red' },
+      ],
+    },
+
+    i_clientsynch: {
+      type: 'action',
+      title: 'Tester avec ClientSynch DB EPI (Grizzly)',
+      steps: [
+        'Sur le bureau Windows, ouvrir le logiciel ClientSynch DB EPI',
+        'Lancer le test de réception et d\'envoi de données',
+        'Observer si le test passe ou échoue',
+      ],
+      media: { type: 'photo', label: 'ClientSynch DB EPI — procédure (photos à venir)' },
+      next: 'i_clientsynch_result',
+    },
+    i_clientsynch_result: {
+      type: 'question',
+      title: 'Le test ClientSynch a-t-il réussi ?',
+      answers: [
+        { label: 'Oui, test OK',       next: 'i_reboot_pc_distepi', color: 'green' },
+        { label: 'Non, test échoue',   next: 'sol_sav_serveur',     color: 'red'   },
+      ],
+    },
+
+    i_reboot_pc_distepi: {
+      type: 'action',
+      title: 'Redémarrer le PC',
+      steps: [
+        'Cliquer sur Démarrer → Arrêter → Redémarrer',
+        'Attendre le redémarrage complet de Windows',
+        'Vérifier que DistEPI se relance et que la synchro fonctionne',
+      ],
+      next: 'i_reboot_distepi_result',
+    },
+    i_reboot_distepi_result: {
+      type: 'question',
+      title: 'DistEPI fonctionne correctement après redémarrage ?',
+      answers: [
+        { label: 'Oui, synchro OK',         next: 'sol_resolved',    color: 'green' },
+        { label: 'Non, erreur persiste',     next: 'sol_sav_serveur', color: 'red'  },
+      ],
+    },
+
+    /* ==================================================================
+       BRANCHE SIGNAL INSTABLE / DÉCONNEXIONS FRÉQUENTES
+       ================================================================== */
+
+    i_signal_faible: {
+      type: 'action',
+      title: 'Vérifier les antennes et repositionner le modem',
+      steps: [
+        'Vérifier que les 2 antennes GSM sont bien vissées sur le modem',
+        'Redresser les antennes verticalement',
+        'Si possible, rapprocher le modem d\'une fenêtre pour améliorer le signal GSM',
+        'Tester avec un téléphone mobile pour évaluer la force du signal dans la pièce',
+      ],
+      next: 'i_signal_result',
+    },
+    i_signal_result: {
+      type: 'question',
+      title: 'La connexion est-elle stable maintenant ?',
+      answers: [
+        { label: 'Oui, connexion stable',    next: 'sol_resolved',    color: 'green' },
+        { label: 'Non, toujours instable',   next: 'sol_antenne_ext', color: 'red'   },
       ],
     },
 
@@ -950,6 +896,12 @@ export const DATA = {
       title: 'Redémarrer le PC',
       message: 'Le logiciel EPIMAT ne répond plus. Redémarrer le PC (Démarrer → Redémarrer). Si le problème persiste après redémarrage, contacter le SAV.',
       sav: false,
+    },
+    sol_sav_serveur: {
+      type: 'solution', outcome: 'sav',
+      title: 'Problème serveur Logimatiq',
+      message: 'Le test ClientSynch DB EPI échoue : le problème vient du serveur Logimatiq ou de la base de données SQL. Contacter le SAV Logimatiq pour intervention sur le serveur.',
+      sav: true,
     },
 
     /* Placeholder machines non développées */
