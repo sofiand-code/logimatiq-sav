@@ -273,6 +273,14 @@ export function renderSetup() {
   const list = document.getElementById('setup-list');
   if (!list) return;
 
+  /* Mémoriser les phases ouvertes avant re-rendu */
+  const openPhases = new Set(
+    PHASES.filter(p => {
+      const el = document.getElementById('phase-content-' + p.id);
+      return el && el.style.display !== 'none';
+    }).map(p => p.id)
+  );
+
   list.innerHTML = `
     <!-- Progression globale -->
     <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-5 shadow-sm">
@@ -300,6 +308,16 @@ export function renderSetup() {
              text-xs py-3 rounded-2xl mt-1 mb-6">
       Réinitialiser la checklist
     </button>`;
+
+  /* Restaurer les phases qui étaient ouvertes */
+  PHASES.forEach(p => {
+    if (openPhases.has(p.id)) {
+      const content = document.getElementById('phase-content-' + p.id);
+      const arrow   = document.getElementById('phase-arrow-' + p.id);
+      if (content) content.style.display = 'block';
+      if (arrow)   arrow.style.transform  = 'rotate(90deg)';
+    }
+  });
 
   /* Événements checkbox */
   list.querySelectorAll('[data-step-id]').forEach(label => {

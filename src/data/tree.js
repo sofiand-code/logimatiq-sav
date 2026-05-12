@@ -7,7 +7,6 @@ export const DATA = {
   machines: [
     { id: 'epimat',   name: 'EPIMAT',          icon: 'machine', color: 'bg-brand-600'   },
     { id: 'logiciel', name: 'Logiciel EPIMAT',  icon: 'pc',      color: 'bg-brand-500'   },
-    { id: 'vetimat',  name: 'VETIMAT',          icon: 'pillar',  color: 'bg-emerald-600' },
   ],
 
   symptoms: {
