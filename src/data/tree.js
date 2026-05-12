@@ -80,8 +80,8 @@ export const DATA = {
       title: 'Quelle est la couleur du voyant LED de l\'écran ?',
       help: 'Petit voyant situé en façade du moniteur, en bas ou sur le côté.',
       answers: [
-        { label: 'Rouge',                      next: 's_rouge_pc_led',   color: 'red'   },
-        { label: 'Éteint (aucune LED)',        next: 's_eteint_cable',   color: 'gray'  },
+        { label: 'Rouge',                                next: 's_rouge_pc_led',  color: 'red'   },
+        { label: 'Éteint (aucune LED)',                  next: 's_eteint_cable',  color: 'gray'  },
         { label: 'Vert (image visible, autre problème)', next: 's_vert_symptome', color: 'green' },
       ],
     },
@@ -96,8 +96,8 @@ export const DATA = {
       title: 'La LED du PC est-elle allumée ?',
       help: 'Voyant lumineux sur la façade du boîtier PC intégré dans la machine.',
       answers: [
-        { label: 'Oui, LED PC allumée',  next: 's_rouge_rebrancher_vga', color: 'green' },
-        { label: 'Non, PC éteint',       next: 's_rouge_pc_ventilo',     color: 'red'   },
+        { label: 'Oui, LED PC allumée',  next: 's_rouge_rebrancher_vga' },
+        { label: 'Non, PC éteint',       next: 's_rouge_pc_ventilo'   },
       ],
     },
 
@@ -120,8 +120,8 @@ export const DATA = {
       type: 'question',
       title: 'Le PC a-t-il démarré ? (LED allumée)',
       answers: [
-        { label: 'Oui, LED allumée',     next: 's_rouge_rebrancher_vga', color: 'green' },
-        { label: 'Non, toujours éteint', next: 'sol_changer_pc',         color: 'red'   },
+        { label: 'Oui, LED allumée',     next: 's_rouge_rebrancher_vga' },
+        { label: 'Non, toujours éteint', next: 'sol_changer_pc'   },
       ],
     },
 
@@ -142,8 +142,8 @@ export const DATA = {
       type: 'question',
       title: 'L\'image est-elle revenue sur l\'écran ?',
       answers: [
-        { label: 'Oui, image OK',  next: 'sol_resolved',         color: 'green' },
-        { label: 'Non, toujours rouge', next: 's_rouge_changer_vga', color: 'red' },
+        { label: 'Oui, image OK',  next: 'sol_resolved' },
+        { label: 'Non, toujours rouge', next: 's_rouge_changer_vga' },
       ],
     },
 
@@ -163,8 +163,8 @@ export const DATA = {
       type: 'question',
       title: 'L\'image est-elle maintenant visible ?',
       answers: [
-        { label: 'Oui, image OK',      next: 'sol_resolved',    color: 'green' },
-        { label: 'Non, écran rouge',   next: 'sol_changer_ecran', color: 'red' },
+        { label: 'Oui, image OK',      next: 'sol_resolved' },
+        { label: 'Non, écran rouge',   next: 'sol_changer_ecran' },
       ],
     },
 
@@ -178,8 +178,8 @@ export const DATA = {
       title: 'Le câble d\'alimentation de l\'écran est-il bien branché ?',
       help: 'Vérifier le câble reliant l\'écran à la multiprise ou au bloc d\'alimentation.',
       answers: [
-        { label: 'Oui, branché',      next: 's_eteint_multiprise',     color: 'green' },
-        { label: 'Non, débranché',    next: 's_eteint_brancher_cable',  color: 'red'   },
+        { label: 'Oui, branché',      next: 's_eteint_multiprise' },
+        { label: 'Non, débranché',    next: 's_eteint_brancher_cable'   },
       ],
     },
 
@@ -199,8 +199,8 @@ export const DATA = {
       title: 'La LED rouge de la multiprise est-elle allumée ?',
       help: 'La multiprise doit afficher un voyant rouge pour indiquer qu\'elle est sous tension.',
       answers: [
-        { label: 'Oui, LED rouge allumée',  next: 's_eteint_changer_alim', color: 'green' },
-        { label: 'Non, multiprise éteinte', next: 'sol_disjoncteur',        color: 'red'   },
+        { label: 'Oui, LED rouge allumée',  next: 's_eteint_changer_alim' },
+        { label: 'Non, multiprise éteinte', next: 'sol_disjoncteur'   },
       ],
     },
 
@@ -220,8 +220,8 @@ export const DATA = {
       type: 'question',
       title: 'L\'écran s\'est-il allumé ?',
       answers: [
-        { label: 'Oui, écran allumé', next: 'sol_resolved',    color: 'green' },
-        { label: 'Non, toujours éteint', next: 'sol_changer_ecran', color: 'red' },
+        { label: 'Oui, écran allumé', next: 'sol_resolved' },
+        { label: 'Non, toujours éteint', next: 'sol_changer_ecran' },
       ],
     },
 
@@ -257,8 +257,8 @@ export const DATA = {
       type: 'question',
       title: 'Le problème d\'image a-t-il disparu ?',
       answers: [
-        { label: 'Oui, image stable',      next: 'sol_resolved',     color: 'green' },
-        { label: 'Non, problème persiste', next: 'sol_changer_ecran', color: 'red'  },
+        { label: 'Oui, image stable',      next: 'sol_resolved' },
+        { label: 'Non, problème persiste', next: 'sol_changer_ecran'  },
       ],
     },
 
@@ -277,8 +277,8 @@ export const DATA = {
       type: 'question',
       title: 'L\'écran tactile répond-il maintenant ?',
       answers: [
-        { label: 'Oui, tactile OK',        next: 'sol_resolved',     color: 'green' },
-        { label: 'Non, toujours inactif',  next: 'sol_changer_ecran', color: 'red'  },
+        { label: 'Oui, tactile OK',        next: 'sol_resolved' },
+        { label: 'Non, toujours inactif',  next: 'sol_changer_ecran'  },
       ],
     },
 
@@ -297,8 +297,8 @@ export const DATA = {
       type: 'question',
       title: 'DistEPI s\'est-il lancé correctement ?',
       answers: [
-        { label: 'Oui, DistEPI lancé',     next: 'sol_resolved',     color: 'green' },
-        { label: 'Non, ne s\'ouvre pas',   next: 'sol_redemarrer_pc', color: 'red'  },
+        { label: 'Oui, DistEPI lancé',     next: 'sol_resolved' },
+        { label: 'Non, ne s\'ouvre pas',   next: 'sol_redemarrer_pc'  },
       ],
     },
 
@@ -318,8 +318,8 @@ export const DATA = {
       type: 'question',
       title: 'La résolution est-elle correcte maintenant ?',
       answers: [
-        { label: 'Oui, affichage correct',  next: 'sol_resolved',      color: 'green' },
-        { label: 'Non, toujours incorrecte', next: 'sol_redemarrer_pc', color: 'red'  },
+        { label: 'Oui, affichage correct',  next: 'sol_resolved' },
+        { label: 'Non, toujours incorrecte', next: 'sol_redemarrer_pc'  },
       ],
     },
 
@@ -340,8 +340,8 @@ export const DATA = {
       type: 'question',
       title: 'La machine fonctionne-t-elle correctement après redémarrage ?',
       answers: [
-        { label: 'Oui, tout est OK',        next: 'sol_resolved',  color: 'green' },
-        { label: 'Non, problème persiste',  next: 'sol_changer_pc', color: 'red'  },
+        { label: 'Oui, tout est OK',        next: 'sol_resolved' },
+        { label: 'Non, problème persiste',  next: 'sol_changer_pc'  },
       ],
     },
 
@@ -356,9 +356,9 @@ export const DATA = {
       title: 'Quel est le problème ?',
       help: 'Regarder la LED bleue "online" sur le modem Four-Faith F3827.',
       answers: [
-        { label: 'LED "online" du modem éteinte',                 next: 'i_reboot_modem',      color: 'red'   },
+        { label: 'LED "online" du modem éteinte',                 next: 'i_reboot_modem'   },
         { label: 'LED "online" allumée mais erreur synchro DistEPI', next: 'i_connexion_distante' },
-        { label: 'Déconnexions fréquentes / signal instable',     next: 'i_signal_faible',     color: 'gray'  },
+        { label: 'Déconnexions fréquentes / signal instable',     next: 'i_signal_faible'  },
       ],
     },
 
@@ -382,8 +382,8 @@ export const DATA = {
       type: 'question',
       title: 'La LED "online" est-elle maintenant allumée ?',
       answers: [
-        { label: 'Oui, LED bleue allumée',  next: 'sol_resolved',     color: 'green' },
-        { label: 'Non, toujours éteinte',   next: 'i_antennes_check', color: 'red'   },
+        { label: 'Oui, LED bleue allumée',  next: 'sol_resolved' },
+        { label: 'Non, toujours éteinte',   next: 'i_antennes_check'   },
       ],
     },
 
@@ -401,8 +401,8 @@ export const DATA = {
       type: 'question',
       title: 'La LED "online" s\'est-elle allumée ?',
       answers: [
-        { label: 'Oui, LED allumée',      next: 'sol_resolved',  color: 'green' },
-        { label: 'Non, toujours éteinte', next: 'i_sim_led',     color: 'red'   },
+        { label: 'Oui, LED allumée',      next: 'sol_resolved' },
+        { label: 'Non, toujours éteinte', next: 'i_sim_led'   },
       ],
     },
 
@@ -411,8 +411,8 @@ export const DATA = {
       title: 'La LED SIM du modem est-elle allumée ?',
       help: 'Voyant indiquant que la carte SIM est bien détectée par le modem.',
       answers: [
-        { label: 'Oui, LED SIM allumée',  next: 'i_setup_grizzly',  color: 'green' },
-        { label: 'Non, LED SIM éteinte',  next: 'i_reinsertion_sim', color: 'red'  },
+        { label: 'Oui, LED SIM allumée',  next: 'i_setup_grizzly' },
+        { label: 'Non, LED SIM éteinte',  next: 'i_reinsertion_sim'  },
       ],
     },
 
@@ -433,8 +433,8 @@ export const DATA = {
       type: 'question',
       title: 'La LED SIM est-elle maintenant allumée ?',
       answers: [
-        { label: 'Oui, LED SIM allumée',  next: 'i_setup_grizzly', color: 'green' },
-        { label: 'Non, toujours éteinte', next: 'sol_changer_modem', color: 'red' },
+        { label: 'Oui, LED SIM allumée',  next: 'i_setup_grizzly' },
+        { label: 'Non, toujours éteinte', next: 'sol_changer_modem' },
       ],
     },
 
@@ -454,8 +454,8 @@ export const DATA = {
       type: 'question',
       title: 'La LED "online" est-elle maintenant allumée ?',
       answers: [
-        { label: 'Oui, LED bleue allumée',  next: 'sol_resolved',      color: 'green' },
-        { label: 'Non, toujours éteinte',   next: 'sol_changer_modem', color: 'red'   },
+        { label: 'Oui, LED bleue allumée',  next: 'sol_resolved' },
+        { label: 'Non, toujours éteinte',   next: 'sol_changer_modem'   },
       ],
     },
 
@@ -468,8 +468,8 @@ export const DATA = {
       title: 'Peut-on se connecter à distance au PC de la machine ?',
       help: 'Si la connexion à distance fonctionne, le câble RJ45 n\'est pas en cause.',
       answers: [
-        { label: 'Oui, connexion distance OK',  next: 'i_clientsynch',  color: 'green' },
-        { label: 'Non, pas de connexion distance', next: 'i_rj45_check', color: 'red'  },
+        { label: 'Oui, connexion distance OK',  next: 'i_clientsynch' },
+        { label: 'Non, pas de connexion distance', next: 'i_rj45_check'  },
       ],
     },
 
@@ -487,8 +487,8 @@ export const DATA = {
       type: 'question',
       title: 'Le PC Windows a-t-il maintenant accès à internet ?',
       answers: [
-        { label: 'Oui, internet OK',         next: 'i_clientsynch',    color: 'green' },
-        { label: 'Non, toujours sans réseau', next: 'sol_changer_modem', color: 'red' },
+        { label: 'Oui, internet OK',         next: 'i_clientsynch' },
+        { label: 'Non, toujours sans réseau', next: 'sol_changer_modem' },
       ],
     },
 
@@ -507,8 +507,8 @@ export const DATA = {
       type: 'question',
       title: 'Le test ClientSynch a-t-il réussi ?',
       answers: [
-        { label: 'Oui, test OK',       next: 'i_reboot_pc_distepi', color: 'green' },
-        { label: 'Non, test échoue',   next: 'sol_sav_serveur',     color: 'red'   },
+        { label: 'Oui, test OK',       next: 'i_reboot_pc_distepi' },
+        { label: 'Non, test échoue',   next: 'sol_sav_serveur'   },
       ],
     },
 
@@ -526,8 +526,8 @@ export const DATA = {
       type: 'question',
       title: 'DistEPI fonctionne correctement après redémarrage ?',
       answers: [
-        { label: 'Oui, synchro OK',         next: 'sol_resolved',    color: 'green' },
-        { label: 'Non, erreur persiste',     next: 'sol_sav_serveur', color: 'red'  },
+        { label: 'Oui, synchro OK',         next: 'sol_resolved' },
+        { label: 'Non, erreur persiste',     next: 'sol_sav_serveur'  },
       ],
     },
 
@@ -550,8 +550,8 @@ export const DATA = {
       type: 'question',
       title: 'La connexion est-elle stable maintenant ?',
       answers: [
-        { label: 'Oui, connexion stable',    next: 'sol_resolved',    color: 'green' },
-        { label: 'Non, toujours instable',   next: 'sol_antenne_ext', color: 'red'   },
+        { label: 'Oui, connexion stable',    next: 'sol_resolved' },
+        { label: 'Non, toujours instable',   next: 'sol_antenne_ext'   },
       ],
     },
 
@@ -566,8 +566,8 @@ export const DATA = {
       title: 'La LED du lecteur de badge est-elle allumée ?',
       help: 'Le lecteur est branché en USB sur le PC — si LED éteinte, le PC est probablement éteint.',
       answers: [
-        { label: 'Oui, LED allumée',   next: 'b_symptome',   color: 'green' },
-        { label: 'Non, LED éteinte',   next: 'b_pc_led',     color: 'red'   },
+        { label: 'Oui, LED allumée',   next: 'b_symptome' },
+        { label: 'Non, LED éteinte',   next: 'b_pc_led'   },
       ],
     },
 
@@ -580,8 +580,8 @@ export const DATA = {
       title: 'La LED du PC est-elle allumée ?',
       help: 'Voyant lumineux sur la façade du boîtier PC intégré.',
       answers: [
-        { label: 'Non, PC éteint',      next: 'b_allumer_pc',   color: 'red'   },
-        { label: 'Oui, PC allumé',      next: 'b_usb_rebranch', color: 'green' },
+        { label: 'Non, PC éteint',      next: 'b_allumer_pc'   },
+        { label: 'Oui, PC allumé',      next: 'b_usb_rebranch' },
       ],
     },
 
@@ -614,8 +614,8 @@ export const DATA = {
       type: 'question',
       title: 'La LED du lecteur est-elle maintenant allumée ?',
       answers: [
-        { label: 'Oui, LED allumée',      next: 'b_symptome',       color: 'green' },
-        { label: 'Non, toujours éteinte', next: 'b_autre_port_usb', color: 'red'   },
+        { label: 'Oui, LED allumée',      next: 'b_symptome' },
+        { label: 'Non, toujours éteinte', next: 'b_autre_port_usb'   },
       ],
     },
 
@@ -634,8 +634,8 @@ export const DATA = {
       type: 'question',
       title: 'La LED s\'est-elle allumée sur le nouveau port ?',
       answers: [
-        { label: 'Oui, LED allumée',      next: 'b_symptome',        color: 'green' },
-        { label: 'Non, toujours éteinte', next: 'sol_changer_lecteur', color: 'red' },
+        { label: 'Oui, LED allumée',      next: 'b_symptome' },
+        { label: 'Non, toujours éteinte', next: 'sol_changer_lecteur' },
       ],
     },
 
@@ -673,7 +673,7 @@ export const DATA = {
       type: 'question',
       title: 'Le lecteur est-il maintenant reconnu (réaction au passage du badge) ?',
       answers: [
-        { label: 'Oui',  next: 'b_notepad_langue', color: 'green' },
+        { label: 'Oui',  next: 'b_notepad_langue' },
         { label: 'Non',  next: 'b_notepad_langue',               },
       ],
     },
@@ -704,8 +704,8 @@ export const DATA = {
       type: 'question',
       title: 'Que s\'affiche-t-il dans le Bloc-notes ?',
       answers: [
-        { label: 'Des caractères hex apparaissent (ex: 3A8F12B4)', next: 'b_admin_base',  color: 'green' },
-        { label: 'Rien ne s\'affiche',                             next: 'b_reprogrammer', color: 'red'   },
+        { label: 'Des caractères hex apparaissent (ex: 3A8F12B4)', next: 'b_admin_base' },
+        { label: 'Rien ne s\'affiche',                             next: 'b_reprogrammer'   },
       ],
     },
 
@@ -727,8 +727,8 @@ export const DATA = {
       type: 'question',
       title: 'Le badge est-il maintenant reconnu dans DistEPI ?',
       answers: [
-        { label: 'Oui, badge OK',          next: 'sol_resolved',        color: 'green' },
-        { label: 'Non, toujours ignoré',   next: 'sol_changer_lecteur', color: 'red'   },
+        { label: 'Oui, badge OK',          next: 'sol_resolved' },
+        { label: 'Non, toujours ignoré',   next: 'sol_changer_lecteur'   },
       ],
     },
 
@@ -748,8 +748,8 @@ export const DATA = {
       type: 'question',
       title: 'Le lecteur lit-il correctement sur le Bloc-notes ?',
       answers: [
-        { label: 'Oui, caractères visibles', next: 'b_admin_base',        color: 'green' },
-        { label: 'Non, toujours rien',        next: 'sol_changer_lecteur', color: 'red'  },
+        { label: 'Oui, caractères visibles', next: 'b_admin_base' },
+        { label: 'Non, toujours rien',        next: 'sol_changer_lecteur'  },
       ],
     },
 
@@ -770,8 +770,8 @@ export const DATA = {
       type: 'question',
       title: 'Le numéro lu dans le Bloc-notes correspond-il au badge ?',
       answers: [
-        { label: 'Oui, même numéro — mal renseigné en BDD', next: 'b_corriger_bdd',  color: 'green' },
-        { label: 'Non, numéro différent — lecteur à reprogrammer', next: 'b_reprogrammer', color: 'red' },
+        { label: 'Oui, même numéro — mal renseigné en BDD', next: 'b_corriger_bdd' },
+        { label: 'Non, numéro différent — lecteur à reprogrammer', next: 'b_reprogrammer' },
       ],
     },
 
@@ -791,8 +791,8 @@ export const DATA = {
       type: 'question',
       title: 'Le badge est-il maintenant correctement reconnu ?',
       answers: [
-        { label: 'Oui',  next: 'sol_resolved',        color: 'green' },
-        { label: 'Non',  next: 'sol_changer_lecteur', color: 'red'   },
+        { label: 'Oui',  next: 'sol_resolved' },
+        { label: 'Non',  next: 'sol_changer_lecteur'   },
       ],
     },
 
@@ -813,8 +813,8 @@ export const DATA = {
       type: 'question',
       title: 'L\'autre badge fonctionne-t-il correctement ?',
       answers: [
-        { label: 'Oui, lecture stable',            next: 'sol_badge_defaillant', color: 'green' },
-        { label: 'Non, même problème',             next: 'b_alea_usb',           color: 'red'   },
+        { label: 'Oui, lecture stable',            next: 'sol_badge_defaillant' },
+        { label: 'Non, même problème',             next: 'b_alea_usb'   },
         { label: 'Pas d\'autre badge disponible',  next: 'b_alea_usb'                           },
       ],
     },
@@ -835,8 +835,8 @@ export const DATA = {
       type: 'question',
       title: 'La lecture est-elle stable maintenant ?',
       answers: [
-        { label: 'Oui, lecture stable',     next: 'sol_resolved',        color: 'green' },
-        { label: 'Non, toujours aléatoire', next: 'sol_changer_lecteur', color: 'red'   },
+        { label: 'Oui, lecture stable',     next: 'sol_resolved' },
+        { label: 'Non, toujours aléatoire', next: 'sol_changer_lecteur'   },
       ],
     },
 
