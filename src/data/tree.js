@@ -394,6 +394,7 @@ export const DATA = {
         'Si une antenne est desserrée, la revisser fermement',
         'Attendre 1 minute et observer la LED online',
       ],
+      media: { type: 'photo', label: 'Câblage et antennes du modem Four-Faith', file: 'cablage_du_modem.png' },
       next: 'i_antennes_result',
     },
     i_antennes_result: {
@@ -408,7 +409,8 @@ export const DATA = {
     i_sim_led: {
       type: 'question',
       title: 'La LED SIM du modem est-elle allumée ?',
-      help: 'Voyant indiquant que la carte SIM est bien détectée par le modem.',
+      help: 'Voyant "SIM" sur la face avant du modem (voir photo).',
+      media: { type: 'photo', label: 'LEDs du modem — repérer la LED SIM', file: 'sens_insertion_sim.png' },
       answers: [
         { label: 'Oui, LED SIM allumée',  next: 'i_setup_grizzly' },
         { label: 'Non, LED SIM éteinte',  next: 'i_reinsertion_sim'  },
@@ -426,6 +428,7 @@ export const DATA = {
         'Réinsérer la SIM et rallumer le modem',
         'Attendre 2 à 3 minutes',
       ],
+      media: { type: 'photo', label: 'Sortir la SIM avec un pin', file: 'sortir_la_sim_du_modem.png' },
       next: 'i_sim_result',
     },
     i_sim_result: {
@@ -446,7 +449,7 @@ export const DATA = {
         'Attendre la fin du setup et le redémarrage automatique du modem si demandé',
         'Attendre 2 à 3 minutes puis observer la LED online',
       ],
-      media: { type: 'photo', label: 'Procédure Grizzly Setup17 (photos à venir)' },
+      media: { type: 'photo', label: 'Interface APN du modem (192.168.1.1)', files: ['interface_web_modem_setup.png', 'interface_web_setup_apn_modem.png'] },
       next: 'i_setup_result',
     },
     i_setup_result: {

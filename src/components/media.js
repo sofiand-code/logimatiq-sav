@@ -10,6 +10,16 @@ export function renderMedia(m) {
   if (!m) return '';
 
   if (m.type === 'photo') {
+    const files = m.files || (m.file ? [m.file] : []);
+    if (files.length > 0) {
+      return files.map(f => `
+        <div class="mt-4 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+          <img src="/${f}" alt="${m.label}"
+               class="w-full object-cover"
+               style="max-height:260px;object-fit:contain;background:#f8fafc"/>
+          <p class="text-[10px] text-slate-400 font-medium text-center py-1.5 bg-slate-50">${m.label}</p>
+        </div>`).join('');
+    }
     return `
       <div class="mt-4 rounded-2xl overflow-hidden border border-slate-200 bg-gradient-to-br from-slate-100 to-slate-200 aspect-[16/10] flex flex-col items-center justify-center">
         <svg viewBox="0 0 24 24" class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-4-4-7 7"/></svg>
