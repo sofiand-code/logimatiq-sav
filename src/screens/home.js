@@ -3,9 +3,8 @@
    ========================================================================== */
 import { DATA } from '../data/tree.js';
 import { ICONS } from '../components/icons.js';
-import { loadHistory, outcomePill, formatDate } from '../components/history-store.js';
 import { getUser, getRoleLabel } from '../data/user-store.js';
-import { t } from '../i18n.js';
+import { t, tSymptom } from '../i18n.js';
 
 const MACHINE_STYLES = {
   epimat:   { bg: '#0F4C81', light: '#EFF5FB', text: '#0F4C81' },
@@ -13,7 +12,7 @@ const MACHINE_STYLES = {
   vetimat:  { bg: '#059669', light: '#ECFDF5', text: '#059669' },
 };
 
-export function renderHome(onOpenMachine, onRestartSymptom, onSetup, onStats, onEditProfile) {
+export function renderHome(onOpenMachine, onSetup, onStats, onEditProfile) {
   /* ---- Infos utilisateur dans le header ---- */
   const user = getUser();
   const userInfoEl = document.getElementById('home-user-info');
@@ -52,8 +51,6 @@ export function renderHome(onOpenMachine, onRestartSymptom, onSetup, onStats, on
   /* ---- Carte Guide de mise en service ---- */
   const setupCard = document.getElementById('setup-card');
   if (setupCard) {
-    setupCard.querySelector('.font-black.text-slate-900').textContent = t('Guide de mise en service');
-    setupCard.querySelector('.text-\\[11px\\]').textContent = t('Checklist installation EPIMAT');
     setupCard.addEventListener('click', () => onSetup?.());
   }
 
@@ -61,42 +58,6 @@ export function renderHome(onOpenMachine, onRestartSymptom, onSetup, onStats, on
   document.getElementById('btn-stats')
     ?.addEventListener('click', () => onStats?.());
 
-  /* ---- Récents ---- */
-  const recents = loadHistory().slice(0, 2);
-  const list = document.getElementById('recent-list');
-  if (!recents.length) {
-    list.innerHTML = `
-      <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm text-center">
-        <p class="text-sm text-slate-400 font-medium">${t('Aucun diagnostic récent')}</p>
-        <p class="text-xs text-slate-300 mt-1">${t('Les diagnostics terminés apparaîtront ici')}</p>
-      </div>`;
-    return;
-  }
-  list.innerHTML = recents.map(h => {
-    const sym = findSymptom(h.symptomId);
-    const outcomeLabel = h.outcome === 'resolved' ? t('Résolu')
-                       : h.outcome === 'sav'      ? t('SAV')
-                       : t('Pièce');
-    return `
-      <button data-symptom="${h.symptomId}"
-        class="tap-card w-full bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm flex items-center gap-3 text-left">
-        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-             style="background:#EFF5FB;color:#0F4C81">
-          ${ICONS.screen}
-        </div>
-        <div class="flex-1 min-w-0">
-          <div class="text-sm font-bold text-slate-900 truncate">${sym ? sym.title : h.symptomId}</div>
-          <div class="text-[11px] text-slate-400 mt-0.5">${formatDate(h.date)}</div>
-        </div>
-        <span class="text-[10px] font-bold ${outcomePill(h.outcome)} px-2.5 py-1 rounded-full shrink-0">
-          ${outcomeLabel}
-        </span>
-      </button>`;
-  }).join('');
-
-  list.querySelectorAll('[data-symptom]').forEach(btn =>
-    btn.addEventListener('click', () => onRestartSymptom(btn.dataset.symptom))
-  );
 }
 
 export function findSymptom(id) {

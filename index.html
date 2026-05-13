@@ -15,6 +15,17 @@
   <!-- ========== SPLASH ========== -->
   <section id="screen-splash" class="screen" style="background:#0F4C81;">
     <div class="flex-1 flex flex-col px-7 pt-10 pb-8">
+
+      <!-- Toggle langue haut droite -->
+      <div class="flex justify-end">
+        <button id="btn-splash-lang"
+          class="flex items-center gap-1 text-[12px] font-bold px-3 py-1.5 rounded-xl border border-white/25 transition-colors hover:border-white/50">
+          <span id="splash-lang-fr" class="text-white font-black">FR</span>
+          <span style="color:rgba(255,255,255,.3)">|</span>
+          <span id="splash-lang-en" style="color:rgba(255,255,255,.4)">EN</span>
+        </button>
+      </div>
+
       <div class="flex-1 flex flex-col items-center justify-center text-center">
         <div class="rounded-2xl flex items-center justify-center mb-5 px-6 py-3"
              style="background:rgba(255,255,255,.95);">
@@ -107,8 +118,8 @@
           </svg>
         </div>
         <div class="flex-1">
-          <div class="font-black text-slate-900 text-sm">Guide de mise en service</div>
-          <div class="text-[11px] font-semibold mt-0.5" style="color:#D97706">Checklist installation EPIMAT</div>
+          <div class="font-black text-slate-900 text-sm" data-i18n="Guide de mise en service">Guide de mise en service</div>
+          <div class="text-[11px] font-semibold mt-0.5" style="color:#D97706" data-i18n="Checklist installation EPIMAT">Checklist installation EPIMAT</div>
         </div>
         <svg viewBox="0 0 24 24" class="w-5 h-5 text-slate-300 shrink-0"
              fill="none" stroke="currentColor" stroke-width="2.5">
@@ -116,8 +127,6 @@
         </svg>
       </button>
 
-      <h3 class="mt-7 mb-3 text-xs font-bold uppercase tracking-widest text-slate-400" data-i18n="Récents">Récents</h3>
-      <div id="recent-list" class="space-y-2"></div>
     </div>
 
     <!-- Bottom nav -->

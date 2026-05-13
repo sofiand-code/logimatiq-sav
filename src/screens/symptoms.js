@@ -3,7 +3,7 @@
    ========================================================================== */
 import { DATA } from '../data/tree.js';
 import { ICONS } from '../components/icons.js';
-import { t } from '../i18n.js';
+import { t, tSymptom } from '../i18n.js';
 
 const CATEGORY_BADGE = {
   'Affichage': { bg: '#EFF5FB', color: '#0F4C81' },
@@ -33,7 +33,7 @@ export function renderSymptoms(machineId, onStart) {
           ${ICONS[s.icon] || ICONS.screen}
         </div>
         <div class="flex-1 min-w-0">
-          <div class="font-black text-slate-900 text-sm leading-snug">${s.title}</div>
+          <div class="font-black text-slate-900 text-sm leading-snug">${tSymptom(s.id, s.title)}</div>
           <span class="inline-block mt-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full"
                 style="background:${cat.bg};color:${cat.color}">
             ${disabled ? t('Bientôt disponible') : catLabel}

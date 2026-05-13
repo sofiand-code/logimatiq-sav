@@ -34,6 +34,12 @@ export function tNode(nodeId, field, frValue) {
   return v !== undefined ? v : frValue;
 }
 
+/** Traduit le titre d'un symptôme (par son id) */
+export function tSymptom(symptomId, frTitle) {
+  if (_lang === 'fr') return frTitle;
+  return EN.symptoms?.[symptomId] ?? frTitle;
+}
+
 /** Traduit le label d'une réponse (par index) */
 export function tAnswer(nodeId, index, frLabel) {
   if (_lang === 'fr') return frLabel;

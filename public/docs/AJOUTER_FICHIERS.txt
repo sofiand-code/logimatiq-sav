@@ -1,0 +1,46 @@
+COMMENT AJOUTER DES GUIDES DANS LA BASE DE CONNAISSANCES
+=========================================================
+
+1. AJOUTER UN PDF
+-----------------
+→ Copier le fichier PDF dans ce dossier (public/docs/)
+→ Ouvrir src/screens/kb.js
+→ Ajouter une entrée dans le tableau KB_ENTRIES :
+
+  {
+    id: 'kb8',                              ← id unique
+    title: 'Nom du guide en français',
+    title_en: 'Guide name in English',
+    tags: ['epimat', 'maintenance'],        ← mots-clés pour la recherche
+    type: 'pdf',
+    file: 'nom-exact-du-fichier.pdf',       ← doit correspondre au fichier dans ce dossier
+  },
+
+
+2. AJOUTER UNE VIDÉO YOUTUBE
+------------------------------
+→ Ouvrir src/screens/kb.js
+→ Ajouter une entrée dans le tableau KB_ENTRIES :
+
+  {
+    id: 'v1',
+    title: 'Titre de la vidéo',
+    title_en: 'Video title in English',
+    tags: ['epimat', 'installation', 'vidéo'],
+    type: 'video',
+    url: 'https://www.youtube.com/watch?v=XXXXXXXX',  ← URL YouTube complète
+    duration: '5 min',                                 ← durée affichée (optionnel)
+  },
+
+
+3. TAGS DISPONIBLES (pour la recherche)
+-----------------------------------------
+epimat, vetimat, badge, modem, sim, apn, gsm, maintenance,
+tuto, installation, user, pdf, vidéo, réseau, logiciel
+
+
+HOW TO ADD GUIDES (English)
+============================
+
+PDF : Copy file to this folder + add entry in kb.js with type:'pdf'
+VIDEO : Add entry in kb.js with type:'video' and YouTube URL

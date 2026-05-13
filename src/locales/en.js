@@ -121,6 +121,19 @@ export const EN = {
     // Setup
     'Mise en service': 'Installation',
     'Base de connaissances': 'Knowledge base',
+    'Progression': 'Progress',
+    '✓ Complété': '✓ Completed',
+    '✓ Installation complète !': '✓ Installation complete!',
+    'La machine est prête à l\'utilisation.': 'The machine is ready to use.',
+    'Réinitialiser la checklist': 'Reset checklist',
+    'Réinitialiser toute la checklist d\'installation ?': 'Reset the entire installation checklist?',
+
+    // KB
+    'Fiches PDF': 'PDF Guides',
+    'Codes erreur': 'Error codes',
+    'écran noir, modem, badge…': 'black screen, modem, badge…',
+    'ERR_SYNC, badge, réseau…': 'ERR_SYNC, badge, network…',
+    'Aucun résultat pour': 'No results for',
 
     // User roles
     'Client': 'Customer',
@@ -133,6 +146,18 @@ export const EN = {
     'Logimatiq SAV': 'Logimatiq Support',
     'Tableau de bord': 'Dashboard',
     'EPIMAT': 'EPIMAT',
+  },
+
+  /* ---- Titres des symptômes (tree.js symptoms[]) ---- */
+  symptoms: {
+    't.epimat.screen':   'Black screen / no image / sync issue',
+    't.epimat.internet': 'No internet connection / modem offline',
+    't.epimat.badge':    'Badge not read / wrong number / erratic reading',
+    't.log.demarrage':   "Software won't start / crashes",
+    't.log.synchro':     'Software synchronization error',
+    't.log.impression':  'Printing problem',
+    't.log.config':      'Configuration / initial setup',
+    't.vet.ph':          'To complete',
   },
 
   /* ---- Nœuds de l'arbre de diagnostic ---- */

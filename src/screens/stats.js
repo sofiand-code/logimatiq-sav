@@ -5,7 +5,7 @@ import { loadHistory } from '../components/history-store.js';
 import { getMachines } from '../data/machines-store.js';
 import { getUser, getRoleLabel } from '../data/user-store.js';
 import { findSymptom } from './home.js';
-import { t } from '../i18n.js';
+import { t, tSymptom } from '../i18n.js';
 
 export function renderStats() {
   const history  = loadHistory();
@@ -63,8 +63,8 @@ export function renderStats() {
   const bySymptom = {};
   history.forEach(h => {
     const sym = findSymptom(h.symptomId);
-    const key = sym?.title || h.symptomId;
-    if (!bySymptom[key]) bySymptom[key] = { title: key, count: 0 };
+    const key = h.symptomId; // toujours utiliser l'id comme clé stable
+    if (!bySymptom[key]) bySymptom[key] = { title: tSymptom(h.symptomId, sym?.title || h.symptomId), count: 0 };
     bySymptom[key].count++;
   });
   const topSymptoms = Object.values(bySymptom)
