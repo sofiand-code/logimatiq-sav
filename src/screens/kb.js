@@ -193,16 +193,23 @@ function renderFiches() {
 
   /* ---- Gestionnaire de clic : ouvrir PDF ou vidéo ---- */
   list.querySelectorAll('[data-kb-id]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const entry = KB_ENTRIES.find(e => e.id === btn.dataset.kbId);
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const entry = KB_ENTRIES.find(en => en.id === btn.dataset.kbId);
       if (!entry) return;
 
-      if (entry.type === 'video') {
-        window.open(entry.url, '_blank', 'noopener');
-      } else {
-        /* PDF : ouvrir depuis public/docs/ */
-        window.open('/docs/' + entry.file, '_blank', 'noopener');
-      }
+      const url = entry.type === 'video'
+        ? entry.url
+        : '/docs/' + encodeURIComponent(entry.file);
+
+      /* Sur iOS PWA, window.open(_blank) est bloqué → on utilise un <a> */
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     });
   });
 }
