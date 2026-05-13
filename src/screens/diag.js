@@ -6,6 +6,7 @@ import { STATE } from '../state.js';
 import { renderMedia } from '../components/media.js';
 import { saveDiagnostic } from '../components/history-store.js';
 import { findSymptom } from './home.js';
+import { t, tNode, tAnswer, tStep } from '../i18n.js';
 
 function estimateDepth(rootId) {
   let max = 0;
@@ -47,15 +48,17 @@ export function diagBack(navFn) {
 }
 
 export function confirmAbort(navFn) {
-  if (confirm('Quitter ce diagnostic ?')) navFn('home');
+  if (confirm(t('Quitter ce diagnostic ?'))) navFn('home');
 }
 
 export function renderDiag(navFn) {
-  const n = DATA.nodes[STATE.history[STATE.history.length - 1]];
+  const nodeId = STATE.history[STATE.history.length - 1];
+  const n = DATA.nodes[nodeId];
   const stepN = STATE.history.length;
   const total = Math.max(STATE.estimatedSteps, stepN);
 
-  document.getElementById('diag-step-label').textContent = `Étape ${stepN} / ${total}`;
+  document.getElementById('diag-step-label').textContent =
+    `${t('Étape')} ${stepN} / ${total}`;
 
   /* Barre de progression */
   const bar = document.getElementById('progress-bar');
@@ -72,11 +75,14 @@ export function renderDiag(navFn) {
   if (fab) fab.style.display = n?.type === 'solution' ? 'none' : 'flex';
 
   const body = document.getElementById('diag-body');
-  if (!n) { body.innerHTML = '<p class="text-slate-400 text-sm">Nœud introuvable.</p>'; return; }
+  if (!n) {
+    body.innerHTML = `<p class="text-slate-400 text-sm">${t('Nœud introuvable.')}</p>`;
+    return;
+  }
 
-  if      (n.type === 'question')  body.innerHTML = renderQuestion(n);
-  else if (n.type === 'action')    body.innerHTML = renderAction(n);
-  else if (n.type === 'solution')  body.innerHTML = renderSolution(n);
+  if      (n.type === 'question')  body.innerHTML = renderQuestion(n, nodeId);
+  else if (n.type === 'action')    body.innerHTML = renderAction(n, nodeId);
+  else if (n.type === 'solution')  body.innerHTML = renderSolution(n, nodeId);
 
   wireEvents(n, navFn);
 }
@@ -85,30 +91,35 @@ export function renderDiag(navFn) {
 /* Templates                                                           */
 /* ------------------------------------------------------------------ */
 
-function renderQuestion(n) {
+function renderQuestion(n, nodeId) {
   return `
     <div class="inline-flex items-center gap-2 bg-brand-50 text-brand-600 text-[10px] font-black
                 uppercase tracking-widest px-3 py-1.5 rounded-full border border-brand-100">
       <svg viewBox="0 0 24 24" class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3">
         <circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/>
       </svg>
-      Question
+      ${t('Question')}
     </div>
-    <h2 class="mt-3 text-2xl font-black text-slate-900 leading-tight">${n.title}</h2>
-    ${n.help ? `<p class="mt-2 text-sm text-slate-500 leading-relaxed">${n.help}</p>` : ''}
+    <h2 class="mt-3 text-2xl font-black text-slate-900 leading-tight">
+      ${tNode(nodeId, 'title', n.title)}
+    </h2>
+    ${(tNode(nodeId, 'help', n.help) || '')
+      ? `<p class="mt-2 text-sm text-slate-500 leading-relaxed">${tNode(nodeId, 'help', n.help)}</p>`
+      : ''}
     ${renderMedia(n.media)}
     <div class="mt-5 space-y-2.5" id="answers-list">
-      ${n.answers.map((a, i) => answerBtn(a, i)).join('')}
+      ${n.answers.map((a, i) => answerBtn(a, i, nodeId)).join('')}
     </div>`;
 }
 
-function answerBtn(a, i) {
+function answerBtn(a, i, nodeId) {
+  const label = tAnswer(nodeId, i, a.label);
   const dot = a.color === 'green' ? '#22C55E'
             : a.color === 'red'   ? '#EF4444'
             : a.color === 'gray'  ? '#94A3B8'
             : null;
   return `
-    <button data-next="${a.next}" data-label="${a.label.replace(/"/g, '&quot;')}"
+    <button data-next="${a.next}" data-label="${label.replace(/"/g, '&quot;')}"
       class="answer-btn w-full bg-white border-2 border-slate-200 rounded-2xl p-4
              flex items-center gap-3.5 text-left shadow-sm">
       ${dot
@@ -117,7 +128,7 @@ function answerBtn(a, i) {
                         flex items-center justify-center shrink-0">
              ${String.fromCharCode(65 + i)}
            </span>`}
-      <span class="flex-1 font-semibold text-slate-800 text-sm">${a.label}</span>
+      <span class="flex-1 font-semibold text-slate-800 text-sm">${label}</span>
       <svg viewBox="0 0 24 24" class="w-5 h-5 text-slate-300 shrink-0" fill="none"
            stroke="currentColor" stroke-width="2.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/>
@@ -125,7 +136,8 @@ function answerBtn(a, i) {
     </button>`;
 }
 
-function renderAction(n) {
+function renderAction(n, nodeId) {
+  const steps = n.steps.map((s, i) => tStep(nodeId, i, s));
   return `
     <div class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest
                 px-3 py-1.5 rounded-full border"
@@ -135,12 +147,14 @@ function renderAction(n) {
           d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2
              M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>
       </svg>
-      Procédure
+      ${t('Procédure')}
     </div>
-    <h2 class="mt-3 text-2xl font-black text-slate-900 leading-tight">${n.title}</h2>
+    <h2 class="mt-3 text-2xl font-black text-slate-900 leading-tight">
+      ${tNode(nodeId, 'title', n.title)}
+    </h2>
     ${renderMedia(n.media)}
     <ol class="mt-5 space-y-2.5">
-      ${n.steps.map((s, i) => `
+      ${steps.map((s, i) => `
         <li class="flex gap-3.5 items-start bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <span class="w-7 h-7 shrink-0 rounded-xl text-white text-xs font-black
                         flex items-center justify-center" style="background:#0F4C81">${i + 1}</span>
@@ -150,16 +164,16 @@ function renderAction(n) {
     <div class="mt-6 grid grid-cols-2 gap-3">
       <button id="btn-back"
         class="bg-white border-2 border-slate-200 text-slate-600 font-bold py-4 rounded-2xl text-sm">
-        ← Retour
+        ${t('← Retour')}
       </button>
-      <button id="btn-next" data-next="${n.next}" data-label="Procédure faite"
+      <button id="btn-next" data-next="${n.next}" data-label="${t('Procédure faite')}"
         class="btn-primary font-bold py-4 rounded-2xl text-sm shadow-sm">
-        C'est fait ✓
+        ${t("C'est fait ✓")}
       </button>
     </div>`;
 }
 
-function renderSolution(n) {
+function renderSolution(n, nodeId) {
   saveDiagnostic(STATE, n);
   const isOK  = n.outcome === 'resolved';
   const isSav = !!n.sav;
@@ -176,7 +190,14 @@ function renderSolution(n) {
   </svg>`;
 
   const pathLabels = STATE.answers.filter(Boolean).slice(-6);
-  const reportText = generateReport(n);
+  const reportText = generateReport(n, nodeId);
+
+  const solTitle   = tNode(nodeId, 'title',   n.title);
+  const solMessage = tNode(nodeId, 'message', n.message);
+
+  const outcomeLabel = n.outcome === 'resolved'
+    ? t('Résolu')
+    : n.outcome === 'sav' ? t('SAV') : t('Pièce');
 
   return `
     <!-- Résultat -->
@@ -186,15 +207,15 @@ function renderSolution(n) {
              style="background:rgba(255,255,255,.2)">
           ${isOK ? iconOK : iconKO}
         </div>
-        <h2 class="text-xl font-black">${n.title}</h2>
-        <p class="mt-2 text-sm leading-relaxed" style="color:rgba(255,255,255,.8)">${n.message}</p>
+        <h2 class="text-xl font-black">${solTitle}</h2>
+        <p class="mt-2 text-sm leading-relaxed" style="color:rgba(255,255,255,.8)">${solMessage}</p>
       </div>
     </div>
 
     ${pathLabels.length ? `
     <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-4 shadow-sm">
       <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2.5">
-        Cheminement du diagnostic
+        ${t('Cheminement du diagnostic')}
       </p>
       <div class="flex flex-wrap gap-1.5">
         ${pathLabels.map(l =>
@@ -215,7 +236,7 @@ function renderSolution(n) {
              m0 0a3 3 0 1 0 5.367-2.684 3 3 0 0 0-5.367 2.684zm0 9.316a3 3 0 1 0 5.368 2.684
              3 3 0 0 0-5.368-2.684z"/>
       </svg>
-      <span id="share-btn-label">Copier le rapport</span>
+      <span id="share-btn-label">${t('Copier le rapport')}</span>
     </button>
 
     <div class="space-y-2.5">
@@ -229,15 +250,15 @@ function renderSolution(n) {
                l-2.257 1.13a11.042 11.042 0 0 0 5.516 5.516l1.13-2.257a1 1 0 0 1 1.21-.502
                l4.493 1.498a1 1 0 0 1 .684.949V19a2 2 0 0 1-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
         </svg>
-        Contacter le SAV Logimatiq
+        ${t('Contacter le SAV Logimatiq')}
       </button>` : ''}
       <button id="btn-restart"
         class="w-full bg-white border-2 border-slate-200 text-slate-600 font-bold py-4 rounded-2xl text-sm">
-        Refaire ce diagnostic
+        ${t('Refaire ce diagnostic')}
       </button>
       <button id="btn-home"
         class="w-full btn-primary font-bold py-4 rounded-2xl text-sm shadow-sm">
-        Terminer
+        ${t('Terminer')}
       </button>
     </div>`;
 }
@@ -245,7 +266,7 @@ function renderSolution(n) {
 /* ------------------------------------------------------------------ */
 /* Génération du rapport texte                                         */
 /* ------------------------------------------------------------------ */
-function generateReport(n) {
+function generateReport(n, nodeId) {
   const sym  = findSymptom(STATE.symptomId);
   const machine = DATA.machines?.find(m => m.id === STATE.machineId);
   const now  = new Date().toLocaleString('fr-FR', {
@@ -255,21 +276,21 @@ function generateReport(n) {
   const steps = STATE.answers.filter(Boolean);
 
   return [
-    '🔧 RAPPORT DIAGNOSTIC LOGIMATIQ',
+    t('🔧 RAPPORT DIAGNOSTIC LOGIMATIQ'),
     '─────────────────────────────',
-    `Machine  : ${machine?.name || STATE.machineId || 'N/A'}`,
-    `Problème : ${sym?.title || STATE.symptomId || 'N/A'}`,
-    `Date     : ${now}`,
+    `${t('Machine  :')} ${machine?.name || STATE.machineId || 'N/A'}`,
+    `${t('Problème :')} ${sym?.title || STATE.symptomId || 'N/A'}`,
+    `${t('Date     :')} ${now}`,
     '',
-    `📋 Étapes suivies (${steps.length}) :`,
+    `📋 ${steps.length > 0 ? steps.length : 0} ${t('étapes') !== 'étapes' ? t('étapes') : 'étapes'} :`,
     ...steps.map((a, i) => `  ${i + 1}. ${a}`),
     '',
     '📌 Conclusion :',
-    n.title,
-    n.message,
+    tNode(nodeId, 'title', n.title),
+    tNode(nodeId, 'message', n.message),
     '',
     '─────────────────────────────',
-    'Généré par Logimatiq SAV App',
+    t('Généré par Logimatiq SAV App'),
   ].join('\n');
 }
 
@@ -291,12 +312,12 @@ function wireEvents(n, navFn) {
       const label = document.getElementById('share-btn-label');
       try {
         if (navigator.share) {
-          await navigator.share({ title: 'Rapport diagnostic Logimatiq', text });
+          await navigator.share({ title: t('Rapport diagnostic Logimatiq'), text });
         } else {
           await navigator.clipboard.writeText(text);
           if (label) {
-            label.textContent = '✓ Copié !';
-            setTimeout(() => { label.textContent = 'Copier le rapport'; }, 2000);
+            label.textContent = t('✓ Copié !');
+            setTimeout(() => { label.textContent = t('Copier le rapport'); }, 2000);
           }
         }
       } catch {

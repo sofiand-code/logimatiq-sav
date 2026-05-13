@@ -3,6 +3,7 @@
    ========================================================================== */
 import { getMachinesByModel, addMachine, deleteMachine } from '../data/machines-store.js';
 import { getUser } from '../data/user-store.js';
+import { t } from '../i18n.js';
 
 const MODEL_LABELS = {
   epimat:   'EPIMAT',
@@ -22,7 +23,6 @@ export function renderMachineSelect(modelId, onSelect) {
   if (modelLabelEl) modelLabelEl.textContent = label;
 
   if (machines.length === 0) {
-    /* Aucune machine enregistrée → afficher directement le formulaire d'ajout */
     renderAddForm(container, modelId, label, user, onSelect, false);
     return;
   }
@@ -30,7 +30,7 @@ export function renderMachineSelect(modelId, onSelect) {
   /* Liste des machines existantes */
   container.innerHTML = `
     <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
-      Machines enregistrées (${machines.length})
+      ${t('Machines enregistrées')} (${machines.length})
     </p>
     <div class="space-y-2.5" id="machine-list">
       ${machines.map(m => `
@@ -63,10 +63,9 @@ export function renderMachineSelect(modelId, onSelect) {
       <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
       </svg>
-      Nouvelle machine
+      ${t('Nouvelle machine')}
     </button>`;
 
-  /* Sélectionner une machine */
   container.querySelectorAll('[data-machine-id]').forEach(btn =>
     btn.addEventListener('click', () => {
       const id = btn.dataset.machineId;
@@ -75,7 +74,6 @@ export function renderMachineSelect(modelId, onSelect) {
     })
   );
 
-  /* Ajouter une nouvelle machine */
   document.getElementById('btn-add-new-machine')?.addEventListener('click', () => {
     renderAddForm(container, modelId, label, user, onSelect, true);
   });
@@ -87,19 +85,19 @@ function renderAddForm(container, modelId, label, user, onSelect, showBack) {
     ${showBack ? `
     <button id="btn-back-list"
       class="flex items-center gap-2 text-sm font-bold text-brand-600 mb-4">
-      ← Retour à la liste
+      ${t('← Retour à la liste')}
     </button>` : ''}
 
     <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
-      Enregistrer une machine ${label}
+      ${t('Enregistrer une machine')} ${label}
     </p>
 
     <div class="space-y-3">
       <div>
         <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">
-          Numéro de série *
+          ${t('Numéro de série *')}
         </label>
-        <input id="ms-serial" type="text" placeholder="Ex : EPM-2024-0042"
+        <input id="ms-serial" type="text" placeholder="${t('Ex : EPM-2024-0042')}"
           class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5
                  text-sm font-bold text-slate-800 outline-none focus:border-brand-400
                  placeholder:text-slate-300 uppercase"/>
@@ -107,9 +105,9 @@ function renderAddForm(container, modelId, label, user, onSelect, showBack) {
 
       <div>
         <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">
-          Site / Emplacement
+          ${t('Site / Emplacement')}
         </label>
-        <input id="ms-location" type="text" placeholder="Ex : Entrepôt Paris, Rayon 3…"
+        <input id="ms-location" type="text" placeholder="${t('Ex : Entrepôt Paris, Rayon 3…')}"
           class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5
                  text-sm font-medium text-slate-800 outline-none focus:border-brand-400
                  placeholder:text-slate-300"/>
@@ -118,9 +116,9 @@ function renderAddForm(container, modelId, label, user, onSelect, showBack) {
       ${user?.role !== 'client' ? `
       <div>
         <label class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1.5 block">
-          Client / Société
+          ${t('Client / Société')}
         </label>
-        <input id="ms-client" type="text" placeholder="Nom du client final"
+        <input id="ms-client" type="text" placeholder="${t('Nom du client final')}"
           value="${user?.companyName || ''}"
           class="w-full bg-white border-2 border-slate-200 rounded-2xl px-4 py-3.5
                  text-sm font-medium text-slate-800 outline-none focus:border-brand-400
@@ -128,16 +126,15 @@ function renderAddForm(container, modelId, label, user, onSelect, showBack) {
       </div>` : ''}
 
       <p id="ms-error" class="text-xs text-rose-500 font-semibold hidden">
-        ⚠ Le numéro de série est obligatoire.
+        ${t('⚠ Le numéro de série est obligatoire.')}
       </p>
 
       <button id="btn-save-machine"
         class="w-full btn-primary font-bold py-4 rounded-2xl text-sm shadow-sm">
-        Enregistrer et continuer →
+        ${t('Enregistrer et continuer →')}
       </button>
     </div>`;
 
-  /* Auto-uppercase du numéro de série */
   document.getElementById('ms-serial')?.addEventListener('input', e => {
     const pos = e.target.selectionStart;
     e.target.value = e.target.value.toUpperCase();

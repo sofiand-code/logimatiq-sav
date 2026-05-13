@@ -7,13 +7,14 @@ import { DATA } from './data/tree.js';
 import { getUser, clearUser } from './data/user-store.js';
 import { renderHome } from './screens/home.js';
 import { renderSymptoms } from './screens/symptoms.js';
-import { startDiagnostic, diagBack, confirmAbort } from './screens/diag.js';
+import { startDiagnostic, diagBack, confirmAbort, renderDiag } from './screens/diag.js';
 import { renderKB } from './screens/kb.js';
 import { renderHistory } from './screens/history.js';
 import { renderSetup } from './screens/setup.js';
 import { renderLogin } from './screens/login.js';
 import { renderMachineSelect } from './screens/machine-select.js';
 import { renderStats } from './screens/stats.js';
+import { getLang, setLang, onLangChange, t, applyI18n, langToggleHTML, bindLangToggle } from './i18n.js';
 
 /* ---- Fonction de navigation centrale ---- */
 function navigate(name) {
@@ -24,6 +25,37 @@ function navigate(name) {
     if (screenName === 'setup')   renderSetup();
     if (screenName === 'stats')   renderStats();
   });
+  applyI18n();
+}
+
+/* ---- Re-rendu complet à la volée lors d'un changement de langue ---- */
+function rerender() {
+  const s = STATE.currentScreen;
+  if      (s === 'home')           renderHome(openMachine, restartSymptom, () => navigate('setup'), () => navigate('stats'), logout);
+  else if (s === 'diag')           renderDiag(navigate);
+  else if (s === 'symptoms')       renderSymptoms(STATE.machineId, (symptomId) => startDiagnostic(symptomId, navigate));
+  else if (s === 'machine-select') renderMachineSelect(STATE.machineId, (machine) => {
+    STATE.currentMachine = machine;
+    renderSymptoms(STATE.machineId, (symptomId) => startDiagnostic(symptomId, navigate));
+    navigate('symptoms');
+  });
+  else if (s === 'history')  renderHistory();
+  else if (s === 'setup')    renderSetup();
+  else if (s === 'stats')    renderStats();
+  else if (s === 'register') renderLogin((user) => { STATE.profile = user?.role || null; navigate('home'); });
+  applyI18n();
+  updateLangToggleHome();
+}
+
+/* ---- Met à jour le bouton langue du header home ---- */
+function updateLangToggleHome() {
+  const el = document.getElementById('btn-lang');
+  if (!el) return;
+  const lang = getLang();
+  el.innerHTML = `
+    <span class="${lang === 'fr' ? 'text-brand-700 font-black' : 'text-slate-400'}">FR</span>
+    <span class="text-slate-300">|</span>
+    <span class="${lang === 'en' ? 'text-brand-700 font-black' : 'text-slate-400'}">EN</span>`;
 }
 
 /* ---- Ouvrir sélection de machine → symptômes ---- */
@@ -48,7 +80,7 @@ function restartSymptom(symptomId) {
 
 /* ---- Déconnexion ---- */
 function logout() {
-  if (confirm('Se déconnecter ?')) {
+  if (confirm(t('Se déconnecter ?'))) {
     clearUser();
     navigate('register');
     renderLogin((user) => {
@@ -100,6 +132,18 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Search KB (input live) */
   document.getElementById('kb-search')
     ?.addEventListener('input', renderKB);
+
+  /* Toggle langue dans le header home */
+  document.getElementById('btn-lang')?.addEventListener('click', () => {
+    setLang(getLang() === 'fr' ? 'en' : 'fr');
+  });
+
+  /* Changer la langue → re-rendre l'écran courant */
+  onLangChange(() => rerender());
+
+  /* Init nav labels i18n */
+  applyI18n();
+  updateLangToggleHome();
 
   /* Démarrage */
   navigate('splash');

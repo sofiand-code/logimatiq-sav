@@ -21,17 +21,18 @@
           <img src="/logo.png" alt="Logimatiq" class="h-10 object-contain" />
         </div>
         <h1 class="text-3xl font-black text-white tracking-tight">SAV</h1>
-        <p class="text-base font-semibold mt-1" style="color:rgba(255,255,255,.65);">Diagnostic pas à pas</p>
-        <p class="text-sm mt-4 leading-relaxed max-w-xs" style="color:rgba(255,255,255,.45);">
+        <p class="text-base font-semibold mt-1" style="color:rgba(255,255,255,.65);" data-i18n="Diagnostic pas à pas">Diagnostic pas à pas</p>
+        <p class="text-sm mt-4 leading-relaxed max-w-xs" style="color:rgba(255,255,255,.45);" data-i18n="Guide de diagnostic pas à pas pour techniciens et clients">
           Guide de diagnostic pas à pas pour techniciens et clients
         </p>
       </div>
       <div class="space-y-3">
         <button id="btn-splash-start"
-          class="w-full btn-accent font-bold py-4 rounded-2xl text-base shadow-lg">
+          class="w-full btn-accent font-bold py-4 rounded-2xl text-base shadow-lg"
+          data-i18n="Démarrer un diagnostic">
           Démarrer un diagnostic
         </button>
-        <p class="text-center text-xs" style="color:rgba(255,255,255,.3);">v0.2 · usage interne Logimatiq</p>
+        <p class="text-center text-xs" style="color:rgba(255,255,255,.3);" data-i18n="v0.2 · usage interne Logimatiq">v0.2 · usage interne Logimatiq</p>
       </div>
     </div>
   </section>
@@ -52,6 +53,14 @@
           </div>
         </div>
         <div class="flex items-center gap-2">
+          <!-- Toggle FR / EN -->
+          <button id="btn-lang"
+            class="flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-xl border border-slate-200"
+            style="color:#0F4C81">
+            <span class="text-brand-700 font-black">FR</span>
+            <span class="text-slate-300">|</span>
+            <span class="text-slate-400">EN</span>
+          </button>
           <button id="btn-stats"
             class="w-10 h-10 rounded-2xl flex items-center justify-center"
             style="background:#EFF5FB;color:#0F4C81" title="Statistiques">
@@ -78,10 +87,10 @@
         <svg viewBox="0 0 24 24" class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.5-3.5"/>
         </svg>
-        <span class="text-sm text-slate-400 font-medium">Chercher un symptôme, une fiche…</span>
+        <span class="text-sm text-slate-400 font-medium" data-i18n="Chercher un symptôme, une fiche…">Chercher un symptôme, une fiche…</span>
       </button>
 
-      <h3 class="mb-3 text-xs font-bold uppercase tracking-widest text-slate-400">Démarrer un diagnostic</h3>
+      <h3 class="mb-3 text-xs font-bold uppercase tracking-widest text-slate-400" data-i18n="Démarrer un diagnostic">Démarrer un diagnostic</h3>
       <div class="grid grid-cols-2 gap-3" id="machine-grid"></div>
 
       <!-- Guide de mise en service -->
@@ -107,7 +116,7 @@
         </svg>
       </button>
 
-      <h3 class="mt-7 mb-3 text-xs font-bold uppercase tracking-widest text-slate-400">Récents</h3>
+      <h3 class="mt-7 mb-3 text-xs font-bold uppercase tracking-widest text-slate-400" data-i18n="Récents">Récents</h3>
       <div id="recent-list" class="space-y-2"></div>
     </div>
 
@@ -117,20 +126,20 @@
         <svg viewBox="0 0 24 24" class="w-5 h-5" fill="currentColor">
           <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
         </svg>
-        <span class="text-[10px] font-bold">Accueil</span>
+        <span class="text-[10px] font-bold" data-i18n="Accueil">Accueil</span>
       </button>
       <button data-nav="kb" class="flex flex-col items-center gap-1 px-4 py-1.5 rounded-xl text-slate-400">
         <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V5z"/>
         </svg>
-        <span class="text-[10px] font-semibold">Fiches</span>
+        <span class="text-[10px] font-semibold" data-i18n="Fiches">Fiches</span>
       </button>
       <button data-nav="history" class="flex flex-col items-center gap-1 px-4 py-1.5 rounded-xl text-slate-400">
         <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="9"/><path stroke-linecap="round" d="M12 7v5l3 2"/>
         </svg>
-        <span class="text-[10px] font-semibold">Historique</span>
+        <span class="text-[10px] font-semibold" data-i18n="Historique">Historique</span>
       </button>
     </nav>
   </section>
@@ -147,7 +156,7 @@
         </button>
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-brand-600" id="sym-machine-label">EPIMAT</p>
-          <h2 class="text-xl font-black text-slate-900">Quel est le problème ?</h2>
+          <h2 class="text-xl font-black text-slate-900" data-i18n="Quel est le problème ?">Quel est le problème ?</h2>
         </div>
       </div>
     </header>
@@ -166,7 +175,8 @@
         </button>
         <span class="text-xs font-bold text-slate-400 uppercase tracking-wider" id="diag-step-label">Étape 1</span>
         <button id="btn-diag-quit"
-          class="text-xs font-semibold text-slate-400 hover:text-rose-500 transition-colors px-2 py-1">
+          class="text-xs font-semibold text-slate-400 hover:text-rose-500 transition-colors px-2 py-1"
+          data-i18n="Quitter">
           Quitter
         </button>
       </div>
@@ -199,7 +209,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6"/>
           </svg>
         </button>
-        <h2 class="text-xl font-black text-slate-900">Base de connaissances</h2>
+        <h2 class="text-xl font-black text-slate-900" data-i18n="Base de connaissances">Base de connaissances</h2>
       </div>
       <!-- Tabs -->
       <div class="flex gap-1.5 bg-slate-100 p-1 rounded-2xl mb-3" id="kb-tabs"></div>
@@ -224,7 +234,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6"/>
         </svg>
       </button>
-      <h2 class="text-xl font-black text-slate-900">Historique</h2>
+      <h2 class="text-xl font-black text-slate-900" data-i18n="Historique">Historique</h2>
     </header>
     <div class="scroll-area flex-1 px-4 py-4" id="history-list"></div>
   </section>
@@ -242,7 +252,7 @@
         <div>
           <p class="text-xs font-bold uppercase tracking-widest text-brand-600"
              id="machine-select-model">EPIMAT</p>
-          <h2 class="text-xl font-black text-slate-900">Quelle machine ?</h2>
+          <h2 class="text-xl font-black text-slate-900" data-i18n="Quelle machine ?">Quelle machine ?</h2>
         </div>
       </div>
     </header>
@@ -259,8 +269,8 @@
         </svg>
       </button>
       <div>
-        <p class="text-xs font-bold uppercase tracking-widest text-brand-600">Logimatiq SAV</p>
-        <h2 class="text-xl font-black text-slate-900">Tableau de bord</h2>
+        <p class="text-xs font-bold uppercase tracking-widest text-brand-600" data-i18n="Logimatiq SAV">Logimatiq SAV</p>
+        <h2 class="text-xl font-black text-slate-900" data-i18n="Tableau de bord">Tableau de bord</h2>
       </div>
     </header>
     <div class="scroll-area flex-1 px-4 py-4" id="stats-body"></div>
@@ -277,7 +287,7 @@
       </button>
       <div>
         <p class="text-xs font-bold uppercase tracking-widest" style="color:#D97706">EPIMAT</p>
-        <h2 class="text-xl font-black text-slate-900">Mise en service</h2>
+        <h2 class="text-xl font-black text-slate-900" data-i18n="Mise en service">Mise en service</h2>
       </div>
     </header>
     <div class="scroll-area flex-1 px-4 py-4" id="setup-list"></div>

@@ -3,6 +3,7 @@
    ========================================================================== */
 import { loadHistory, outcomePill, formatDate } from '../components/history-store.js';
 import { findSymptom } from './home.js';
+import { t } from '../i18n.js';
 
 export function renderHistory() {
   const list = document.getElementById('history-list');
@@ -19,8 +20,8 @@ export function renderHistory() {
             <path stroke-linecap="round" d="M12 7v5l3 2"/>
           </svg>
         </div>
-        <p class="font-bold text-slate-500 text-sm">Aucun diagnostic terminé</p>
-        <p class="text-xs text-slate-400 mt-1">Les diagnostics complétés apparaîtront ici</p>
+        <p class="font-bold text-slate-500 text-sm">${t('Aucun diagnostic terminé')}</p>
+        <p class="text-xs text-slate-400 mt-1">${t('Les diagnostics complétés apparaîtront ici')}</p>
       </div>`;
     return;
   }
@@ -33,20 +34,23 @@ export function renderHistory() {
     <div class="grid grid-cols-3 gap-2.5 mb-5">
       <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm text-center">
         <div class="text-2xl font-black text-slate-900">${total}</div>
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Total</div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">${t('Total')}</div>
       </div>
       <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm text-center">
         <div class="text-2xl font-black text-emerald-500">${resolved}</div>
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Résolus</div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">${t('Résolus')}</div>
       </div>
       <div class="bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm text-center">
         <div class="text-2xl font-black text-brand-600">${rate}%</div>
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Taux</div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">${t('Taux')}</div>
       </div>
     </div>
     ${arr.map(h => {
       const sym  = findSymptom(h.symptomId);
       const pill = outcomePill(h.outcome);
+      const outcomeLabel = h.outcome === 'resolved' ? t('Résolu')
+                         : h.outcome === 'sav'      ? t('SAV')
+                         : t('Pièce');
       return `
         <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-2.5 shadow-sm">
           <div class="flex items-start justify-between gap-2">
@@ -54,11 +58,11 @@ export function renderHistory() {
               ${sym ? sym.title : h.symptomId}
             </div>
             <span class="text-[10px] font-black ${pill} px-2.5 py-1 rounded-full shrink-0">
-              ${h.outcome === 'resolved' ? 'Résolu' : h.outcome === 'sav' ? 'SAV' : 'Pièce'}
+              ${outcomeLabel}
             </span>
           </div>
           <div class="text-[11px] text-slate-400 font-medium mt-1">
-            ${formatDate(h.date)} · ${h.path.length} étapes
+            ${formatDate(h.date)} · ${h.path.length} ${t('étapes')}
           </div>
           ${h.answers?.length ? `
           <div class="mt-2.5 flex flex-wrap gap-1">

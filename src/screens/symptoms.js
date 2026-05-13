@@ -3,6 +3,7 @@
    ========================================================================== */
 import { DATA } from '../data/tree.js';
 import { ICONS } from '../components/icons.js';
+import { t } from '../i18n.js';
 
 const CATEGORY_BADGE = {
   'Affichage': { bg: '#EFF5FB', color: '#0F4C81' },
@@ -23,6 +24,7 @@ export function renderSymptoms(machineId, onStart) {
   list.innerHTML = symptoms.map(s => {
     const cat = CATEGORY_BADGE[s.category] || CATEGORY_BADGE['—'];
     const disabled = s.rootNode === 'tbd';
+    const catLabel = t(s.category);
     return `
       <button data-symptom="${s.id}" ${disabled ? 'disabled' : ''}
         class="tap-card w-full bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex items-center gap-4 text-left ${disabled ? 'opacity-50' : ''}">
@@ -34,7 +36,7 @@ export function renderSymptoms(machineId, onStart) {
           <div class="font-black text-slate-900 text-sm leading-snug">${s.title}</div>
           <span class="inline-block mt-1.5 text-[10px] font-bold px-2.5 py-0.5 rounded-full"
                 style="background:${cat.bg};color:${cat.color}">
-            ${disabled ? 'Bientôt disponible' : s.category}
+            ${disabled ? t('Bientôt disponible') : catLabel}
           </span>
         </div>
         ${!disabled ? `

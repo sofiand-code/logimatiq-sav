@@ -5,6 +5,7 @@ import { DATA } from '../data/tree.js';
 import { ICONS } from '../components/icons.js';
 import { loadHistory, outcomePill, formatDate } from '../components/history-store.js';
 import { getUser, getRoleLabel } from '../data/user-store.js';
+import { t } from '../i18n.js';
 
 const MACHINE_STYLES = {
   epimat:   { bg: '#0F4C81', light: '#EFF5FB', text: '#0F4C81' },
@@ -19,7 +20,7 @@ export function renderHome(onOpenMachine, onRestartSymptom, onSetup, onStats, on
   if (userInfoEl && user) {
     userInfoEl.innerHTML = `
       <span class="font-black text-slate-900 text-sm truncate">${user.companyName}</span>
-      <span class="text-[10px] text-slate-400 font-medium truncate">${user.staffName} · ${getRoleLabel(user.role)}</span>`;
+      <span class="text-[10px] text-slate-400 font-medium truncate">${user.staffName} · ${t(getRoleLabel(user.role))}</span>`;
   }
   const profileBadge = document.getElementById('home-profile-badge');
   if (profileBadge) profileBadge.onclick = () => onEditProfile?.();
@@ -39,7 +40,7 @@ export function renderHome(onOpenMachine, onRestartSymptom, onSetup, onStats, on
         </div>
         <div class="font-black text-slate-900 text-sm leading-tight">${m.name}</div>
         <div class="text-[11px] font-semibold mt-0.5" style="color:${s.text}">
-          ${hasContent ? `${count} diagnostic${count > 1 ? 's' : ''}` : 'Bientôt disponible'}
+          ${hasContent ? `${count} diagnostic${count > 1 ? 's' : ''}` : t('Bientôt disponible')}
         </div>
       </button>`;
   }).join('');
@@ -49,8 +50,12 @@ export function renderHome(onOpenMachine, onRestartSymptom, onSetup, onStats, on
   );
 
   /* ---- Carte Guide de mise en service ---- */
-  document.getElementById('setup-card')
-    ?.addEventListener('click', () => onSetup?.());
+  const setupCard = document.getElementById('setup-card');
+  if (setupCard) {
+    setupCard.querySelector('.font-black.text-slate-900').textContent = t('Guide de mise en service');
+    setupCard.querySelector('.text-\\[11px\\]').textContent = t('Checklist installation EPIMAT');
+    setupCard.addEventListener('click', () => onSetup?.());
+  }
 
   /* ---- Bouton Statistiques ---- */
   document.getElementById('btn-stats')
@@ -62,13 +67,16 @@ export function renderHome(onOpenMachine, onRestartSymptom, onSetup, onStats, on
   if (!recents.length) {
     list.innerHTML = `
       <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm text-center">
-        <p class="text-sm text-slate-400 font-medium">Aucun diagnostic récent</p>
-        <p class="text-xs text-slate-300 mt-1">Les diagnostics terminés apparaîtront ici</p>
+        <p class="text-sm text-slate-400 font-medium">${t('Aucun diagnostic récent')}</p>
+        <p class="text-xs text-slate-300 mt-1">${t('Les diagnostics terminés apparaîtront ici')}</p>
       </div>`;
     return;
   }
   list.innerHTML = recents.map(h => {
     const sym = findSymptom(h.symptomId);
+    const outcomeLabel = h.outcome === 'resolved' ? t('Résolu')
+                       : h.outcome === 'sav'      ? t('SAV')
+                       : t('Pièce');
     return `
       <button data-symptom="${h.symptomId}"
         class="tap-card w-full bg-white rounded-2xl p-3.5 border border-slate-200 shadow-sm flex items-center gap-3 text-left">
@@ -81,7 +89,7 @@ export function renderHome(onOpenMachine, onRestartSymptom, onSetup, onStats, on
           <div class="text-[11px] text-slate-400 mt-0.5">${formatDate(h.date)}</div>
         </div>
         <span class="text-[10px] font-bold ${outcomePill(h.outcome)} px-2.5 py-1 rounded-full shrink-0">
-          ${h.outcome === 'resolved' ? 'Résolu' : h.outcome === 'sav' ? 'SAV' : 'Pièce'}
+          ${outcomeLabel}
         </span>
       </button>`;
   }).join('');
