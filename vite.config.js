@@ -7,8 +7,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/*.png'],
       manifest: {
-        name: 'Logimatiq SAV',
-        short_name: 'SAV',
+        name: 'Logimatiq',
+        short_name: 'Logimatiq',
         description: 'Diagnostic terrain — guide pas à pas',
         theme_color: '#0F4C81',
         background_color: '#0F4C81',
