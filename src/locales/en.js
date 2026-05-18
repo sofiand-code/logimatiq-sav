@@ -128,6 +128,21 @@ export const EN = {
     'Réinitialiser la checklist': 'Reset checklist',
     'Réinitialiser toute la checklist d\'installation ?': 'Reset the entire installation checklist?',
 
+    // Faults
+    'Pannes': 'Faults',
+    'Pannes récurrentes': 'Recurring faults',
+    'Rechercher une panne…': 'Search for a fault…',
+    'Tout': 'All',
+    'Symptômes': 'Symptoms',
+    'Étapes de résolution': 'Resolution steps',
+    'Photo à venir': 'Photo coming soon',
+    'Appeler le SAV Logimatiq': 'Call Logimatiq Support',
+    'Aucune panne trouvée': 'No fault found',
+    'Essayez un autre mot-clé': 'Try another keyword',
+    'Critique': 'Critical',
+    'Urgent': 'Urgent',
+    'Courant': 'Common',
+
     // KB
     'Fiches PDF': 'PDF Guides',
     'Codes erreur': 'Error codes',

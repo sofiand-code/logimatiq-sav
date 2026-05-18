@@ -14,6 +14,7 @@ import { renderSetup } from './screens/setup.js';
 import { renderLogin } from './screens/login.js';
 import { renderMachineSelect } from './screens/machine-select.js';
 import { renderStats } from './screens/stats.js';
+import { renderFaults } from './screens/faults.js';
 import { getLang, setLang, onLangChange, t, applyI18n, langToggleHTML, bindLangToggle } from './i18n.js';
 
 /* ---- Fonction de navigation centrale ---- */
@@ -21,6 +22,7 @@ function navigate(name) {
   nav(name, (screenName) => {
     if (screenName === 'home')    renderHome(openMachine, () => navigate('setup'), () => navigate('stats'), logout);
     if (screenName === 'kb')      renderKB();
+    if (screenName === 'faults')  renderFaults();
     if (screenName === 'history') renderHistory();
     if (screenName === 'setup')   renderSetup();
     if (screenName === 'stats')   renderStats();
@@ -39,6 +41,7 @@ function rerender() {
     renderSymptoms(STATE.machineId, (symptomId) => startDiagnostic(symptomId, navigate));
     navigate('symptoms');
   });
+  else if (s === 'faults')   renderFaults();
   else if (s === 'history')  renderHistory();
   else if (s === 'setup')    renderSetup();
   else if (s === 'stats')    renderStats();
