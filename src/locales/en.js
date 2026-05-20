@@ -130,6 +130,7 @@ export const EN = {
 
     // Faults
     'Pannes': 'Faults',
+    'Tambour, trappe, moteur…': 'Drum, hatch, motor…',
     'Pannes récurrentes': 'Recurring faults',
     'Rechercher une panne…': 'Search for a fault…',
     'Tout': 'All',
