@@ -1,0 +1,116 @@
+<title>Arbres de diagnostic EPIMAT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout : fiche d'atelier — bandeau d'onglets, un arbre plein écran à la fois, défilement libre dans le schéma */
+:root{
+  --bg:#F5F6F8; --panel:#FFFFFF; --fg:#1B2027; --muted:#5D6570; --line:#D9DDE3;
+  --accent:#3B5BA9; --accent-soft:#E8EEFB; --warn:#C77700; --warn-soft:#FFF1D6;
+  --font-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --font-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161C; --panel:#1A1F27; --fg:#E7EAEE; --muted:#9AA3AE; --line:#2C333D;
+  --accent:#8EA9EC; --accent-soft:#1F2A44; --warn:#F0A73A; --warn-soft:#3A2A10; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12161C; --panel:#1A1F27; --fg:#E7EAEE; --muted:#9AA3AE; --line:#2C333D;
+  --accent:#8EA9EC; --accent-soft:#1F2A44; --warn:#F0A73A; --warn-soft:#3A2A10; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:20px 48px}
+.wrap{max-width:1600px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+h1{font-family:var(--font-display);font-weight:700;font-size:clamp(22px,3vw,30px);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:2px 0 0}
+.mono{font-family:var(--font-mono);font-size:12px}
+nav{display:flex;flex-wrap:wrap;gap:6px}
+nav a{text-decoration:none;font:600 14px var(--font-body);padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
+nav a:hover{border-color:var(--accent)}
+nav a:focus-visible,.tool:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:16px;height:12px;border-radius:3px;border:1.5px solid;display:inline-block}
+.panel{scroll-margin-top:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.bar h2{font-family:var(--font-display);font-weight:500;font-size:19px;margin:0}
+.tools{display:flex;gap:6px;align-items:center}
+.tool{font:600 13px var(--font-body);padding:5px 10px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}
+.zoomv{font-family:var(--font-mono);font-size:12px;color:var(--muted);min-width:44px;text-align:center}
+.scroll{overflow:auto;border-top:1px solid var(--line);padding-top:10px}
+.scroll pre.mermaid{margin:0;background:transparent;transform-origin:top left}
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.note{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--panel);min-width:0}
+.note.w{border-color:var(--warn);background:var(--warn-soft)}
+.note h3{font-family:var(--font-display);font-weight:500;font-size:15px;margin:0 0 4px}
+.note p{margin:0;color:var(--muted);font-size:14px}
+.note.w p{color:var(--fg)}
+h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px 0 0}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Arbres de diagnostic EPIMAT</h1>
+      <p class="sub">État actuel de l'appli Logimatiq SAV — source <span class="mono">sav-app/src/data/tree.js</span></p>
+    </div>
+    <nav aria-label="Aller à un arbre"><a href="#p-s">Écran</a><a href="#p-i">Internet / modem</a><a href="#p-b">Badge</a></nav>
+  </header>
+
+  <div class="legend">
+    <span><i class="sw" style="background:#E8EEFB;border-color:#3B5BA9"></i>Question</span>
+    <span><i class="sw" style="background:#F3F4F6;border-color:#8A8F98"></i>Action du technicien</span>
+    <span><i class="sw" style="background:#DDF2D8;border-color:#3E8A2E"></i>Résolu</span>
+    <span><i class="sw" style="background:#FBE0D8;border-color:#B5482A"></i>Pièce à changer</span>
+    <span><i class="sw" style="background:#FCEBC8;border-color:#B37A12"></i>Appel SAV</span>
+    <span><i class="sw" style="background:#FFF1D6;border-color:#C77700;border-style:dashed"></i>Point à corriger</span>
+  </div>
+
+  <section class="panel" id="p-s">
+    <div class="bar"><h2>Écran noir / pas d'image <span class="sub mono">· %%S_s%%</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+%%G_s%%
+    </pre></div>
+  </section>
+
+  <section class="panel" id="p-i">
+    <div class="bar"><h2>Internet / modem hors ligne <span class="sub mono">· %%S_i%%</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+%%G_i%%
+    </pre></div>
+  </section>
+
+  <section class="panel" id="p-b">
+    <div class="bar"><h2>Badge non lu / mauvais numéro <span class="sub mono">· %%S_b%%</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+%%G_b%%
+    </pre></div>
+  </section>
+
+  <h2 class="sec">Points à corriger dans l'existant</h2>
+  <div class="notes">
+    <div class="note w"><h3>Badge — « Le lecteur est-il maintenant reconnu ? »</h3><p>Oui et Non mènent à la même étape (test Notepad). La question ne sert à rien en l'état.</p></div>
+    <div class="note w"><h3>Écran — DistEPI ne se lance pas / mauvaise résolution</h3><p>L'arbre s'arrête sur « Redémarrer le PC » sans demander ensuite si ça a marché.</p></div>
+    <div class="note w"><h3>Écran éteint, multiprise allumée</h3><p>On remplace directement l'alimentation de l'écran sans vérifier le bouton marche ni le câble côté écran.</p></div>
+    <div class="note w"><h3>3 conclusions jamais atteintes</h3><p>« Changer le bloc alimentation », « Changer PC ou écran » et « Badge incompatible » existent mais aucune branche n'y mène.</p></div>
+  </div>
+
+  <h2 class="sec">Reste à construire</h2>
+  <div class="notes">
+    <div class="note"><h3>EPIMAT — mécanique</h3><p>Fiches simples seulement : alimentation (3), tambour (3), trappe (3), moteur (2). Aucun arbre de questions.</p></div>
+    <div class="note"><h3>Logiciel EPIMAT</h3><p>4 symptômes renvoient vers « Arbre à compléter » : démarrage / plantage, synchro, impression, configuration.</p></div>
+    <div class="note"><h3>VETIMAT</h3><p>Placeholder uniquement.</p></div>
+    <div class="note"><h3>TOOLMAT, SmartBox, ELIMAT</h3><p>Absentes de l'appli.</p></div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.panel').forEach(p=>{
+  let z=1;const pre=p.querySelector('pre'),v=p.querySelector('.zoomv');
+  p.querySelectorAll('[data-z]').forEach(btn=>btn.addEventListener('click',()=>{
+    const d=btn.dataset.z;z=d==='0'?1:Math.min(3,Math.max(0.3,z+(d==='+'?0.2:-0.2)));
+    pre.style.zoom=z;v.textContent=Math.round(z*100)+' %';
+  }));
+});
+</script>
