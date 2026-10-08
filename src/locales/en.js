@@ -512,14 +512,14 @@ export const EN = {
     i_test_url: {
       title: 'Test access to the EPIMAT server from the PC',
       steps: [
-        "On the machine's PC, open Internet Explorer",
+        "On the machine's PC, open any web browser",
         'Go to https://epimat.logimatiq.com',
         'Check that the page opens without a certificate warning',
       ],
     },
     i_test_url_result: {
       title: 'Does the page open normally?',
-      help: 'If Internet Explorer can reach the EPIMAT address, the EPIMAT applications work (network prerequisites).',
+      help: 'If the browser can reach the EPIMAT address, the EPIMAT applications work (network prerequisites).',
       answers: ['Yes', 'No'],
     },
     i_rj45_check: {

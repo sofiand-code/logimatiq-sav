@@ -594,17 +594,17 @@ export const DATA = {
       type: 'action',
       title: "Tester l'accès au serveur EPIMAT depuis le PC",
       steps: [
-        'Sur le PC de la machine, ouvrir Internet Explorer',
+        "Sur le PC de la machine, ouvrir un navigateur internet (n'importe lequel)",
         'Aller sur https://epimat.logimatiq.com',
         "Vérifier que la page s'ouvre sans avertissement de certificat",
       ],
       next: 'i_test_url_result',
-      src: ['PR p.3-4'],
+      src: ['PR p.3-4', 'REP'],
     },
     i_test_url_result: {
       type: 'question',
       title: "La page s'ouvre-t-elle normalement ?",
-      help: "Si Internet Explorer accède à l'adresse EPIMAT, les applications EPIMAT fonctionnent (prérequis réseau).",
+      help: "Si le navigateur accède à l'adresse EPIMAT, les applications EPIMAT fonctionnent (prérequis réseau).",
       answers: [
         { label: 'Oui', next: 'i_clientsynch' },
         { label: 'Non', next: 'sol_sav' },
