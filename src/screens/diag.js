@@ -3,10 +3,10 @@
    ========================================================================== */
 import { DATA } from '../data/tree.js';
 import { STATE } from '../state.js';
-import { renderMedia } from '../components/media.js';
+import { renderMedia, bindZoom } from '../components/media.js';
 import { saveDiagnostic } from '../components/history-store.js';
 import { findSymptom } from './home.js';
-import { t, tNode, tAnswer, tStep } from '../i18n.js';
+import { t, tNode, tAnswer, tStep, tMedia } from '../i18n.js';
 
 function estimateDepth(rootId) {
   let max = 0;
@@ -91,6 +91,17 @@ export function renderDiag(navFn) {
 /* Templates                                                           */
 /* ------------------------------------------------------------------ */
 
+/* Médias d'un nœud : un objet ou une liste d'objets, légendes traduites */
+function mediaHTML(n, nodeId) {
+  const list = Array.isArray(n.media) ? n.media : n.media ? [n.media] : [];
+  return list.map((m, i) => renderMedia(m, tMedia(nodeId, i, m.label))).join('');
+}
+
+function helpHTML(n, nodeId) {
+  const help = tNode(nodeId, 'help', n.help);
+  return help ? `<p class="mt-2 text-sm text-slate-500 leading-relaxed">${help}</p>` : '';
+}
+
 function renderQuestion(n, nodeId) {
   return `
     <div class="inline-flex items-center gap-2 bg-brand-50 text-brand-600 text-[10px] font-black
@@ -103,10 +114,8 @@ function renderQuestion(n, nodeId) {
     <h2 class="mt-3 text-2xl font-black text-slate-900 leading-tight">
       ${tNode(nodeId, 'title', n.title)}
     </h2>
-    ${(tNode(nodeId, 'help', n.help) || '')
-      ? `<p class="mt-2 text-sm text-slate-500 leading-relaxed">${tNode(nodeId, 'help', n.help)}</p>`
-      : ''}
-    ${renderMedia(n.media)}
+    ${helpHTML(n, nodeId)}
+    ${mediaHTML(n, nodeId)}
     <div class="mt-5 space-y-2.5" id="answers-list">
       ${n.answers.map((a, i) => answerBtn(a, i, nodeId)).join('')}
     </div>`;
@@ -152,7 +161,8 @@ function renderAction(n, nodeId) {
     <h2 class="mt-3 text-2xl font-black text-slate-900 leading-tight">
       ${tNode(nodeId, 'title', n.title)}
     </h2>
-    ${renderMedia(n.media)}
+    ${helpHTML(n, nodeId)}
+    ${mediaHTML(n, nodeId)}
     <ol class="mt-5 space-y-2.5">
       ${steps.map((s, i) => `
         <li class="flex gap-3.5 items-start bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
@@ -211,6 +221,8 @@ function renderSolution(n, nodeId) {
         <p class="mt-2 text-sm leading-relaxed" style="color:rgba(255,255,255,.8)">${solMessage}</p>
       </div>
     </div>
+
+    ${n.media ? `<div class="mb-4">${mediaHTML(n, nodeId)}</div>` : ''}
 
     ${pathLabels.length ? `
     <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-4 shadow-sm">
@@ -303,6 +315,7 @@ function wireEvents(n, navFn) {
   );
   document.getElementById('btn-back')
     ?.addEventListener('click', () => diagBack(navFn));
+  bindZoom(document.getElementById('diag-body'));
 
   /* Rapport partageable */
   document.getElementById('btn-share-report')

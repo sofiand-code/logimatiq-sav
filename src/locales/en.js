@@ -166,9 +166,9 @@ export const EN = {
 
   /* ---- Titres des symptômes (tree.js symptoms[]) ---- */
   symptoms: {
-    't.epimat.screen':   'Black screen / no image / sync issue',
+    't.epimat.screen':   'Black screen / no image / frozen screen',
     't.epimat.internet': 'No internet connection / modem offline',
-    't.epimat.badge':    'Badge not read / wrong number / erratic reading',
+    't.epimat.badge':    'Badge not read / not recognized / wrong number',
     't.log.demarrage':   "Software won't start / crashes",
     't.log.synchro':     'Software synchronization error',
     't.log.impression':  'Printing problem',
@@ -189,7 +189,7 @@ export const EN = {
       title: 'Connect the machine to the power outlet',
       steps: [
         'Check that the power strip is on (red indicator lit)',
-        'Firmly connect the power cable on the machine side',
+        'Firmly connect the power cable on the machine side (supplied cable, exits at the bottom)',
         'Connect the other end to the power strip',
         'Wait 10 seconds',
       ],
@@ -198,22 +198,25 @@ export const EN = {
       title: 'What is the color of the screen LED indicator?',
       help: 'Small indicator on the front of the monitor, at the bottom or side.',
       answers: ['Red', 'Off (no LED)', 'Green (image visible, other problem)'],
+      media: 'Touch screen from the 2015 parts list: POWER button at the top of the right edge',
     },
     s_rouge_pc_led: {
       title: 'Is the PC LED on?',
       help: 'Light indicator on the front of the PC case built into the machine.',
       answers: ['Yes, PC LED on', 'No, PC off'],
+      media: 'The PC is in the bottom compartment of the machine (circled in red)',
     },
     s_rouge_pc_ventilo: {
       title: 'Check the PC power supply',
       steps: [
-        'Listen or look if the PC fan is running (ventilation grills)',
+        'Listen or look whether the PC fan is running',
         'Go to the back of the PC case',
-        'Locate the small ON/OFF switch near the PC power socket',
-        'Switch to OFF, wait 5 seconds, then switch back to ON',
+        'Locate the ON/OFF switch near the PC power socket',
+        'Switch it to OFF, wait 5 seconds, then switch it back to ON',
         'Return to the front and press the PC Power button',
         'Wait 15 seconds',
       ],
+      media: 'The PC is in the bottom compartment of the machine (circled in red)',
     },
     s_rouge_pc_demarre: {
       title: 'Did the PC start? (LED on)',
@@ -221,12 +224,14 @@ export const EN = {
     },
     s_rouge_rebrancher_vga: {
       title: 'Disconnect and reconnect the VGA cable',
+      help: "The screen's 3 cables (USB, power, VGA) all connect at the same place behind the screen.",
       steps: [
         'Locate the VGA cable (blue screw connector) between screen and PC',
         'Unplug the cable on the screen side, then on the PC side',
         'Firmly reconnect on both sides and tighten the thumbscrews',
         'Wait 10 seconds',
       ],
+      media: 'Behind the screen (17-inch kit): USB, power and VGA cable connections',
     },
     s_rouge_vga_result: {
       title: 'Has the image returned on the screen?',
@@ -240,23 +245,46 @@ export const EN = {
         'Tighten the thumbscrews',
         'Wait for the image to return (10 seconds)',
       ],
+      media: 'Behind the screen (17-inch kit): USB, power and VGA cable connections',
     },
     s_rouge_apres_changer_vga: {
       title: 'Is the image now visible?',
       answers: ['Yes, image OK', 'No, screen red'],
     },
+    s_eteint_machine: {
+      title: 'Is the rest of the machine powered on?',
+      help: 'PC LED, badge reader indicator, modem indicators.',
+      answers: ['No, everything seems off', 'Yes, only the screen is off'],
+    },
+    s_eteint_bouton: {
+      title: "Press the screen's power button",
+      steps: [
+        "Locate the screen's Power button (in the photo: at the top of the right edge)",
+        'Press it once and wait 5 seconds',
+      ],
+      media: 'Touch screen from the 2015 parts list: POWER button at the top of the right edge',
+    },
+    s_eteint_bouton_result: {
+      title: 'Does the screen turn on?',
+      answers: ['Yes', 'No'],
+    },
     s_eteint_cable: {
-      title: 'Is the screen power cable properly connected?',
-      help: 'Check the cable connecting the screen to the power strip or power supply.',
+      title: 'Is the power cable properly connected on the screen side and on the power supply side?',
+      help: 'It arrives behind the screen together with the USB and VGA cables.',
       answers: ['Yes, connected', 'No, disconnected'],
+      media: 'Behind the screen (17-inch kit): USB, power and VGA cable connections',
     },
     s_eteint_brancher_cable: {
       title: 'Connect the screen power cable',
       steps: [
-        'Locate the screen power cable',
         'Firmly connect the end on the screen side',
-        'Connect the other end to the power strip',
+        'Check the connection on the power supply side and on the power strip side',
       ],
+      media: 'Behind the screen (17-inch kit): USB, power and VGA cable connections',
+    },
+    s_eteint_cable_result: {
+      title: 'Does the screen turn on?',
+      answers: ['Yes', 'No'],
     },
     s_eteint_multiprise: {
       title: 'Is the red LED on the power strip lit?',
@@ -277,13 +305,21 @@ export const EN = {
       answers: ['Yes, screen on', 'No, still off'],
     },
     s_vert_symptome: {
-      title: 'What is the exact problem?',
+      title: 'What is the problem?',
       answers: [
-        'Flickering or color problem',
-        'Touchscreen not responding',
-        'DistEPI is not launched (desktop visible)',
-        'Wrong display resolution',
+        'The touchscreen does not respond',
+        'Damaged image: flickering, colors, broken screen',
+        'DistEPI is not displayed (Windows desktop visible)',
         'Screen frozen / stuck',
+        'Windows or BIOS error message',
+      ],
+    },
+    s_vert_image: {
+      title: 'What do you see on the screen?',
+      answers: [
+        'Flickering or abnormal colors',
+        'Wrong resolution (image too large or cut off)',
+        'Broken or cracked screen',
       ],
     },
     s_vert_vga: {
@@ -293,6 +329,7 @@ export const EN = {
         'Unplug and firmly reconnect on both sides',
         'Tighten the thumbscrews',
       ],
+      media: 'Behind the screen (17-inch kit): USB, power and VGA cable connections',
     },
     s_vert_vga_result: {
       title: 'Has the image problem disappeared?',
@@ -305,6 +342,7 @@ export const EN = {
         'Unplug and firmly reconnect on both sides',
         'If possible, try another USB port on the PC',
       ],
+      media: 'Behind the screen (17-inch kit): USB, power and VGA cable connections',
     },
     s_vert_usb_result: {
       title: 'Is the touchscreen responding now?',
@@ -313,8 +351,8 @@ export const EN = {
     s_vert_distepi: {
       title: 'Launch the DistEPI software',
       steps: [
-        'On the Windows desktop, find the DistEPI icon',
-        'Double-click to launch the application',
+        'On the Windows desktop, double-click the DistEPI icon',
+        'If the icon is missing: run C:\\EPI\\DistEPI.exe',
         'Wait for full loading (about 30 seconds)',
       ],
     },
@@ -335,6 +373,18 @@ export const EN = {
       title: 'Is the resolution correct now?',
       answers: ['Yes, display correct', 'No, still incorrect'],
     },
+    s_redemarrer_distrib: {
+      title: 'Restart the dispenser',
+      steps: [
+        'Start → Shut down → Restart',
+        'If the screen is frozen: hold the PC Power button for 5 seconds, then turn it back on',
+        'Wait for Windows and DistEPI to fully start',
+      ],
+    },
+    s_redemarrer_distrib_result: {
+      title: 'After the restart, is DistEPI displayed correctly?',
+      answers: ['Yes', 'No'],
+    },
     s_vert_redemarrer: {
       title: 'Restart the machine',
       steps: [
@@ -349,88 +399,150 @@ export const EN = {
       title: 'Is the machine working correctly after restart?',
       answers: ['Yes, everything OK', 'No, problem persists'],
     },
+    s_vert_erreur: {
+      title: 'Note the message, then restart the dispenser',
+      steps: [
+        'Photograph or write down the error message',
+        'Start → Shut down → Restart (or hold the Power button for 5 seconds)',
+        'Wait for the full startup',
+      ],
+    },
+    s_vert_erreur_result: {
+      title: 'Has the error message disappeared?',
+      answers: ['Yes', 'No, it comes back'],
+    },
 
     /* === ARBRE INTERNET === */
     i_debut: {
       title: 'What is the problem?',
-      help: 'Check the blue "online" LED on the Four-Faith F3827 modem.',
+      help: 'Four-Faith modem indicators: steady blue Online = internet OK; blinking ETH = link with the PC OK.',
       answers: [
-        'Modem "online" LED is off',
+        '"Online" LED off',
         '"Online" LED on but DistEPI sync error',
         'Frequent disconnections / unstable signal',
       ],
+      media: [
+        'Location of the modem in the machine (circled in red)',
+        'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
+      ],
+    },
+    i_pwr_led: {
+      title: "Is the modem's PWR LED on (steady blue)?",
+      answers: ['Yes', 'No, modem off'],
+      media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
+    },
+    i_alim_modem: {
+      title: "Check the modem's power supply",
+      steps: [
+        'Check that the power jack is fully inserted into the modem',
+        'Check that its power adapter is plugged in and powered',
+        'Wait 2 to 3 minutes',
+      ],
+      media: 'Modem connectors: 2 antennas, power (PWR) and the RJ45 cable from the PC on ETH',
+    },
+    i_alim_modem_result: {
+      title: 'Does the PWR LED turn on?',
+      answers: ['Yes', 'No'],
     },
     i_reboot_modem: {
       title: 'Restart the modem',
       steps: [
-        'Locate the ON/OFF switch on the modem power supply',
-        'Switch to OFF (or unplug the power socket)',
+        "Unplug the modem's power supply (jack), or switch it OFF if it has a switch",
         'Wait 30 seconds',
-        'Turn back on (switch to ON or reconnect)',
-        'Wait 2 to 3 minutes for the modem to reconnect to the GSM network',
+        'Plug the power supply back in',
+        'Wait 2 to 3 minutes for the modem to reconnect to the mobile network',
       ],
+      media: 'Modem connectors: 2 antennas, power (PWR) and the RJ45 cable from the PC on ETH',
     },
     i_reboot_result: {
-      title: 'Is the "online" LED now on?',
+      title: 'Is the "Online" LED now on?',
       answers: ['Yes, blue LED on', 'No, still off'],
     },
     i_antennes_check: {
       title: 'Check the 2 modem antennas',
       steps: [
-        'Check that both GSM antennas are properly screwed onto the modem',
+        'Check that both antennas are properly screwed onto the modem',
         'If an antenna is loose, screw it back firmly',
-        'Wait 1 minute and observe the online LED',
+        'Wait 1 minute and observe the Online LED',
       ],
+      media: 'Modem connectors: 2 antennas, power (PWR) and the RJ45 cable from the PC on ETH',
     },
     i_antennes_result: {
-      title: 'Did the "online" LED turn on?',
+      title: 'Did the "Online" LED turn on?',
       answers: ['Yes, LED on', 'No, still off'],
     },
     i_sim_led: {
       title: 'Is the modem SIM LED on?',
-      help: '"SIM" indicator on the front of the modem (see photo).',
+      help: 'Blue SIM LED = SIM card detected.',
       answers: ['Yes, SIM LED on', 'No, SIM LED off'],
+      media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
     },
     i_reinsertion_sim: {
       title: 'Re-insert the SIM card',
       steps: [
-        'Turn off the modem',
-        'Locate the small SIM ejection hole on the modem',
-        'Insert a pin, rivet or pen tip into the hole to eject the SIM',
-        'Remove the SIM and clean the gold contacts with a dry cloth',
-        'Re-insert the SIM and turn the modem back on',
+        "Cut the modem's power supply",
+        'Eject the SIM with a pen or a pointed tool (ejection hole)',
+        'Clean the gold contacts with a dry cloth',
+        'Re-insert the SIM the right way round, then turn the modem back on',
         'Wait 2 to 3 minutes',
       ],
+      media: 'Eject the SIM with a pointed tool in the ejection hole',
     },
     i_sim_result: {
       title: 'Is the SIM LED now on?',
       answers: ['Yes, SIM LED on', 'No, still off'],
     },
     i_setup_grizzly: {
-      title: 'Launch the Grizzly setup (setup17)',
+      title: 'Run the router configuration again (Logimatiq program)',
       steps: [
-        'On the Windows desktop, open the Grizzly Setup17 program',
-        'Follow the reconfiguration procedure — the program automatically resets the APN (wbdata / matooma / orange)',
-        'Wait for the setup to complete and the modem to restart automatically if prompted',
-        'Wait 2 to 3 minutes then observe the online LED',
+        'Run setup_config_routeur_four_faith_1.0.0.17.exe (C:\\EPI folder)',
+        'User Account Control: "Oui" (Yes), then "Suivant" (Next), "Suivant", "Installer" (Install)',
+        '"La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ?" (internet provided by a Logimatiq router?): "Oui" (Yes)',
+        'Choose the SIM card APN from the list (wbdata, matooma.m2m, orange…), then "Enregistrer les paramètres et Fermer" (Save settings and Close)',
+        '"Configuration terminée avec succès" (configuration completed): OK, then "Non, je préfère redémarrer plus tard" (restart later) and "Terminer" (Finish)',
+        'Wait 2 to 3 minutes and observe the Online LED',
+      ],
+      media: [
+        'Question "La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ?": answer "Oui" (Yes)',
+        'Choose the SIM card APN from the list',
       ],
     },
     i_setup_result: {
-      title: 'Is the "online" LED now on?',
+      title: 'Is the "Online" LED now on?',
       answers: ['Yes, blue LED on', 'No, still off'],
+    },
+    i_eth_led: {
+      title: "Is the modem's ETH LED blinking?",
+      help: "Blinking ETH = the modem is exchanging data with the machine's PC.",
+      answers: ['Yes, it is blinking', 'No, off or steady'],
+      media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
     },
     i_connexion_distante: {
       title: "Can we connect remotely to the machine's PC?",
       help: 'If remote connection works, the RJ45 cable is not the cause.',
       answers: ['Yes, remote connection OK', 'No, no remote connection'],
     },
-    i_rj45_check: {
-      title: 'Check the RJ45 cable (PC ↔ Modem)',
+    i_test_url: {
+      title: 'Test access to the EPIMAT server from the PC',
       steps: [
-        'Locate the RJ45 cable connecting the PC to the modem',
+        "On the machine's PC, open Internet Explorer",
+        'Go to https://epimat.logimatiq.com',
+        'Check that the page opens without a certificate warning',
+      ],
+    },
+    i_test_url_result: {
+      title: 'Does the page open normally?',
+      help: 'If Internet Explorer can reach the EPIMAT address, the EPIMAT applications work (network prerequisites).',
+      answers: ['Yes', 'No'],
+    },
+    i_rj45_check: {
+      title: 'Check the RJ45 cable (PC ↔ modem)',
+      steps: [
+        "Locate the RJ45 cable connecting the PC to the modem's ETH port",
         'Unplug and reconnect firmly on both ends until it clicks',
         'Check that the Windows PC shows an internet connection',
       ],
+      media: 'Modem connectors: 2 antennas, power (PWR) and the RJ45 cable from the PC on ETH',
     },
     i_rj45_result: {
       title: 'Does the Windows PC now have internet access?',
@@ -443,6 +555,7 @@ export const EN = {
         'Run the data receive and send test',
         'Observe whether the test passes or fails',
       ],
+      media: 'ClientSynch DB EPI — procedure (photos coming soon)',
     },
     i_clientsynch_result: {
       title: 'Did the ClientSynch test succeed?',
@@ -457,17 +570,19 @@ export const EN = {
       ],
     },
     i_reboot_distepi_result: {
-      title: 'Is DistEPI working correctly after restart?',
+      title: 'Is DistEPI working correctly after the restart?',
       answers: ['Yes, sync OK', 'No, error persists'],
     },
     i_signal_faible: {
       title: 'Check antennas and reposition the modem',
+      help: 'Signal LEDs (bars in the middle of the modem): the more bars, the better the signal.',
       steps: [
-        'Check that both GSM antennas are properly screwed onto the modem',
+        'Check that both antennas are properly screwed onto the modem',
         'Straighten the antennas vertically',
-        'If possible, move the modem closer to a window to improve the GSM signal',
-        'Test with a mobile phone to assess signal strength in the room',
+        'If possible, move the modem closer to a window',
+        'Use a mobile phone to check the signal strength in the room',
       ],
+      media: 'Modem connectors: 2 antennas, power (PWR) and the RJ45 cable from the PC on ETH',
     },
     i_signal_result: {
       title: 'Is the connection stable now?',
@@ -477,23 +592,28 @@ export const EN = {
     /* === ARBRE BADGE === */
     b_debut: {
       title: 'Is the badge reader LED on?',
-      help: 'The reader is connected via USB to the PC — if LED is off, the PC is probably off.',
+      help: 'The reader is connected to the PC via USB: if its LED is off, the PC is probably off.',
       answers: ['Yes, LED on', 'No, LED off'],
+      media: 'The badge reader (circled in red)',
     },
     b_pc_led: {
       title: 'Is the PC LED on?',
-      help: 'Light indicator on the front of the integrated PC case.',
       answers: ['No, PC off', 'Yes, PC on'],
+      media: 'The PC is in the bottom compartment of the machine (circled in red)',
     },
     b_allumer_pc: {
       title: 'Turn on the PC',
       steps: [
         'Press the Power button on the front of the PC case',
-        'If nothing happens, go to the back of the PC',
-        'Check the ON/OFF switch and set it to ON',
-        'Return to the front and press the Power button again',
+        'If nothing happens, set the ON/OFF switch at the back to ON',
+        'Press the Power button again',
         'Wait 15 seconds',
       ],
+      media: 'The PC is in the bottom compartment of the machine (circled in red)',
+    },
+    b_led_apres_pc: {
+      title: 'Is the reader LED now on?',
+      answers: ['Yes', 'No'],
     },
     b_usb_rebranch: {
       title: 'Disconnect and reconnect the reader USB cable',
@@ -521,32 +641,38 @@ export const EN = {
       answers: ['Yes, LED on', 'No, still off'],
     },
     b_symptome: {
-      title: 'What is the problem with the badge?',
+      title: 'What happens when the badge is presented?',
+      help: 'The reader beeps when it reads a badge.',
       answers: [
-        'Badge not read — no reaction',
-        'Badge read but wrong number displayed',
+        'Nothing: no beep, no reaction',
+        'Beep, but nothing happens on the screen',
+        'The screen asks "INITIALISATION BADGE — Tapez votre code !" (enter your code)',
+        'Badge read but refused, wrong name or wrong number',
         'Random / intermittent reading',
       ],
     },
-    b_port_com: {
-      title: 'Check the COM port (Device Manager)',
+    b_autre_badge: {
+      title: 'Test with another badge',
       steps: [
-        'Right-click "This PC" → Manage → Device Manager',
-        'Open "Ports (COM & LPT)" → note the reader COM number (e.g.: COM1)',
-        'Open the AUTOMAT INI file on the desktop',
-        'In the [port com] section, verify "port lecteur badge" = same number',
-        'If different, correct the number and save AUTOMAT INI',
+        "Take a badge that works (maintenance badge or a colleague's badge)",
+        'Present it in front of the reader',
+        'Listen for the beep and watch the screen',
       ],
     },
-    b_port_com_result: {
-      title: 'Is the reader now recognized (reaction when swiping badge)?',
-      answers: ['Yes', 'No'],
+    b_autre_badge_result: {
+      title: 'Is the other badge read?',
+      answers: ['Yes, the other badge is read', 'No, no badge is read'],
+    },
+    b_badge_deja_ok: {
+      title: 'Has the first badge ever worked on this machine?',
+      answers: ['Yes, it used to work', 'No, it is a new type of badge'],
     },
     b_notepad_langue: {
       title: 'Prepare Notepad test — switch keyboard to English',
+      help: 'The USB reader works like a keyboard: it "types" the badge number.',
       steps: [
-        'Click on the language in the bottom right of the Windows taskbar',
-        'Select "ENG" (English) as input language',
+        'Click on the language at the bottom right of the Windows taskbar',
+        'Select "ENG" (English) as the input language',
         'Open Notepad: Start → Notepad',
         'Click in the Notepad text area',
       ],
@@ -560,10 +686,7 @@ export const EN = {
     },
     b_notepad_result: {
       title: 'What appears in Notepad?',
-      answers: [
-        'Hex characters appear (e.g.: 3A8F12B4)',
-        'Nothing appears',
-      ],
+      answers: ['Characters appear (e.g.: 3A8F12B4)', 'Nothing appears'],
     },
     b_admin_base: {
       title: 'Fix the character count in Admin Base',
@@ -571,9 +694,10 @@ export const EN = {
         'In DistEPI, go to "Admin Base"',
         'Find the badge character count parameter',
         'Count the number of characters read in Notepad',
-        'Correct the parameter to match (e.g.: set 8 if Notepad reads 8 characters)',
+        'Correct the parameter to match',
         'Save and restart DistEPI',
       ],
+      media: 'Admin Base — character count parameter (photos coming soon)',
     },
     b_admin_result: {
       title: 'Is the badge now recognized in DistEPI?',
@@ -586,10 +710,61 @@ export const EN = {
         'Follow the reprogramming procedure',
         'Re-test with Notepad after reprogramming',
       ],
+      media: 'Reader reprogramming procedure (tutorial coming soon)',
     },
     b_reprogrammer_result: {
       title: 'Does the reader read correctly in Notepad?',
       answers: ['Yes, characters visible', 'No, still nothing'],
+    },
+    b_bip_redemarrer: {
+      title: 'Restart the dispenser',
+      steps: [
+        'Start → Shut down → Restart',
+        'Wait for Windows and DistEPI to fully start',
+        'Present the badge again',
+      ],
+    },
+    b_bip_result: {
+      title: 'Does the badge work after the restart?',
+      answers: ['Yes', 'No'],
+    },
+    b_init_badge: {
+      title: 'Initialize the badge (first use on this machine)',
+      steps: [
+        'Enter the number printed on the badge, adding leading zeros to get 7 digits',
+        'Examples: badge 529545 → 0529545; badge 14 → 0000014',
+        'Check the name displayed, then confirm with OK',
+      ],
+      media: '"INITIALISATION BADGE" screen: enter the badge number as 7 digits',
+    },
+    b_init_result: {
+      title: 'Is the correct name displayed?',
+      answers: ['Yes', 'No, wrong or unknown name'],
+    },
+    b_salarie_extranet: {
+      title: 'Check the employee in the EPIMAT extranet',
+      steps: [
+        'Log in to https://epimat.logimatiq.com/client',
+        '"Salariés" (Employees) → search for the employee',
+        'Check the badge number (7 digits), the profile and access to this machine',
+        'Correct, save, then run a synchronization',
+      ],
+    },
+    b_salarie_result: {
+      title: 'Is the badge recognized now?',
+      answers: ['Yes', 'No'],
+    },
+    b_sync: {
+      title: 'Run a synchronization and check the 4G connection',
+      steps: [
+        "Check that the modem's Online LED is steady blue (otherwise: Internet / modem tree)",
+        'Run a synchronization',
+        'Present the badge again',
+      ],
+    },
+    b_sync_result: {
+      title: 'Is the badge recognized now?',
+      answers: ['Yes', 'No'],
     },
     b_mauvais_notepad: {
       title: 'Check the read number — Notepad test (English keyboard)',
@@ -602,17 +777,16 @@ export const EN = {
     b_mauvais_result: {
       title: 'Does the number read in Notepad match the badge?',
       answers: [
-        'Yes, same number — incorrectly entered in database',
+        'Yes, same number — incorrectly entered in the database',
         'No, different number — reader to reprogram',
       ],
     },
     b_corriger_bdd: {
-      title: 'Correct the number in the database',
+      title: "Correct the employee's badge number",
       steps: [
-        'In DistEPI, go to "Admin Base"',
-        'Find the employee concerned',
-        'Correct the registered badge number with the exact number on the physical badge',
-        'Save and retest',
+        'EPIMAT extranet → "Salariés" (Employees) → employee record → "Modifier" (Edit)',
+        'Correct the badge number with the exact number of the physical badge',
+        'Save, synchronize and test again',
       ],
     },
     b_bdd_result: {
@@ -622,18 +796,14 @@ export const EN = {
     b_alea_badge: {
       title: 'Test with another badge',
       steps: [
-        'Get another available Kalistrut badge',
+        'Take another available badge',
         'Swipe it in front of the reader',
-        'Observe if the reading is stable with this other badge',
+        'Observe whether the reading is stable with this other badge',
       ],
     },
     b_alea_badge_result: {
       title: 'Does the other badge work correctly?',
-      answers: [
-        'Yes, stable reading',
-        'No, same problem',
-        'No other badge available',
-      ],
+      answers: ['Yes, stable reading', 'No, same problem', 'No other badge available'],
     },
     b_alea_usb: {
       title: 'Check the reader USB cable',
@@ -654,53 +824,55 @@ export const EN = {
       title: 'Problem resolved',
       message: 'The machine is working correctly again. Remember to close the support ticket if applicable.',
     },
+    sol_sav: {
+      title: 'Contact Support',
+      message: 'The problem persists after the checks. Contact Logimatiq Support and send them the diagnostic report.',
+    },
     sol_disjoncteur: {
       title: 'Power / circuit breaker issue',
-      message: 'The power strip indicator is off. Check the circuit breaker in the electrical panel. If the breaker is OK, contact Support.',
+      message: 'The machine or the power strip is not powered. Check the connections and the circuit breaker in the electrical panel of the room. If the breaker is OK, contact Support.',
     },
     sol_changer_pc: {
       title: 'Replace the integrated PC',
-      message: 'The PC will not start despite checks. Replace the PC and contact Support for follow-up.',
+      message: 'The PC no longer starts despite the checks. Replace the PC, check that everything works with DEBES, and contact Support.',
+      media: 'The PC is in the bottom compartment of the machine (circled in red)',
     },
     sol_changer_ecran: {
       title: 'Replace the screen',
-      message: 'The screen remains faulty after checks. Replace it and contact Support.',
+      message: 'The screen remains faulty after the checks. Replace it (remove the protective plate, disconnect, unscrew) and contact Support.',
     },
     sol_changer_pc_ecran: {
       title: 'Replace PC or screen',
       message: 'If possible, test with another screen to isolate the faulty component. Contact Support for replacement.',
     },
     sol_changer_alim: {
-      title: 'Replace the power supply',
-      message: 'The power supply is faulty. Replace it and contact Support.',
+      title: "Replace the screen's power supply unit",
+      message: 'The screen turns back on with a new power supply: the old unit was faulty. Report the replaced part to Support.',
     },
     sol_changer_modem: {
       title: 'Replace the GSM modem',
-      message: 'The modem will not connect despite checks. Replace it and contact Support.',
+      message: 'The modem no longer connects despite the checks. Replace it (keep the SIM, disconnect the power supply and the antennas) and contact Support.',
     },
     sol_antenne_ext: {
       title: 'Install an external antenna',
       message: 'The GSM signal is insufficient in this location. An external remote antenna is needed. Contact Support for installation.',
     },
+    sol_sav_serveur: {
+      title: 'Logimatiq server issue',
+      message: 'The ClientSynch DB EPI test fails: the issue is with the Logimatiq server or the SQL database. Contact Logimatiq Support.',
+    },
     sol_changer_lecteur: {
       title: 'Replace the badge reader',
-      message: 'The badge reader is faulty. Replace it and contact Support for reconfiguration.',
+      message: 'The badge reader is faulty. Replace it (move the connector over to the new reader), check that it beeps when a badge is presented, and contact Support.',
+      media: 'The badge reader seen from inside the door (circled in orange)',
     },
     sol_badge_incompatible: {
       title: 'Incompatible badge',
-      message: 'This badge type is not compatible with the EPIMAT reader. Order 125 kHz HID Kalistrut badges from Support.',
+      message: 'This type of badge is not read by the machine reader. Contact Support.',
     },
     sol_badge_defaillant: {
       title: 'Defective badge — to replace',
       message: 'This specific badge is defective (other badges work). Replace the badge through Support.',
-    },
-    sol_redemarrer_pc: {
-      title: 'Restart the PC',
-      message: 'The EPIMAT software is not responding. Restart the PC (Start → Restart). If the problem persists after restart, contact Support.',
-    },
-    sol_sav_serveur: {
-      title: 'Logimatiq server issue',
-      message: 'The ClientSynch DB EPI test fails: the issue is with the Logimatiq server or SQL database. Contact Logimatiq Support for server intervention.',
     },
     tbd: {
       title: 'Tree to complete',

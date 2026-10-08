@@ -54,6 +54,14 @@ export function tStep(nodeId, index, frStep) {
   return arr?.[index] ?? frStep;
 }
 
+/** Traduit la légende d'un média (index = rang dans la liste des médias du nœud) */
+export function tMedia(nodeId, index, frLabel) {
+  if (_lang === 'fr') return frLabel;
+  const v = EN.nodes[nodeId]?.media;
+  const s = Array.isArray(v) ? v[index] : index === 0 ? v : undefined;
+  return s ?? frLabel;
+}
+
 /** Met à jour tous les éléments [data-i18n] dans le DOM */
 export function applyI18n() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
