@@ -9,6 +9,6 @@ git commit -m "Mise a jour utilisateurs"
 git push origin master
 echo.
 echo  Termine ! L'app est mise a jour dans 1-2 minutes.
-echo  https://logimatiq-sav.pages.dev/
+echo  https://logimatiq-sav.vercel.app/
 echo.
 pause
