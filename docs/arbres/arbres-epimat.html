@@ -66,25 +66,27 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
   </div>
 
   <section class="panel" id="p-a">
-    <div class="bar"><h2>Machine hors tension / plus de courant <span class="sub mono">· 7 questions · 4 actions · 4 conclusions · 4 photos</span></h2>
+    <div class="bar"><h2>Machine hors tension / plus de courant <span class="sub mono">· 7 questions · 5 actions · 4 conclusions · 4 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
-  a_debut("La prise ou la multiprise qui alimente la machine a-t-elle du courant ?"):::ques
+  a_debut("La prise du local qui alimente la machine a-t-elle du courant ?"):::ques
   a_debut -->|"Oui"| a_cable_machine
   a_debut -->|"Non"| a_disjoncteur_local
   a_cable_machine["Vérifier le câble secteur de la machine"]:::act
-  a_cable_machine --> a_machine_ok
+  a_cable_machine --> a_interrupteur
   a_disjoncteur_local["Vérifier le disjoncteur du tableau électrique du local"]:::act
   a_disjoncteur_local --> a_disjoncteur_result
-  a_machine_ok("La machine est-elle sous tension maintenant ?"):::ques
-  sol_resolved__0(["Problème résolu"]):::resolved
-  a_machine_ok -->|"Oui"| sol_resolved__0
-  a_machine_ok -->|"Non"| a_coupe_circuits
+  a_interrupteur["Vérifier l'interrupteur général de la machine"]:::act
+  a_interrupteur --> a_machine_ok
   a_disjoncteur_result("Le courant est-il revenu à la prise ?"):::ques
   a_disjoncteur_result -->|"Oui"| a_cable_machine
-  sol_disjoncteur__1(["Problème secteur / disjoncteur"]):::sav
-  a_disjoncteur_result -->|"Non"| sol_disjoncteur__1
+  sol_disjoncteur__0(["Problème secteur / disjoncteur"]):::sav
+  a_disjoncteur_result -->|"Non"| sol_disjoncteur__0
+  a_machine_ok("La machine est-elle sous tension maintenant ?"):::ques
+  sol_resolved__1(["Problème résolu"]):::resolved
+  a_machine_ok -->|"Oui"| sol_resolved__1
+  a_machine_ok -->|"Non"| a_coupe_circuits
   a_coupe_circuits("Sur l'alimentation générale, un coupe-circuit est-il déclenché ?"):::ques
   a_coupe_circuits -->|"Oui, un bouton est sorti"| a_rearmer
   a_coupe_circuits -->|"Non"| a_fusible
@@ -116,7 +118,7 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-s">
-    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 21 questions · 13 actions · 7 conclusions · 2 photos</span></h2>
+    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 23 questions · 14 actions · 5 conclusions · 3 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -169,10 +171,10 @@ flowchart TD
   s_rouge_pc_demarre("Le PC a-t-il démarré ? (LED allumée)"):::ques
   s_rouge_pc_demarre -->|"Oui, LED allumée"| s_rouge_rebrancher_vga
   s_rouge_pc_demarre -->|"Non, toujours éteint"| s_rouge_multiprise
-  s_eteint_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::ques
+  s_eteint_multiprise("La LED rouge de la multiprise intérieure est-elle allumée ?"):::ques
   s_eteint_multiprise -->|"Oui, LED rouge allumée"| s_eteint_changer_alim
-  sol_disjoncteur__3(["Problème secteur / disjoncteur"]):::sav
-  s_eteint_multiprise -->|"Non, multiprise éteinte"| sol_disjoncteur__3
+  a_debut__3[["→ Machine hors tension / plus de courant"]]:::link
+  s_eteint_multiprise -->|"Non, multiprise éteinte"| a_debut__3
   s_eteint_brancher_cable["Brancher le câble d'alimentation de l'écran"]:::act
   s_eteint_brancher_cable --> s_eteint_cable_result
   s_vert_usb_result("L'écran tactile répond-il maintenant ?"):::ques
@@ -182,7 +184,7 @@ flowchart TD
   s_vert_usb_result -->|"Non, toujours inactif"| sol_changer_ecran__5
   s_vert_vga["Vérifier le câble VGA"]:::act
   s_vert_vga --> s_vert_vga_result
-  s_vert_resolution["Corriger la résolution (1280 × 720)"]:::act
+  s_vert_resolution["Corriger la résolution de l'écran"]:::act
   s_vert_resolution --> s_vert_resolution_result
   s_vert_distepi_result("DistEPI s'est-il lancé correctement ?"):::ques
   sol_resolved__6(["Problème résolu"]):::resolved
@@ -200,7 +202,7 @@ flowchart TD
   s_vert_erreur_result -->|"Non, il revient"| sol_changer_pc__10
   s_rouge_changer_vga["Remplacer le câble VGA"]:::act
   s_rouge_changer_vga --> s_rouge_apres_changer_vga
-  s_rouge_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::ques
+  s_rouge_multiprise("La LED rouge de la multiprise intérieure est-elle allumée ?"):::ques
   sol_changer_pc__11(["Changer le PC intégré"]):::replace
   s_rouge_multiprise -->|"Oui, LED rouge allumée"| sol_changer_pc__11
   a_debut__12[["→ Machine hors tension / plus de courant"]]:::link
@@ -225,18 +227,29 @@ flowchart TD
   s_rouge_apres_changer_vga("L'image est-elle maintenant visible ?"):::ques
   sol_resolved__17(["Problème résolu"]):::resolved
   s_rouge_apres_changer_vga -->|"Oui, image OK"| sol_resolved__17
-  sol_changer_pc_ecran__18(["Changer PC ou écran"]):::replace
-  s_rouge_apres_changer_vga -->|"Non, écran rouge"| sol_changer_pc_ecran__18
+  s_rouge_apres_changer_vga -->|"Non, écran rouge"| s_rouge_pc_verif
   s_eteint_alim_result("L'écran s'est-il allumé ?"):::ques
-  sol_changer_alim__19(["Changer le bloc d'alimentation de l'écran"]):::replace
-  s_eteint_alim_result -->|"Oui, écran allumé"| sol_changer_alim__19
-  sol_changer_ecran__20(["Changer l'écran"]):::replace
-  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__20
+  sol_changer_alim__18(["Changer le bloc d'alimentation de l'écran"]):::replace
+  s_eteint_alim_result -->|"Oui, écran allumé"| sol_changer_alim__18
+  sol_changer_ecran__19(["Changer l'écran"]):::replace
+  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__19
   s_redemarrer_distrib_result("Après redémarrage, DistEPI s'affiche-t-il correctement ?"):::ques
-  sol_resolved__21(["Problème résolu"]):::resolved
-  s_redemarrer_distrib_result -->|"Oui"| sol_resolved__21
-  sol_sav__22(["Contacter le SAV"]):::sav
-  s_redemarrer_distrib_result -->|"Non"| sol_sav__22
+  sol_resolved__20(["Problème résolu"]):::resolved
+  s_redemarrer_distrib_result -->|"Oui"| sol_resolved__20
+  sol_sav__21(["Contacter le SAV"]):::sav
+  s_redemarrer_distrib_result -->|"Non"| sol_sav__21
+  s_rouge_pc_verif("Le PC est-il bien allumé et en marche ?"):::ques
+  sol_changer_ecran__22(["Changer l'écran"]):::replace
+  s_rouge_pc_verif -->|"Oui, le PC est en marche"| sol_changer_ecran__22
+  s_rouge_pc_verif -->|"Non, ou je ne sais pas"| s_rouge_pc_relancer
+  s_rouge_pc_relancer["Relancer le PC"]:::act
+  s_rouge_pc_relancer --> s_rouge_pc_relancer_result
+  s_rouge_pc_relancer_result("Que se passe-t-il ?"):::ques
+  sol_resolved__23(["Problème résolu"]):::resolved
+  s_rouge_pc_relancer_result -->|"L'image est revenue"| sol_resolved__23
+  sol_changer_ecran__24(["Changer l'écran"]):::replace
+  s_rouge_pc_relancer_result -->|"Le PC a démarré, mais toujours pas d'image"| sol_changer_ecran__24
+  s_rouge_pc_relancer_result -->|"Le PC reste éteint"| s_rouge_multiprise
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
@@ -248,7 +261,7 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-i">
-    <div class="bar"><h2>Pas de connexion internet / modem hors ligne <span class="sub mono">· 15 questions · 10 actions · 5 conclusions · 6 photos</span></h2>
+    <div class="bar"><h2>Pas de connexion internet / modem hors ligne <span class="sub mono">· 15 questions · 11 actions · 5 conclusions · 7 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -271,6 +284,7 @@ flowchart TD
   i_connexion_distante("Peut-on se connecter à distance au PC de la machine ?"):::ques
   i_connexion_distante -->|"Oui, connexion distance OK"| i_test_url
   i_connexion_distante -->|"Non, pas de connexion distance"| i_rj45_check
+  i_connexion_distante -->|"Pas de logiciel de connexion à distance"| i_rj45_check
   i_rj45_check["Vérifier le câble RJ45 (PC ↔ modem)"]:::act
   i_rj45_check --> i_rj45_result
   i_signal_result("La connexion est-elle stable maintenant ?"):::ques
@@ -309,12 +323,12 @@ flowchart TD
   sol_sav_serveur__7(["Problème serveur Logimatiq"]):::sav
   i_clientsynch_result -->|"Non, test échoue"| sol_sav_serveur__7
   i_sim_led("La LED SIM du modem est-elle allumée ?"):::ques
-  i_sim_led -->|"Oui, LED SIM allumée"| i_setup_grizzly
+  i_sim_led -->|"Oui, LED SIM allumée"| i_lire_apn
   i_sim_led -->|"Non, LED SIM éteinte"| i_reinsertion_sim
   i_reboot_pc_distepi["Redémarrer le PC"]:::act
   i_reboot_pc_distepi --> i_reboot_distepi_result
-  i_setup_grizzly["Relancer la configuration du routeur (programme Logimatiq)"]:::act
-  i_setup_grizzly --> i_setup_result
+  i_lire_apn["Relever l'APN actuel du modem"]:::act
+  i_lire_apn --> i_setup_grizzly
   i_reinsertion_sim["Réinsérer la carte SIM"]:::act
   i_reinsertion_sim --> i_sim_result
   i_reboot_distepi_result("DistEPI fonctionne-t-il correctement après redémarrage ?"):::ques
@@ -322,15 +336,17 @@ flowchart TD
   i_reboot_distepi_result -->|"Oui, synchro OK"| sol_resolved__8
   sol_sav_serveur__9(["Problème serveur Logimatiq"]):::sav
   i_reboot_distepi_result -->|"Non, erreur persiste"| sol_sav_serveur__9
-  i_setup_result("La LED « Online » est-elle maintenant allumée ?"):::ques
-  sol_resolved__10(["Problème résolu"]):::resolved
-  i_setup_result -->|"Oui, LED bleue allumée"| sol_resolved__10
-  sol_changer_modem__11(["Changer le modem GSM"]):::replace
-  i_setup_result -->|"Non, toujours éteinte"| sol_changer_modem__11
+  i_setup_grizzly["Relancer la configuration du routeur (programme Logimatiq)"]:::act
+  i_setup_grizzly --> i_setup_result
   i_sim_result("La LED SIM est-elle maintenant allumée ?"):::ques
-  i_sim_result -->|"Oui, LED SIM allumée"| i_setup_grizzly
+  i_sim_result -->|"Oui, LED SIM allumée"| i_lire_apn
+  sol_changer_modem__10(["Changer le modem GSM"]):::replace
+  i_sim_result -->|"Non, toujours éteinte"| sol_changer_modem__10
+  i_setup_result("La LED « Online » est-elle maintenant allumée ?"):::ques
+  sol_resolved__11(["Problème résolu"]):::resolved
+  i_setup_result -->|"Oui, LED bleue allumée"| sol_resolved__11
   sol_changer_modem__12(["Changer le modem GSM"]):::replace
-  i_sim_result -->|"Non, toujours éteinte"| sol_changer_modem__12
+  i_setup_result -->|"Non, toujours éteinte"| sol_changer_modem__12
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
@@ -342,7 +358,7 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-b">
-    <div class="bar"><h2>Badge non lu / non reconnu / mauvais numéro <span class="sub mono">· 21 questions · 16 actions · 6 conclusions · 4 photos</span></h2>
+    <div class="bar"><h2>Badge non lu / non reconnu / mauvais numéro <span class="sub mono">· 21 questions · 16 actions · 6 conclusions · 5 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -407,14 +423,14 @@ flowchart TD
   b_notepad_langue --> b_notepad_test
   b_salarie_extranet["Vérifier le salarié dans l'extranet EPIMAT"]:::act
   b_salarie_extranet --> b_salarie_result
-  b_mauvais_notepad["Vérifier le numéro lu — test Notepad (clavier anglais)"]:::act
+  b_mauvais_notepad["Vérifier le numéro lu par le lecteur"]:::act
   b_mauvais_notepad --> b_mauvais_result
   b_alea_usb["Vérifier le câble USB du lecteur"]:::act
   b_alea_usb --> b_alea_usb_result
   b_led_apres_pc("La LED du lecteur est-elle maintenant allumée ?"):::ques
   b_led_apres_pc -->|"Oui"| b_symptome
   b_led_apres_pc -->|"Non"| b_usb_rebranch
-  b_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::ques
+  b_multiprise("La LED rouge de la multiprise intérieure est-elle allumée ?"):::ques
   sol_changer_pc__6(["Changer le PC intégré"]):::replace
   b_multiprise -->|"Oui, LED rouge allumée"| sol_changer_pc__6
   a_debut__7[["→ Machine hors tension / plus de courant"]]:::link
