@@ -184,15 +184,14 @@ export const EN = {
     /* === ARBRE ÉCRAN === */
     s_debut: {
       title: 'Is the machine plugged into the power outlet?',
-      help: 'Check that the main power cable is properly connected to the power strip.',
+      help: "Check that the machine's power cable is properly plugged into the room's wall outlet.",
       answers: ['Yes, plugged in', 'No, unplugged'],
     },
     s_brancher: {
       title: 'Connect the machine to the power outlet',
       steps: [
-        'Check that the power strip is on (red indicator lit)',
         'Firmly connect the power cable on the machine side (supplied cable, exits at the bottom)',
-        'Connect the other end to the power strip',
+        "Plug the other end into the room's wall outlet",
         'Wait 10 seconds',
       ],
     },
@@ -224,9 +223,10 @@ export const EN = {
       answers: ['Yes, LED on', 'No, still off'],
     },
     s_rouge_multiprise: {
-      title: 'Is the red LED on the power strip lit?',
-      help: 'The PC is plugged into the power strip: if the strip is off, the fault is in the power supply, not in the PC.',
+      title: 'Is the red LED on the internal power strip lit?',
+      help: 'White power strip on the electrical panel plate, inside the machine (open the front, slide the plate forward). The PC is plugged into it: if it is off, the fault is in the power supply, not in the PC.',
       answers: ['Yes, red LED lit', 'No, power strip off'],
+      media: 'Electrical panel plate: the internal power strip (white) is in the middle, below the EPI RT board',
     },
     s_rouge_rebrancher_vga: {
       title: 'Disconnect and reconnect the VGA cable',
@@ -257,6 +257,26 @@ export const EN = {
       title: 'Is the image now visible?',
       answers: ['Yes, image OK', 'No, screen red'],
     },
+    s_rouge_pc_verif: {
+      title: 'Is the PC really on and running?',
+      help: 'PC LED lit and fan running. Often the PC has turned off or no longer works.',
+      answers: ['Yes, the PC is running', "No, or I don't know"],
+      media: 'The PC is in the bottom compartment of the machine (circled in red)',
+    },
+    s_rouge_pc_relancer: {
+      title: 'Restart the PC',
+      steps: [
+        'Go to the back of the PC case',
+        'Switch the ON/OFF switch to OFF, wait 5 seconds, then switch it back to ON',
+        'Return to the front and press the PC Power button',
+        'Wait 15 seconds',
+      ],
+      media: 'The PC is in the bottom compartment of the machine (circled in red)',
+    },
+    s_rouge_pc_relancer_result: {
+      title: 'What happens?',
+      answers: ['The image is back', 'The PC started, but still no image', 'The PC stays off'],
+    },
     s_eteint_machine: {
       title: 'Is the rest of the machine powered on?',
       help: 'PC LED, badge reader indicator, modem indicators.',
@@ -281,9 +301,10 @@ export const EN = {
       answers: ['Yes', 'No'],
     },
     s_eteint_multiprise: {
-      title: 'Is the red LED on the power strip lit?',
-      help: 'The power strip must show a red indicator to confirm it is powered.',
+      title: 'Is the red LED on the internal power strip lit?',
+      help: 'White power strip on the electrical panel plate, inside the machine (open the front, slide the plate forward). Its red indicator lit = it is powered.',
       answers: ['Yes, red LED lit', 'No, power strip off'],
+      media: 'Electrical panel plate: the internal power strip (white) is in the middle, below the EPI RT board',
     },
     s_eteint_changer_alim: {
       title: 'Replace the screen power supply',
@@ -355,11 +376,11 @@ export const EN = {
       answers: ['Yes, DistEPI launched', "No, won't open"],
     },
     s_vert_resolution: {
-      title: 'Fix the resolution (1280 × 720)',
+      title: 'Correct the screen resolution',
       steps: [
         'Right-click on the Windows desktop',
         'Click "Display settings"',
-        'Under Resolution, select 1280 × 720',
+        'Under Resolution, choose 1280 × 720 for a 17-inch screen, 800 × 600 for an 8-inch screen',
         'Click "Keep changes"',
       ],
     },
@@ -441,7 +462,7 @@ export const EN = {
     i_reboot_modem: {
       title: 'Restart the modem',
       steps: [
-        "Unplug the modem's power supply (jack), or switch it OFF if it has a switch",
+        "Unplug the modem's power supply (jack): it has no switch",
         'Wait 30 seconds',
         'Plug the power supply back in',
         'Wait 2 to 3 minutes for the modem to reconnect to the mobile network',
@@ -486,13 +507,23 @@ export const EN = {
       title: 'Is the SIM LED now on?',
       answers: ['Yes, SIM LED on', 'No, still off'],
     },
+    i_lire_apn: {
+      title: "Note the modem's current APN",
+      help: 'The modem answers even without internet: you just need to be at the machine.',
+      steps: [
+        "On the machine's PC, open a browser and go to 192.168.1.1",
+        "Log in with the modem's credentials (Logimatiq SIM procedure)",
+        'Setup menu: write down the APN shown',
+      ],
+      media: 'Modem interface (192.168.1.1): Setup menu, APN field',
+    },
     i_setup_grizzly: {
       title: 'Run the router configuration again (Logimatiq program)',
       steps: [
         'Run setup_config_routeur_four_faith_1.0.0.17.exe (C:\\EPI folder)',
         'User Account Control: "Oui" (Yes), then "Suivant" (Next), "Suivant", "Installer" (Install)',
         '"La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ?" (internet provided by a Logimatiq router?): "Oui" (Yes)',
-        'Choose the SIM card APN from the list (wbdata, matooma.m2m, orange…), then "Enregistrer les paramètres et Fermer" (Save settings and Close)',
+        'Choose the APN from the list (wbdata, matooma.m2m, orange…): the same one you noted if the SIM card has not changed; with a new SIM, ask Support for its APN; then "Enregistrer les paramètres et Fermer" (Save settings and Close)',
         '"Configuration terminée avec succès" (configuration completed): OK, then "Non, je préfère redémarrer plus tard" (restart later) and "Terminer" (Finish)',
         'Wait 2 to 3 minutes and observe the Online LED',
       ],
@@ -513,8 +544,12 @@ export const EN = {
     },
     i_connexion_distante: {
       title: "Can we connect remotely to the machine's PC?",
-      help: 'If remote connection works, the RJ45 cable is not the cause.',
-      answers: ['Yes, remote connection OK', 'No, no remote connection'],
+      help: 'Only if you have your own remote access software installed on this PC (a reseller, for example). If remote access works, the RJ45 cable is not the cause.',
+      answers: [
+        'Yes, remote connection OK',
+        'No, no remote connection',
+        'No remote access software',
+      ],
     },
     i_test_url: {
       title: 'Test access to the EPIMAT server from the PC',
@@ -610,9 +645,10 @@ export const EN = {
       answers: ['Yes, LED on', 'No, still off'],
     },
     b_multiprise: {
-      title: 'Is the red LED on the power strip lit?',
-      help: 'The PC is plugged into the power strip: if the strip is off, the fault is in the power supply, not in the PC.',
+      title: 'Is the red LED on the internal power strip lit?',
+      help: 'White power strip on the electrical panel plate, inside the machine (open the front, slide the plate forward). The PC is plugged into it: if it is off, the fault is in the power supply, not in the PC.',
       answers: ['Yes, red LED lit', 'No, power strip off'],
+      media: 'Electrical panel plate: the internal power strip (white) is in the middle, below the EPI RT board',
     },
     b_led_apres_pc: {
       title: 'Is the reader LED now on?',
@@ -733,12 +769,13 @@ export const EN = {
     },
     b_init_badge: {
       title: 'Initialize the badge (first use on this machine)',
+      help: 'This screen appears when the machine cannot find the badge number: a new badge, or a number mistyped in the extranet.',
       steps: [
-        'Enter the number printed on the badge, adding leading zeros to get 7 digits',
-        'Examples: badge 529545 → 0529545; badge 14 → 0000014',
+        'The employee types their employee number, the one on their record in the extranet',
+        'Some customers use the number printed on the badge as the employee number (for example as 7 digits, leading zeros: 529545 → 0529545)',
         'Check the name displayed, then confirm with OK',
       ],
-      media: '"INITIALISATION BADGE" screen: enter the badge number as 7 digits',
+      media: '"INITIALISATION BADGE" screen: the employee types their employee number',
     },
     b_init_result: {
       title: 'Is the correct name displayed?',
@@ -749,7 +786,7 @@ export const EN = {
       steps: [
         'Log in to https://epimat.logimatiq.com/client',
         '"Salariés" (Employees) → search for the employee',
-        'Check the badge number (7 digits), the profile and access to this machine',
+        'Check the badge number (7 digits; watch out for typos), the profile and access to this machine',
         'Correct and save',
         'On the machine, run a synchronization: keyboard plugged into the PC, Shift + L (maintenance menu), then the "Synchroniser" (Synchronize) button',
       ],
@@ -772,11 +809,11 @@ export const EN = {
       answers: ['Yes', 'No'],
     },
     b_mauvais_notepad: {
-      title: 'Check the read number — Notepad test (English keyboard)',
+      title: 'Check the number read by the reader',
       steps: [
-        'Switch Windows keyboard to English (taskbar → ENG)',
-        'Open Notepad and swipe the badge in front of the reader',
-        'Compare the number displayed with the one printed on the badge',
+        'Present the badge to the reader',
+        'The number read is displayed at the top of the DistEPI screen',
+        'Compare it with the number printed on the badge',
       ],
     },
     b_mauvais_result: {
@@ -827,8 +864,8 @@ export const EN = {
 
     /* === ARBRE ALIMENTATION === */
     a_debut: {
-      title: 'Does the outlet or power strip supplying the machine have power?',
-      help: 'Check that the power strip is switched on (red indicator), then test the outlet with another device.',
+      title: "Does the room's wall outlet supplying the machine have power?",
+      help: 'Test the outlet with another device.',
       answers: ['Yes', 'No'],
     },
     a_disjoncteur_local: {
@@ -848,6 +885,16 @@ export const EN = {
         'The supplied cable comes out at the bottom of the machine',
         'Check that it is fully plugged in on the machine side and on the outlet side',
       ],
+    },
+    a_interrupteur: {
+      title: "Check the machine's main switch",
+      help: 'It has no indicator light: only its position matters.',
+      steps: [
+        'Open the front and slide the electrical panel plate forward',
+        'On the main power supply, find the red O / I switch, next to the fuse holder',
+        'If it is on O, set it to I',
+      ],
+      media: 'The red O / I main switch (no indicator light), next to the fuse holder',
     },
     a_machine_ok: {
       title: 'Is the machine powered on now?',
@@ -905,7 +952,7 @@ export const EN = {
     },
     sol_disjoncteur: {
       title: 'Power / circuit breaker issue',
-      message: 'The machine or the power strip is not powered. Check the connections and the circuit breaker in the electrical panel of the room. If the breaker is OK, contact Support.',
+      message: "The room's wall outlet is not powered. Check the connections and the circuit breaker in the electrical panel of the room. If the breaker is OK, contact Support.",
     },
     sol_changer_pc: {
       title: 'Replace the integrated PC',
@@ -915,10 +962,6 @@ export const EN = {
     sol_changer_ecran: {
       title: 'Replace the screen',
       message: 'The screen remains faulty after the checks. Replace it (remove the protective plate, disconnect, unscrew) and contact Support.',
-    },
-    sol_changer_pc_ecran: {
-      title: 'Replace PC or screen',
-      message: 'If possible, test with another screen to isolate the faulty component. Contact Support for replacement.',
     },
     sol_changer_alim: {
       title: "Replace the screen's power supply unit",
@@ -935,7 +978,7 @@ export const EN = {
     },
     sol_changer_modem: {
       title: 'Replace the GSM modem',
-      message: 'The modem no longer connects despite the checks. Replace it (keep the SIM, disconnect the power supply and the antennas) and contact Support.',
+      message: 'The modem no longer connects despite the checks. Before unplugging it, note its APN (PC browser → 192.168.1.1 → Setup): the new modem must have the same APN if the same SIM card is kept. Replace it (keep the SIM, disconnect the power supply and the antennas) and contact Support.',
     },
     sol_antenne_ext: {
       title: 'Install an external antenna',

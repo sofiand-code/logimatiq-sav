@@ -57,24 +57,23 @@ export const DATA = {
     s_debut: {
       type: 'question',
       title: 'La machine est-elle branchée au secteur ?',
-      help: "Vérifier que le câble d'alimentation principal est bien connecté à la multiprise.",
+      help: "Vérifier que le câble d'alimentation de la machine est bien branché à la prise du local.",
       answers: [
         { label: 'Oui, branchée', next: 's_led_ecran' },
         { label: 'Non, débranchée', next: 's_brancher' },
       ],
-      src: ['T'],
+      src: ['T', 'REP'],
     },
     s_brancher: {
       type: 'action',
       title: 'Brancher la machine au secteur',
       steps: [
-        'Vérifier que la multiprise est allumée (voyant rouge allumé)',
         "Brancher fermement le câble d'alimentation côté machine (câble fourni, sortie en partie basse)",
-        "Brancher l'autre extrémité dans la multiprise",
+        "Brancher l'autre extrémité dans la prise du local",
         'Patienter 10 secondes',
       ],
       next: 's_led_ecran',
-      src: ['T', 'MU18 p.4'],
+      src: ['T', 'MU18 p.4', 'REP'],
     },
     s_led_ecran: {
       type: 'question',
@@ -126,13 +125,14 @@ export const DATA = {
     },
     s_rouge_multiprise: {
       type: 'question',
-      title: 'La LED rouge de la multiprise est-elle allumée ?',
-      help: "Le PC est branché sur la multiprise : si elle est éteinte, la panne vient de l'alimentation, pas du PC.",
+      title: 'La LED rouge de la multiprise intérieure est-elle allumée ?',
+      help: "Multiprise blanche sur la platine du tableau électrique, dans la machine (ouvrir la façade, coulisser la platine vers l'avant). Le PC y est branché : si elle est éteinte, la panne vient de l'alimentation, pas du PC.",
+      media: { type: 'photo', label: 'Platine du tableau électrique : la multiprise intérieure (blanche) est au milieu, sous la carte EPI RT', file: 'arbres/platine_tableau_electrique.jpg' },
       answers: [
         { label: 'Oui, LED rouge allumée', next: 'sol_changer_pc' },
         { label: 'Non, multiprise éteinte', next: 'a_debut' },
       ],
-      src: ['REP'],
+      src: ['REP', 'MF12 p.10-11'],
     },
     s_rouge_rebrancher_vga: {
       type: 'action',
@@ -175,9 +175,43 @@ export const DATA = {
       title: "L'image est-elle maintenant visible ?",
       answers: [
         { label: 'Oui, image OK', next: 'sol_resolved' },
-        { label: 'Non, écran rouge', next: 'sol_changer_pc_ecran' },
+        { label: 'Non, écran rouge', next: 's_rouge_pc_verif' },
       ],
-      src: ['T'],
+      src: ['T', 'REP'],
+    },
+    s_rouge_pc_verif: {
+      type: 'question',
+      title: 'Le PC est-il bien allumé et en marche ?',
+      help: "LED du PC allumée et ventilateur qui tourne. Souvent, le PC s'est éteint ou ne marche plus.",
+      media: { type: 'photo', label: 'Le PC est dans le compartiment du bas de la machine (entouré en rouge)', file: 'arbres/pc_emplacement.jpg' },
+      answers: [
+        { label: 'Oui, le PC est en marche', next: 'sol_changer_ecran' },
+        { label: 'Non, ou je ne sais pas', next: 's_rouge_pc_relancer' },
+      ],
+      src: ['REP'],
+    },
+    s_rouge_pc_relancer: {
+      type: 'action',
+      title: 'Relancer le PC',
+      steps: [
+        "Aller à l'arrière du boîtier PC",
+        'Passer le switch ON/OFF sur OFF, attendre 5 secondes, puis le remettre sur ON',
+        'Revenir en façade et appuyer sur le bouton Power du PC',
+        'Attendre 15 secondes',
+      ],
+      media: { type: 'photo', label: 'Le PC est dans le compartiment du bas de la machine (entouré en rouge)', file: 'arbres/pc_emplacement.jpg' },
+      next: 's_rouge_pc_relancer_result',
+      src: ['T', 'REP'],
+    },
+    s_rouge_pc_relancer_result: {
+      type: 'question',
+      title: 'Que se passe-t-il ?',
+      answers: [
+        { label: "L'image est revenue", next: 'sol_resolved' },
+        { label: "Le PC a démarré, mais toujours pas d'image", next: 'sol_changer_ecran' },
+        { label: 'Le PC reste éteint', next: 's_rouge_multiprise' },
+      ],
+      src: ['REP', 'LOG'],
     },
 
     /* ---- Branche éteinte — LED écran éteinte : machine (→ arbre Alimentation), câble, puis alimentation de l'écran
@@ -225,13 +259,14 @@ export const DATA = {
     },
     s_eteint_multiprise: {
       type: 'question',
-      title: 'La LED rouge de la multiprise est-elle allumée ?',
-      help: "La multiprise doit afficher un voyant rouge pour indiquer qu'elle est sous tension.",
+      title: 'La LED rouge de la multiprise intérieure est-elle allumée ?',
+      help: "Multiprise blanche sur la platine du tableau électrique, dans la machine (ouvrir la façade, coulisser la platine vers l'avant). Son voyant rouge allumé = elle est sous tension.",
+      media: { type: 'photo', label: 'Platine du tableau électrique : la multiprise intérieure (blanche) est au milieu, sous la carte EPI RT', file: 'arbres/platine_tableau_electrique.jpg' },
       answers: [
         { label: 'Oui, LED rouge allumée', next: 's_eteint_changer_alim' },
-        { label: 'Non, multiprise éteinte', next: 'sol_disjoncteur' },
+        { label: 'Non, multiprise éteinte', next: 'a_debut' },
       ],
-      src: ['T'],
+      src: ['T', 'REP', 'MF12 p.10-11'],
     },
     s_eteint_changer_alim: {
       type: 'action',
@@ -342,15 +377,15 @@ export const DATA = {
     },
     s_vert_resolution: {
       type: 'action',
-      title: 'Corriger la résolution (1280 × 720)',
+      title: "Corriger la résolution de l'écran",
       steps: [
         'Faire un clic droit sur le bureau Windows',
         "Cliquer sur « Paramètres d'affichage »",
-        'Dans Résolution, sélectionner 1280 × 720',
+        'Dans Résolution, choisir 1280 × 720 pour un écran 17 pouces, 800 × 600 pour un écran 8 pouces',
         'Cliquer sur « Conserver les modifications »',
       ],
       next: 's_vert_resolution_result',
-      src: ['T'],
+      src: ['T', 'REP'],
     },
     s_vert_resolution_result: {
       type: 'question',
@@ -480,14 +515,14 @@ export const DATA = {
       type: 'action',
       title: 'Redémarrer le modem',
       steps: [
-        "Débrancher l'alimentation du modem (jack), ou le passer sur OFF s'il a un interrupteur",
+        "Débrancher l'alimentation du modem (jack) : il n'a pas d'interrupteur",
         'Attendre 30 secondes',
         "Rebrancher l'alimentation",
         'Attendre 2 à 3 minutes que le modem se reconnecte au réseau mobile',
       ],
       media: { type: 'photo', label: 'Connecteurs du modem : 2 antennes, alimentation (PWR) et câble RJ45 du PC sur ETH', file: 'arbres/modem_connecteurs.jpg' },
       next: 'i_reboot_result',
-      src: ['T', 'IM p.1', 'D24 p.4'],
+      src: ['T', 'IM p.1', 'D24 p.4', 'REP'],
     },
     i_reboot_result: {
       type: 'question',
@@ -525,7 +560,7 @@ export const DATA = {
       help: 'LED SIM bleue = carte SIM détectée.',
       media: { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
       answers: [
-        { label: 'Oui, LED SIM allumée', next: 'i_setup_grizzly' },
+        { label: 'Oui, LED SIM allumée', next: 'i_lire_apn' },
         { label: 'Non, LED SIM éteinte', next: 'i_reinsertion_sim' },
       ],
       src: ['T', 'SIM p.12'],
@@ -548,10 +583,23 @@ export const DATA = {
       type: 'question',
       title: 'La LED SIM est-elle maintenant allumée ?',
       answers: [
-        { label: 'Oui, LED SIM allumée', next: 'i_setup_grizzly' },
+        { label: 'Oui, LED SIM allumée', next: 'i_lire_apn' },
         { label: 'Non, toujours éteinte', next: 'sol_changer_modem' },
       ],
       src: ['T'],
+    },
+    i_lire_apn: {
+      type: 'action',
+      title: "Relever l'APN actuel du modem",
+      help: "Le modem répond même sans internet : il suffit d'être devant la machine.",
+      steps: [
+        "Sur le PC de la machine, ouvrir un navigateur et aller à l'adresse 192.168.1.1",
+        'Se connecter avec les identifiants du modem (procédure SIM Logimatiq)',
+        "Menu Setup : noter l'APN affiché",
+      ],
+      media: { type: 'photo', label: 'Interface du modem (192.168.1.1) : menu Setup, champ APN', file: 'interface_web_setup_apn_modem.png' },
+      next: 'i_setup_grizzly',
+      src: ['REP', 'SIM'],
     },
     i_setup_grizzly: {
       type: 'action',
@@ -560,7 +608,7 @@ export const DATA = {
         'Lancer setup_config_routeur_four_faith_1.0.0.17.exe (dossier C:\\EPI)',
         'Contrôle de compte : Oui, puis Suivant, Suivant, Installer',
         '« La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ? » : Oui',
-        "Choisir l'APN de la carte SIM dans la liste (wbdata, matooma.m2m, orange…), puis « Enregistrer les paramètres et Fermer »",
+        "Choisir l'APN dans la liste (wbdata, matooma.m2m, orange…) : le même que celui relevé si la carte SIM n'a pas changé ; avec une nouvelle SIM, demander son APN au SAV ; puis « Enregistrer les paramètres et Fermer »",
         '« Configuration terminée avec succès » : OK, puis « Non, je préfère redémarrer plus tard » et Terminer',
         'Attendre 2 à 3 minutes et observer la LED Online',
       ],
@@ -569,7 +617,7 @@ export const DATA = {
         { type: 'photo', label: "Choisir l'APN de la carte SIM dans la liste", file: 'arbres/routeur_apn.jpg' },
       ],
       next: 'i_setup_result',
-      src: ['T', 'SIM p.8-10'],
+      src: ['T', 'SIM p.8-10', 'REP'],
     },
     i_setup_result: {
       type: 'question',
@@ -596,12 +644,13 @@ export const DATA = {
     i_connexion_distante: {
       type: 'question',
       title: 'Peut-on se connecter à distance au PC de la machine ?',
-      help: "Si la connexion à distance fonctionne, le câble RJ45 n'est pas en cause.",
+      help: "Seulement si vous avez votre propre logiciel de connexion à distance installé sur ce PC (revendeur, par exemple). Si la connexion à distance fonctionne, le câble RJ45 n'est pas en cause.",
       answers: [
         { label: 'Oui, connexion distance OK', next: 'i_test_url' },
         { label: 'Non, pas de connexion distance', next: 'i_rj45_check' },
+        { label: 'Pas de logiciel de connexion à distance', next: 'i_rj45_check' },
       ],
-      src: ['T'],
+      src: ['T', 'REP'],
     },
     i_test_url: {
       type: 'action',
@@ -655,7 +704,7 @@ export const DATA = {
       ],
       media: { type: 'photo', label: 'ClientSynch DB EPI — procédure (photos à venir)' },
       next: 'i_clientsynch_result',
-      src: ['T'],
+      src: ['T', 'REP'],
     },
     i_clientsynch_result: {
       type: 'question',
@@ -763,13 +812,14 @@ export const DATA = {
     },
     b_multiprise: {
       type: 'question',
-      title: 'La LED rouge de la multiprise est-elle allumée ?',
-      help: "Le PC est branché sur la multiprise : si elle est éteinte, la panne vient de l'alimentation, pas du PC.",
+      title: 'La LED rouge de la multiprise intérieure est-elle allumée ?',
+      help: "Multiprise blanche sur la platine du tableau électrique, dans la machine (ouvrir la façade, coulisser la platine vers l'avant). Le PC y est branché : si elle est éteinte, la panne vient de l'alimentation, pas du PC.",
+      media: { type: 'photo', label: 'Platine du tableau électrique : la multiprise intérieure (blanche) est au milieu, sous la carte EPI RT', file: 'arbres/platine_tableau_electrique.jpg' },
       answers: [
         { label: 'Oui, LED rouge allumée', next: 'sol_changer_pc' },
         { label: 'Non, multiprise éteinte', next: 'a_debut' },
       ],
-      src: ['REP'],
+      src: ['REP', 'MF12 p.10-11'],
     },
     b_led_apres_pc: {
       type: 'question',
@@ -970,14 +1020,15 @@ export const DATA = {
     b_init_badge: {
       type: 'action',
       title: 'Initialiser le badge (première utilisation sur cette machine)',
+      help: "Cet écran apparaît quand la machine ne trouve pas le numéro du badge : badge nouveau, ou numéro mal saisi dans l'extranet.",
       steps: [
-        'Saisir le numéro inscrit sur le badge, en ajoutant des 0 devant pour avoir 7 chiffres',
-        'Exemples : badge 529545 → 0529545 ; badge 14 → 0000014',
+        "Le salarié tape son numéro de matricule, celui de sa fiche dans l'extranet",
+        'Certains clients mettent comme matricule le numéro inscrit sur le badge (par exemple sur 7 chiffres, zéros devant : 529545 → 0529545)',
         'Vérifier le nom affiché, puis valider avec OK',
       ],
-      media: { type: 'photo', label: 'Écran « INITIALISATION BADGE » : saisir le numéro du badge sur 7 chiffres', file: 'arbres/badge_initialisation.jpg' },
+      media: { type: 'photo', label: 'Écran « INITIALISATION BADGE » : le salarié tape son matricule', file: 'arbres/badge_initialisation.jpg' },
       next: 'b_init_result',
-      src: ['IB p.1'],
+      src: ['IB p.1', 'REP'],
     },
     b_init_result: {
       type: 'question',
@@ -994,7 +1045,7 @@ export const DATA = {
       steps: [
         'Se connecter à https://epimat.logimatiq.com/client',
         'Salariés → rechercher le salarié',
-        "Vérifier le numéro de badge (7 chiffres), le profil et l'accès à cette machine",
+        "Vérifier le numéro de badge (7 chiffres ; attention aux fautes de frappe), le profil et l'accès à cette machine",
         'Corriger et enregistrer',
         'Sur la machine, lancer une synchronisation : clavier branché sur le PC, Maj + L (menu maintenance), puis bouton « Synchroniser »',
       ],
@@ -1035,14 +1086,14 @@ export const DATA = {
     },
     b_mauvais_notepad: {
       type: 'action',
-      title: 'Vérifier le numéro lu — test Notepad (clavier anglais)',
+      title: 'Vérifier le numéro lu par le lecteur',
       steps: [
-        'Passer le clavier Windows en anglais (barre des tâches → ENG)',
-        'Ouvrir le Bloc-notes et passer le badge devant le lecteur',
-        'Comparer le numéro affiché avec celui imprimé sur le badge',
+        'Passer le badge devant le lecteur',
+        "Le numéro lu s'affiche en haut de l'écran de DistEPI",
+        'Le comparer avec le numéro imprimé sur le badge',
       ],
       next: 'b_mauvais_result',
-      src: ['T', 'MU18 p.12'],
+      src: ['MU18 p.12', 'REP'],
     },
     b_mauvais_result: {
       type: 'question',
@@ -1125,8 +1176,8 @@ export const DATA = {
        ==================================================================== */
     a_debut: {
       type: 'question',
-      title: 'La prise ou la multiprise qui alimente la machine a-t-elle du courant ?',
-      help: 'Vérifier que la multiprise est allumée (voyant rouge), puis tester la prise avec un autre appareil.',
+      title: 'La prise du local qui alimente la machine a-t-elle du courant ?',
+      help: 'Tester la prise avec un autre appareil.',
       answers: [
         { label: 'Oui', next: 'a_cable_machine' },
         { label: 'Non', next: 'a_disjoncteur_local' },
@@ -1159,8 +1210,21 @@ export const DATA = {
         'Le câble fourni sort par la partie inférieure de la machine',
         "Vérifier qu'il est bien enfoncé côté machine et côté prise",
       ],
-      next: 'a_machine_ok',
+      next: 'a_interrupteur',
       src: ['MU18 p.4', 'D24 p.1'],
+    },
+    a_interrupteur: {
+      type: 'action',
+      title: "Vérifier l'interrupteur général de la machine",
+      help: "Il n'a pas de voyant : seule sa position compte.",
+      steps: [
+        "Ouvrir la façade et coulisser la platine du tableau électrique vers l'avant",
+        "Sur l'alimentation générale, repérer l'interrupteur rouge O / I, à côté du porte-fusible",
+        "S'il est sur O, le mettre sur I",
+      ],
+      media: { type: 'photo', label: "L'interrupteur général rouge O / I (sans voyant), à côté du porte-fusible", file: 'arbres/fusible_cache_noir.jpg' },
+      next: 'a_machine_ok',
+      src: ['REP', 'FI'],
     },
     a_machine_ok: {
       type: 'question',
@@ -1259,7 +1323,7 @@ export const DATA = {
     sol_disjoncteur: {
       type: 'solution', outcome: 'sav',
       title: 'Problème secteur / disjoncteur',
-      message: "La machine ou la multiprise n'est pas alimentée. Vérifier les branchements et le disjoncteur du tableau électrique du local. Si le disjoncteur est OK, contacter le SAV.",
+      message: "La prise du local n'est pas alimentée. Vérifier les branchements et le disjoncteur du tableau électrique du local. Si le disjoncteur est OK, contacter le SAV.",
       sav: true,
       src: ['T', 'D24 p.1'],
     },
@@ -1277,13 +1341,6 @@ export const DATA = {
       message: "L'écran reste défaillant après vérifications. Le remplacer (retirer la plaque protectrice, débrancher, dévisser) et contacter le SAV.",
       sav: true,
       src: ['T', 'D24 p.3'],
-    },
-    sol_changer_pc_ecran: {
-      type: 'solution', outcome: 'replace',
-      title: 'Changer PC ou écran',
-      message: 'Si possible, tester avec un autre écran pour isoler le composant défaillant. Contacter le SAV pour remplacement.',
-      sav: true,
-      src: ['T'],
     },
     sol_changer_alim: {
       type: 'solution', outcome: 'replace',
@@ -1310,9 +1367,9 @@ export const DATA = {
     sol_changer_modem: {
       type: 'solution', outcome: 'replace',
       title: 'Changer le modem GSM',
-      message: 'Le modem ne se connecte plus malgré les vérifications. Le remplacer (récupérer la SIM, débrancher alimentation et antennes) et contacter le SAV.',
+      message: 'Le modem ne se connecte plus malgré les vérifications. Avant de le débrancher, relever son APN (navigateur du PC → 192.168.1.1 → Setup) : le nouveau modem doit avoir le même APN si on garde la même carte SIM. Le remplacer (récupérer la SIM, débrancher alimentation et antennes) et contacter le SAV.',
       sav: true,
-      src: ['T', 'D24 p.4'],
+      src: ['T', 'D24 p.4', 'REP'],
     },
     sol_antenne_ext: {
       type: 'solution', outcome: 'sav',
