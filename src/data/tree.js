@@ -1,14 +1,16 @@
 /* ============================================================================
    DATA — Logimatiq SAV
-   3 arbres EPIMAT : Écran, Internet / modem, Badge
-   Préfixes de nœuds : s_ (screen) · i_ (internet) · b_ (badge)
+   4 arbres EPIMAT : Écran, Internet / modem, Badge, Alimentation
+   Préfixes de nœuds : s_ (écran) · i_ (internet / modem) · b_ (badge) · a_ (alimentation)
    Types : question (answers → next) · action (steps → next) · solution (outcome)
 
-   Refonte d'octobre 2026 (lots 1 et 2). Chaque nœud porte un champ `src`,
+   Refonte d'octobre 2026 (lots 1, 2, 3). Chaque nœud porte un champ `src`,
    non affiché dans l'app, qui cite ses sources :
      T     arbres validés sur le terrain (mai 2026)
+     R     repères de l'équipe Logimatiq
      D24   doc maintenance 2024 (tableau des pannes p.1, fiches de remplacement)
      E17   procédure « Remplacement écran 8 par 17 pouces »
+     MF12  manuel de maintenance FR (2012)
      ME15  manuel de maintenance EN (2015)
      MU18  manuel d'installation et d'utilisation (2018)
      DS    paramètres de DistEPI
@@ -16,6 +18,7 @@
      SIM   procédure SIM / APN (2026)
      IM    installation du modem
      IB    initialisation des badges
+     FI    fiches d'intervention
      REP   réponses de l'équipe Logimatiq (octobre 2026)
      LOG   logique de diagnostic déduite des sources, à valider sur le terrain
    Images : public/arbres/ (media : un objet, ou une liste d'objets).
@@ -29,6 +32,7 @@ export const DATA = {
 
   symptoms: {
     epimat: [
+      { id: 't.epimat.alim', title: 'Machine hors tension / plus de courant', category: 'Alimentation', rootNode: 'a_debut', icon: 'power' },
       { id: 't.epimat.screen', title: "Écran noir / pas d'image / écran figé", category: 'Affichage', rootNode: 's_debut', icon: 'screen' },
       { id: 't.epimat.internet', title: 'Pas de connexion internet / modem hors ligne', category: 'Réseau', rootNode: 'i_debut', icon: 'antenna' },
       { id: 't.epimat.badge', title: 'Badge non lu / non reconnu / mauvais numéro', category: 'Badge', rootNode: 'b_debut', icon: 'badge' },
@@ -166,15 +170,14 @@ export const DATA = {
       src: ['T'],
     },
 
-    /* ---- Branche éteinte — LED écran éteinte : machine, câble, puis alimentation
-       (l'écran 17 pouces s'allume seul : pas d'étape bouton marche)
-       (« tout semble éteint » → sol_disjoncteur en attendant l'arbre Alimentation) ---- */
+    /* ---- Branche éteinte — LED écran éteinte : machine (→ arbre Alimentation), câble, puis alimentation de l'écran
+       (l'écran 17 pouces s'allume seul : pas d'étape bouton marche) ---- */
     s_eteint_machine: {
       type: 'question',
       title: 'Le reste de la machine est-il sous tension ?',
       help: 'LED du PC, voyant du lecteur de badge, voyants du modem.',
       answers: [
-        { label: 'Non, tout semble éteint', next: 'sol_disjoncteur' },
+        { label: 'Non, tout semble éteint', next: 'a_debut' },
         { label: "Oui, seul l'écran est éteint", next: 's_eteint_cable' },
       ],
       src: ['D24 p.1', 'REP'],
@@ -1088,6 +1091,127 @@ export const DATA = {
     },
 
     /* ====================================================================
+       ARBRE 4 — ALIMENTATION  (préfixe a_) — EPIMAT 13 et 14
+       Point d'entrée : a_debut (aussi depuis l'arbre Écran : « tout semble éteint »)
+       ==================================================================== */
+    a_debut: {
+      type: 'question',
+      title: 'La prise ou la multiprise qui alimente la machine a-t-elle du courant ?',
+      help: 'Tester la prise avec un autre appareil.',
+      answers: [
+        { label: 'Oui', next: 'a_cable_machine' },
+        { label: 'Non', next: 'a_disjoncteur_local' },
+      ],
+      src: ['D24 p.1'],
+    },
+    a_disjoncteur_local: {
+      type: 'action',
+      title: 'Vérifier le disjoncteur du tableau électrique du local',
+      steps: [
+        'Repérer le disjoncteur qui alimente la prise',
+        "Le réarmer s'il est déclenché",
+      ],
+      next: 'a_disjoncteur_result',
+      src: ['D24 p.1', 'T'],
+    },
+    a_disjoncteur_result: {
+      type: 'question',
+      title: 'Le courant est-il revenu à la prise ?',
+      answers: [
+        { label: 'Oui', next: 'a_cable_machine' },
+        { label: 'Non', next: 'sol_disjoncteur' },
+      ],
+      src: ['LOG'],
+    },
+    a_cable_machine: {
+      type: 'action',
+      title: 'Vérifier le câble secteur de la machine',
+      steps: [
+        'Le câble fourni sort par la partie inférieure de la machine',
+        "Vérifier qu'il est bien enfoncé côté machine et côté prise",
+      ],
+      next: 'a_machine_ok',
+      src: ['MU18 p.4', 'D24 p.1'],
+    },
+    a_machine_ok: {
+      type: 'question',
+      title: 'La machine est-elle sous tension maintenant ?',
+      help: 'LED du PC, écran, LED du lecteur de badge.',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'a_coupe_circuits' },
+      ],
+      src: ['LOG'],
+    },
+
+    /* ---- Dans la machine : alimentation générale (coupe-circuits, fusible) ---- */
+    a_coupe_circuits: {
+      type: 'question',
+      title: "Sur l'alimentation générale, un coupe-circuit est-il déclenché ?",
+      help: "Ouvrir la façade, coulisser la platine du tableau électrique vers l'avant. L'alimentation générale (230 VAC → 24 / 5 V DC) est en haut, avec 2 fusibles réarmables : 24 V (3 A) et 5 V (1 A).",
+      media: { type: 'photo', label: 'Alimentation générale, en haut de la platine : fusibles réarmables 24 V (3 A) et 5 V (1 A)', file: 'arbres/alim_generale_fusibles.jpg' },
+      answers: [
+        { label: 'Oui, un bouton est sorti', next: 'a_rearmer' },
+        { label: 'Non', next: 'a_fusible' },
+      ],
+      src: ['MF12 p.10-11', 'FI'],
+    },
+    a_rearmer: {
+      type: 'action',
+      title: 'Réarmer le coupe-circuit',
+      steps: [
+        'Appuyer sur le bouton du coupe-circuit déclenché',
+        "Observer s'il redéclenche aussitôt",
+      ],
+      media: { type: 'photo', label: 'Alimentation générale, en haut de la platine : fusibles réarmables 24 V (3 A) et 5 V (1 A)', file: 'arbres/alim_generale_fusibles.jpg' },
+      next: 'a_rearmer_result',
+      src: ['FI', 'D24 p.1'],
+    },
+    a_rearmer_result: {
+      type: 'question',
+      title: 'Le coupe-circuit redéclenche-t-il aussitôt ?',
+      answers: [
+        { label: 'Oui, il redéclenche', next: 'sol_court_circuit' },
+        { label: 'Non, il tient', next: 'a_machine_ok2' },
+      ],
+      src: ['FI'],
+    },
+    a_machine_ok2: {
+      type: 'question',
+      title: 'La machine fonctionne-t-elle normalement ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'a_fusible' },
+      ],
+      src: ['LOG'],
+    },
+    a_fusible: {
+      type: 'action',
+      title: 'Contrôler le fusible 4 A min / 5 A max',
+      steps: [
+        'Couper le secteur : débrancher la prise de la machine',
+        "Sur l'alimentation générale, sortir le porte-fusible (cache noir) avec un tournevis plat",
+        "Contrôler le fusible ; s'il est grillé, le remplacer par un fusible de 4 A minimum, 5 A maximum",
+        'Remettre le porte-fusible, puis rebrancher la prise',
+      ],
+      media: [
+        { type: 'photo', label: 'Sortir le porte-fusible (cache noir) avec un tournevis plat', file: 'arbres/fusible_cache_noir.jpg' },
+        { type: 'photo', label: 'Le fusible dans son porte-fusible', file: 'arbres/fusible_sorti.jpg' },
+      ],
+      next: 'a_fusible_result',
+      src: ['R', 'FI', 'REP'],
+    },
+    a_fusible_result: {
+      type: 'question',
+      title: "La machine s'allume-t-elle ?",
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'sol_changer_alim_generale' },
+      ],
+      src: ['LOG'],
+    },
+
+    /* ====================================================================
        SOLUTIONS COMMUNES
        ==================================================================== */
     sol_resolved: {
@@ -1138,6 +1262,21 @@ export const DATA = {
       message: "L'écran se rallume avec une alimentation neuve : l'ancien bloc était défaillant. Signaler la pièce remplacée au SAV.",
       sav: true,
       src: ['T'],
+    },
+    sol_changer_alim_generale: {
+      type: 'solution', outcome: 'replace',
+      title: "Changer l'alimentation générale",
+      message: "L'alimentation générale (230 VAC → 24 / 5 V DC, en haut de la platine du tableau électrique) ne délivre plus de tension. La remplacer et contacter le SAV.",
+      media: { type: 'photo', label: "Platine du tableau électrique : l'alimentation générale est en haut", file: 'arbres/platine_tableau_electrique.jpg' },
+      sav: true,
+      src: ['MF12 p.10-11', 'FI'],
+    },
+    sol_court_circuit: {
+      type: 'solution', outcome: 'sav',
+      title: 'Court-circuit ou blocage : ne pas insister',
+      message: 'Le coupe-circuit redéclenche aussitôt : court-circuit ou blocage probable. Ne pas réarmer à nouveau. Contacter le SAV.',
+      sav: true,
+      src: ['FI'],
     },
     sol_changer_modem: {
       type: 'solution', outcome: 'replace',

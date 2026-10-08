@@ -52,7 +52,7 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
       <h1>Arbres de diagnostic EPIMAT</h1>
       <p class="sub">État de l'appli Logimatiq SAV au 8 octobre 2026 — généré depuis <span class="mono">sav-app/src/data/tree.js</span> par <span class="mono">docs/arbres/gen.mjs</span></p>
     </div>
-    <nav aria-label="Aller à un arbre"><a href="#p-s">Affichage</a><a href="#p-i">Réseau</a><a href="#p-b">Badge</a></nav>
+    <nav aria-label="Aller à un arbre"><a href="#p-a">Alimentation</a><a href="#p-s">Affichage</a><a href="#p-i">Réseau</a><a href="#p-b">Badge</a></nav>
   </header>
 
   <div class="legend">
@@ -64,6 +64,56 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
     <span><i class="sw" style="background:#ECEBE6;border-color:#86847C"></i>Information</span>
     <span><i class="sw" style="background:#EEF0FF;border-color:#5B5FC7;border-style:dashed"></i>Renvoi vers un autre arbre</span>
   </div>
+
+  <section class="panel" id="p-a">
+    <div class="bar"><h2>Machine hors tension / plus de courant <span class="sub mono">· 7 questions · 4 actions · 4 conclusions · 4 photos</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+flowchart TD
+  a_debut("La prise ou la multiprise qui alimente la machine a-t-elle du courant ?"):::ques
+  a_debut -->|"Oui"| a_cable_machine
+  a_debut -->|"Non"| a_disjoncteur_local
+  a_cable_machine["Vérifier le câble secteur de la machine"]:::act
+  a_cable_machine --> a_machine_ok
+  a_disjoncteur_local["Vérifier le disjoncteur du tableau électrique du local"]:::act
+  a_disjoncteur_local --> a_disjoncteur_result
+  a_machine_ok("La machine est-elle sous tension maintenant ?"):::ques
+  sol_resolved__0(["Problème résolu"]):::resolved
+  a_machine_ok -->|"Oui"| sol_resolved__0
+  a_machine_ok -->|"Non"| a_coupe_circuits
+  a_disjoncteur_result("Le courant est-il revenu à la prise ?"):::ques
+  a_disjoncteur_result -->|"Oui"| a_cable_machine
+  sol_disjoncteur__1(["Problème secteur / disjoncteur"]):::sav
+  a_disjoncteur_result -->|"Non"| sol_disjoncteur__1
+  a_coupe_circuits("Sur l'alimentation générale, un coupe-circuit est-il déclenché ?"):::ques
+  a_coupe_circuits -->|"Oui, un bouton est sorti"| a_rearmer
+  a_coupe_circuits -->|"Non"| a_fusible
+  a_rearmer["Réarmer le coupe-circuit"]:::act
+  a_rearmer --> a_rearmer_result
+  a_fusible["Contrôler le fusible 4 A min / 5 A max"]:::act
+  a_fusible --> a_fusible_result
+  a_rearmer_result("Le coupe-circuit redéclenche-t-il aussitôt ?"):::ques
+  sol_court_circuit__2(["Court-circuit ou blocage : ne pas insister"]):::sav
+  a_rearmer_result -->|"Oui, il redéclenche"| sol_court_circuit__2
+  a_rearmer_result -->|"Non, il tient"| a_machine_ok2
+  a_fusible_result("La machine s'allume-t-elle ?"):::ques
+  sol_resolved__3(["Problème résolu"]):::resolved
+  a_fusible_result -->|"Oui"| sol_resolved__3
+  sol_changer_alim_generale__4(["Changer l'alimentation générale"]):::replace
+  a_fusible_result -->|"Non"| sol_changer_alim_generale__4
+  a_machine_ok2("La machine fonctionne-t-elle normalement ?"):::ques
+  sol_resolved__5(["Problème résolu"]):::resolved
+  a_machine_ok2 -->|"Oui"| sol_resolved__5
+  a_machine_ok2 -->|"Non"| a_fusible
+  classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
+  classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
+  classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
+  classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
+  classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
+  classDef info fill:#ECEBE6,stroke:#86847C,color:#3A3934
+    </pre></div>
+  </section>
 
   <section class="panel" id="p-s">
     <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 20 questions · 13 actions · 7 conclusions · 2 photos</span></h2>
@@ -83,8 +133,8 @@ flowchart TD
   s_rouge_pc_led -->|"Oui, LED PC allumée"| s_rouge_rebrancher_vga
   s_rouge_pc_led -->|"Non, PC éteint"| s_rouge_pc_ventilo
   s_eteint_machine("Le reste de la machine est-il sous tension ?"):::ques
-  sol_disjoncteur__0(["Problème secteur / disjoncteur"]):::sav
-  s_eteint_machine -->|"Non, tout semble éteint"| sol_disjoncteur__0
+  a_debut__0[["→ Machine hors tension / plus de courant"]]:::link
+  s_eteint_machine -->|"Non, tout semble éteint"| a_debut__0
   s_eteint_machine -->|"Oui, seul l'écran est éteint"| s_eteint_cable
   s_vert_symptome("Quel est le problème ?"):::ques
   s_vert_symptome -->|"L'écran tactile ne répond pas"| s_vert_usb

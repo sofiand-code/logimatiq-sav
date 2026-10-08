@@ -44,6 +44,7 @@ export const EN = {
     'Historique': 'History',
 
     // Symptoms
+    'Alimentation': 'Power',
     'Quel est le problème ?': 'What is the problem?',
     'Affichage': 'Display',
     'Réseau': 'Network',
@@ -166,6 +167,7 @@ export const EN = {
 
   /* ---- Titres des symptômes (tree.js symptoms[]) ---- */
   symptoms: {
+    't.epimat.alim': 'Machine powered off / no power',
     't.epimat.screen':   'Black screen / no image / frozen screen',
     't.epimat.internet': 'No internet connection / modem offline',
     't.epimat.badge':    'Badge not read / not recognized / wrong number',
@@ -809,6 +811,75 @@ export const EN = {
       answers: ['Yes, stable reading', 'No, still random'],
     },
 
+    /* === ARBRE ALIMENTATION === */
+    a_debut: {
+      title: 'Does the outlet or power strip supplying the machine have power?',
+      help: 'Test the outlet with another device.',
+      answers: ['Yes', 'No'],
+    },
+    a_disjoncteur_local: {
+      title: "Check the circuit breaker in the room's electrical panel",
+      steps: [
+        'Find the circuit breaker that supplies the outlet',
+        'Reset it if it has tripped',
+      ],
+    },
+    a_disjoncteur_result: {
+      title: 'Is the outlet powered again?',
+      answers: ['Yes', 'No'],
+    },
+    a_cable_machine: {
+      title: "Check the machine's mains cable",
+      steps: [
+        'The supplied cable comes out at the bottom of the machine',
+        'Check that it is fully plugged in on the machine side and on the outlet side',
+      ],
+    },
+    a_machine_ok: {
+      title: 'Is the machine powered on now?',
+      help: 'PC LED, screen, badge reader LED.',
+      answers: ['Yes', 'No'],
+    },
+    a_coupe_circuits: {
+      title: 'On the main power supply, has a circuit breaker tripped?',
+      help: 'Open the front, slide the electrical panel plate forward. The main power supply (230 VAC → 24 / 5 V DC) is at the top, with 2 resettable fuses: 24 V (3 A) and 5 V (1 A).',
+      answers: ['Yes, a button has popped out', 'No'],
+      media: 'Main power supply, at the top of the plate: resettable fuses 24 V (3 A) and 5 V (1 A)',
+    },
+    a_rearmer: {
+      title: 'Reset the circuit breaker',
+      steps: [
+        'Press the button of the tripped circuit breaker',
+        'Watch whether it trips again immediately',
+      ],
+      media: 'Main power supply, at the top of the plate: resettable fuses 24 V (3 A) and 5 V (1 A)',
+    },
+    a_rearmer_result: {
+      title: 'Does the circuit breaker trip again immediately?',
+      answers: ['Yes, it trips again', 'No, it holds'],
+    },
+    a_machine_ok2: {
+      title: 'Is the machine working normally?',
+      answers: ['Yes', 'No'],
+    },
+    a_fusible: {
+      title: 'Check the fuse (4 A min / 5 A max)',
+      steps: [
+        'Switch off the mains: unplug the machine',
+        'On the main power supply, pull out the fuse holder (black cover) with a flat screwdriver',
+        'Check the fuse; if it has blown, replace it with a fuse of 4 A minimum, 5 A maximum',
+        'Put the fuse holder back, then plug the machine back in',
+      ],
+      media: [
+        'Pull out the fuse holder (black cover) with a flat screwdriver',
+        'The fuse in its holder',
+      ],
+    },
+    a_fusible_result: {
+      title: 'Does the machine turn on?',
+      answers: ['Yes', 'No'],
+    },
+
     /* === SOLUTIONS === */
     sol_resolved: {
       title: 'Problem resolved',
@@ -838,6 +909,15 @@ export const EN = {
     sol_changer_alim: {
       title: "Replace the screen's power supply unit",
       message: 'The screen turns back on with a new power supply: the old unit was faulty. Report the replaced part to Support.',
+    },
+    sol_changer_alim_generale: {
+      title: 'Replace the main power supply',
+      message: 'The main power supply (230 VAC → 24 / 5 V DC, at the top of the electrical panel plate) no longer delivers voltage. Replace it and contact Support.',
+      media: 'Electrical panel plate: the main power supply is at the top',
+    },
+    sol_court_circuit: {
+      title: 'Short circuit or jam: do not insist',
+      message: 'The circuit breaker trips again immediately: probable short circuit or jam. Do not reset it again. Contact Support.',
     },
     sol_changer_modem: {
       title: 'Replace the GSM modem',

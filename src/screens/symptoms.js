@@ -6,6 +6,7 @@ import { ICONS } from '../components/icons.js';
 import { t, tSymptom } from '../i18n.js';
 
 const CATEGORY_BADGE = {
+  'Alimentation': { bg: '#FEF2F2', color: '#DC2626' },
   'Affichage': { bg: '#EFF5FB', color: '#0F4C81' },
   'Réseau':    { bg: '#ECFDF5', color: '#059669' },
   'Badge':     { bg: '#FFFBEB', color: '#D97706' },
