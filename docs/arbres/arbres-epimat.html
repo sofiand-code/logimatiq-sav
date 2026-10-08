@@ -116,7 +116,7 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-s">
-    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 20 questions · 13 actions · 7 conclusions · 2 photos</span></h2>
+    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 21 questions · 13 actions · 7 conclusions · 2 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -168,71 +168,75 @@ flowchart TD
   s_rouge_vga_result -->|"Non, toujours rouge"| s_rouge_changer_vga
   s_rouge_pc_demarre("Le PC a-t-il démarré ? (LED allumée)"):::ques
   s_rouge_pc_demarre -->|"Oui, LED allumée"| s_rouge_rebrancher_vga
-  sol_changer_pc__3(["Changer le PC intégré"]):::replace
-  s_rouge_pc_demarre -->|"Non, toujours éteint"| sol_changer_pc__3
+  s_rouge_pc_demarre -->|"Non, toujours éteint"| s_rouge_multiprise
   s_eteint_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::ques
   s_eteint_multiprise -->|"Oui, LED rouge allumée"| s_eteint_changer_alim
-  sol_disjoncteur__4(["Problème secteur / disjoncteur"]):::sav
-  s_eteint_multiprise -->|"Non, multiprise éteinte"| sol_disjoncteur__4
+  sol_disjoncteur__3(["Problème secteur / disjoncteur"]):::sav
+  s_eteint_multiprise -->|"Non, multiprise éteinte"| sol_disjoncteur__3
   s_eteint_brancher_cable["Brancher le câble d'alimentation de l'écran"]:::act
   s_eteint_brancher_cable --> s_eteint_cable_result
   s_vert_usb_result("L'écran tactile répond-il maintenant ?"):::ques
-  sol_resolved__5(["Problème résolu"]):::resolved
-  s_vert_usb_result -->|"Oui, tactile OK"| sol_resolved__5
-  sol_changer_ecran__6(["Changer l'écran"]):::replace
-  s_vert_usb_result -->|"Non, toujours inactif"| sol_changer_ecran__6
+  sol_resolved__4(["Problème résolu"]):::resolved
+  s_vert_usb_result -->|"Oui, tactile OK"| sol_resolved__4
+  sol_changer_ecran__5(["Changer l'écran"]):::replace
+  s_vert_usb_result -->|"Non, toujours inactif"| sol_changer_ecran__5
   s_vert_vga["Vérifier le câble VGA"]:::act
   s_vert_vga --> s_vert_vga_result
   s_vert_resolution["Corriger la résolution (1280 × 720)"]:::act
   s_vert_resolution --> s_vert_resolution_result
   s_vert_distepi_result("DistEPI s'est-il lancé correctement ?"):::ques
-  sol_resolved__7(["Problème résolu"]):::resolved
-  s_vert_distepi_result -->|"Oui, DistEPI lancé"| sol_resolved__7
+  sol_resolved__6(["Problème résolu"]):::resolved
+  s_vert_distepi_result -->|"Oui, DistEPI lancé"| sol_resolved__6
   s_vert_distepi_result -->|"Non, ne s'ouvre pas"| s_redemarrer_distrib
   s_vert_redemarrer_result("La machine fonctionne-t-elle correctement après redémarrage ?"):::ques
-  sol_resolved__8(["Problème résolu"]):::resolved
-  s_vert_redemarrer_result -->|"Oui, tout est OK"| sol_resolved__8
-  sol_changer_pc__9(["Changer le PC intégré"]):::replace
-  s_vert_redemarrer_result -->|"Non, problème persiste"| sol_changer_pc__9
+  sol_resolved__7(["Problème résolu"]):::resolved
+  s_vert_redemarrer_result -->|"Oui, tout est OK"| sol_resolved__7
+  sol_changer_pc__8(["Changer le PC intégré"]):::replace
+  s_vert_redemarrer_result -->|"Non, problème persiste"| sol_changer_pc__8
   s_vert_erreur_result("Le message d'erreur a-t-il disparu ?"):::ques
-  sol_resolved__10(["Problème résolu"]):::resolved
-  s_vert_erreur_result -->|"Oui"| sol_resolved__10
-  sol_changer_pc__11(["Changer le PC intégré"]):::replace
-  s_vert_erreur_result -->|"Non, il revient"| sol_changer_pc__11
+  sol_resolved__9(["Problème résolu"]):::resolved
+  s_vert_erreur_result -->|"Oui"| sol_resolved__9
+  sol_changer_pc__10(["Changer le PC intégré"]):::replace
+  s_vert_erreur_result -->|"Non, il revient"| sol_changer_pc__10
   s_rouge_changer_vga["Remplacer le câble VGA"]:::act
   s_rouge_changer_vga --> s_rouge_apres_changer_vga
+  s_rouge_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::ques
+  sol_changer_pc__11(["Changer le PC intégré"]):::replace
+  s_rouge_multiprise -->|"Oui, LED rouge allumée"| sol_changer_pc__11
+  a_debut__12[["→ Machine hors tension / plus de courant"]]:::link
+  s_rouge_multiprise -->|"Non, multiprise éteinte"| a_debut__12
   s_eteint_changer_alim["Remplacer l'alimentation de l'écran"]:::act
   s_eteint_changer_alim --> s_eteint_alim_result
   s_eteint_cable_result("L'écran s'allume-t-il ?"):::ques
-  sol_resolved__12(["Problème résolu"]):::resolved
-  s_eteint_cable_result -->|"Oui"| sol_resolved__12
+  sol_resolved__13(["Problème résolu"]):::resolved
+  s_eteint_cable_result -->|"Oui"| sol_resolved__13
   s_eteint_cable_result -->|"Non"| s_eteint_multiprise
   s_vert_vga_result("Le problème d'image a-t-il disparu ?"):::ques
-  sol_resolved__13(["Problème résolu"]):::resolved
-  s_vert_vga_result -->|"Oui, image stable"| sol_resolved__13
-  sol_changer_ecran__14(["Changer l'écran"]):::replace
-  s_vert_vga_result -->|"Non, problème persiste"| sol_changer_ecran__14
+  sol_resolved__14(["Problème résolu"]):::resolved
+  s_vert_vga_result -->|"Oui, image stable"| sol_resolved__14
+  sol_changer_ecran__15(["Changer l'écran"]):::replace
+  s_vert_vga_result -->|"Non, problème persiste"| sol_changer_ecran__15
   s_vert_resolution_result("La résolution est-elle correcte maintenant ?"):::ques
-  sol_resolved__15(["Problème résolu"]):::resolved
-  s_vert_resolution_result -->|"Oui, affichage correct"| sol_resolved__15
+  sol_resolved__16(["Problème résolu"]):::resolved
+  s_vert_resolution_result -->|"Oui, affichage correct"| sol_resolved__16
   s_vert_resolution_result -->|"Non, toujours incorrecte"| s_redemarrer_distrib
   s_redemarrer_distrib["Redémarrer le distributeur"]:::act
   s_redemarrer_distrib --> s_redemarrer_distrib_result
   s_rouge_apres_changer_vga("L'image est-elle maintenant visible ?"):::ques
-  sol_resolved__16(["Problème résolu"]):::resolved
-  s_rouge_apres_changer_vga -->|"Oui, image OK"| sol_resolved__16
-  sol_changer_pc_ecran__17(["Changer PC ou écran"]):::replace
-  s_rouge_apres_changer_vga -->|"Non, écran rouge"| sol_changer_pc_ecran__17
+  sol_resolved__17(["Problème résolu"]):::resolved
+  s_rouge_apres_changer_vga -->|"Oui, image OK"| sol_resolved__17
+  sol_changer_pc_ecran__18(["Changer PC ou écran"]):::replace
+  s_rouge_apres_changer_vga -->|"Non, écran rouge"| sol_changer_pc_ecran__18
   s_eteint_alim_result("L'écran s'est-il allumé ?"):::ques
-  sol_changer_alim__18(["Changer le bloc d'alimentation de l'écran"]):::replace
-  s_eteint_alim_result -->|"Oui, écran allumé"| sol_changer_alim__18
-  sol_changer_ecran__19(["Changer l'écran"]):::replace
-  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__19
+  sol_changer_alim__19(["Changer le bloc d'alimentation de l'écran"]):::replace
+  s_eteint_alim_result -->|"Oui, écran allumé"| sol_changer_alim__19
+  sol_changer_ecran__20(["Changer l'écran"]):::replace
+  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__20
   s_redemarrer_distrib_result("Après redémarrage, DistEPI s'affiche-t-il correctement ?"):::ques
-  sol_resolved__20(["Problème résolu"]):::resolved
-  s_redemarrer_distrib_result -->|"Oui"| sol_resolved__20
-  sol_sav__21(["Contacter le SAV"]):::sav
-  s_redemarrer_distrib_result -->|"Non"| sol_sav__21
+  sol_resolved__21(["Problème résolu"]):::resolved
+  s_redemarrer_distrib_result -->|"Oui"| sol_resolved__21
+  sol_sav__22(["Contacter le SAV"]):::sav
+  s_redemarrer_distrib_result -->|"Non"| sol_sav__22
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
@@ -338,7 +342,7 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-b">
-    <div class="bar"><h2>Badge non lu / non reconnu / mauvais numéro <span class="sub mono">· 19 questions · 16 actions · 5 conclusions · 4 photos</span></h2>
+    <div class="bar"><h2>Badge non lu / non reconnu / mauvais numéro <span class="sub mono">· 21 questions · 16 actions · 6 conclusions · 4 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -365,7 +369,7 @@ flowchart TD
   b_alea_badge["Tester avec un autre badge"]:::act
   b_alea_badge --> b_alea_badge_result
   b_allumer_pc["Allumer le PC"]:::act
-  b_allumer_pc --> b_led_apres_pc
+  b_allumer_pc --> b_pc_demarre
   b_usb_rebranch["Débrancher et rebrancher le câble USB du lecteur"]:::act
   b_usb_rebranch --> b_led_apres_usb
   b_autre_badge_result("L'autre badge est-il lu ?"):::ques
@@ -388,9 +392,9 @@ flowchart TD
   b_alea_badge_result -->|"Oui, lecture stable"| sol_badge_defaillant__3
   b_alea_badge_result -->|"Non, même problème"| b_alea_usb
   b_alea_badge_result -->|"Pas d'autre badge disponible"| b_alea_usb
-  b_led_apres_pc("La LED du lecteur est-elle maintenant allumée ?"):::ques
-  b_led_apres_pc -->|"Oui"| b_symptome
-  b_led_apres_pc -->|"Non"| b_usb_rebranch
+  b_pc_demarre("Le PC a-t-il démarré ? (LED allumée)"):::ques
+  b_pc_demarre -->|"Oui, LED allumée"| b_led_apres_pc
+  b_pc_demarre -->|"Non, toujours éteint"| b_multiprise
   b_led_apres_usb("La LED du lecteur est-elle maintenant allumée ?"):::ques
   b_led_apres_usb -->|"Oui, LED allumée"| b_symptome
   b_led_apres_usb -->|"Non, toujours éteinte"| b_autre_port_usb
@@ -407,27 +411,35 @@ flowchart TD
   b_mauvais_notepad --> b_mauvais_result
   b_alea_usb["Vérifier le câble USB du lecteur"]:::act
   b_alea_usb --> b_alea_usb_result
+  b_led_apres_pc("La LED du lecteur est-elle maintenant allumée ?"):::ques
+  b_led_apres_pc -->|"Oui"| b_symptome
+  b_led_apres_pc -->|"Non"| b_usb_rebranch
+  b_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::ques
+  sol_changer_pc__6(["Changer le PC intégré"]):::replace
+  b_multiprise -->|"Oui, LED rouge allumée"| sol_changer_pc__6
+  a_debut__7[["→ Machine hors tension / plus de courant"]]:::link
+  b_multiprise -->|"Non, multiprise éteinte"| a_debut__7
   b_autre_port_usb["Essayer un autre port USB"]:::act
   b_autre_port_usb --> b_led_autre_port
   b_notepad_test["Tester la lecture du badge sur Notepad"]:::act
   b_notepad_test --> b_notepad_result
   b_salarie_result("Le badge est-il reconnu maintenant ?"):::ques
-  sol_resolved__6(["Problème résolu"]):::resolved
-  b_salarie_result -->|"Oui"| sol_resolved__6
-  sol_sav__7(["Contacter le SAV"]):::sav
-  b_salarie_result -->|"Non"| sol_sav__7
+  sol_resolved__8(["Problème résolu"]):::resolved
+  b_salarie_result -->|"Oui"| sol_resolved__8
+  sol_sav__9(["Contacter le SAV"]):::sav
+  b_salarie_result -->|"Non"| sol_sav__9
   b_mauvais_result("Le numéro lu dans le Bloc-notes correspond-il au badge ?"):::ques
   b_mauvais_result -->|"Oui, même numéro — mal renseigné en base"| b_corriger_bdd
   b_mauvais_result -->|"Non, numéro différent — lecteur à reprogrammer"| b_reprogrammer
   b_alea_usb_result("La lecture est-elle stable maintenant ?"):::ques
-  sol_resolved__8(["Problème résolu"]):::resolved
-  b_alea_usb_result -->|"Oui, lecture stable"| sol_resolved__8
-  sol_changer_lecteur__9(["Changer le lecteur de badge"]):::replace
-  b_alea_usb_result -->|"Non, toujours aléatoire"| sol_changer_lecteur__9
+  sol_resolved__10(["Problème résolu"]):::resolved
+  b_alea_usb_result -->|"Oui, lecture stable"| sol_resolved__10
+  sol_changer_lecteur__11(["Changer le lecteur de badge"]):::replace
+  b_alea_usb_result -->|"Non, toujours aléatoire"| sol_changer_lecteur__11
   b_led_autre_port("La LED s'est-elle allumée sur le nouveau port ?"):::ques
   b_led_autre_port -->|"Oui, LED allumée"| b_symptome
-  sol_changer_lecteur__10(["Changer le lecteur de badge"]):::replace
-  b_led_autre_port -->|"Non, toujours éteinte"| sol_changer_lecteur__10
+  sol_changer_lecteur__12(["Changer le lecteur de badge"]):::replace
+  b_led_autre_port -->|"Non, toujours éteinte"| sol_changer_lecteur__12
   b_notepad_result("Que s'affiche-t-il dans le Bloc-notes ?"):::ques
   b_notepad_result -->|"Des caractères apparaissent (ex : 3A8F12B4)"| b_admin_base
   b_notepad_result -->|"Rien ne s'affiche"| b_reprogrammer
@@ -438,19 +450,19 @@ flowchart TD
   b_admin_base["Corriger le nombre de caractères dans Admin Base"]:::act
   b_admin_base --> b_admin_result
   b_bdd_result("Le badge est-il maintenant correctement reconnu ?"):::ques
-  sol_resolved__11(["Problème résolu"]):::resolved
-  b_bdd_result -->|"Oui"| sol_resolved__11
-  sol_changer_lecteur__12(["Changer le lecteur de badge"]):::replace
-  b_bdd_result -->|"Non"| sol_changer_lecteur__12
+  sol_resolved__13(["Problème résolu"]):::resolved
+  b_bdd_result -->|"Oui"| sol_resolved__13
+  sol_changer_lecteur__14(["Changer le lecteur de badge"]):::replace
+  b_bdd_result -->|"Non"| sol_changer_lecteur__14
   b_reprogrammer_result("Le lecteur lit-il correctement sur le Bloc-notes ?"):::ques
   b_reprogrammer_result -->|"Oui, caractères visibles"| b_admin_base
-  sol_changer_lecteur__13(["Changer le lecteur de badge"]):::replace
-  b_reprogrammer_result -->|"Non, toujours rien"| sol_changer_lecteur__13
-  b_admin_result("Le badge est-il maintenant reconnu dans DistEPI ?"):::ques
-  sol_resolved__14(["Problème résolu"]):::resolved
-  b_admin_result -->|"Oui, badge OK"| sol_resolved__14
   sol_changer_lecteur__15(["Changer le lecteur de badge"]):::replace
-  b_admin_result -->|"Non, toujours ignoré"| sol_changer_lecteur__15
+  b_reprogrammer_result -->|"Non, toujours rien"| sol_changer_lecteur__15
+  b_admin_result("Le badge est-il maintenant reconnu dans DistEPI ?"):::ques
+  sol_resolved__16(["Problème résolu"]):::resolved
+  b_admin_result -->|"Oui, badge OK"| sol_resolved__16
+  sol_changer_lecteur__17(["Changer le lecteur de badge"]):::replace
+  b_admin_result -->|"Non, toujours ignoré"| sol_changer_lecteur__17
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3

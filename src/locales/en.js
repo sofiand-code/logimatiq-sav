@@ -223,6 +223,11 @@ export const EN = {
       title: 'Did the PC start? (LED on)',
       answers: ['Yes, LED on', 'No, still off'],
     },
+    s_rouge_multiprise: {
+      title: 'Is the red LED on the power strip lit?',
+      help: 'The PC is plugged into the power strip: if the strip is off, the fault is in the power supply, not in the PC.',
+      answers: ['Yes, red LED lit', 'No, power strip off'],
+    },
     s_rouge_rebrancher_vga: {
       title: 'Disconnect and reconnect the VGA cable',
       help: "The screen's 3 cables (USB, power, VGA) all connect at the same place behind the screen.",
@@ -600,6 +605,15 @@ export const EN = {
       ],
       media: 'The PC is in the bottom compartment of the machine (circled in red)',
     },
+    b_pc_demarre: {
+      title: 'Did the PC start? (LED on)',
+      answers: ['Yes, LED on', 'No, still off'],
+    },
+    b_multiprise: {
+      title: 'Is the red LED on the power strip lit?',
+      help: 'The PC is plugged into the power strip: if the strip is off, the fault is in the power supply, not in the PC.',
+      answers: ['Yes, red LED lit', 'No, power strip off'],
+    },
     b_led_apres_pc: {
       title: 'Is the reader LED now on?',
       answers: ['Yes', 'No'],
@@ -814,7 +828,7 @@ export const EN = {
     /* === ARBRE ALIMENTATION === */
     a_debut: {
       title: 'Does the outlet or power strip supplying the machine have power?',
-      help: 'Test the outlet with another device.',
+      help: 'Check that the power strip is switched on (red indicator), then test the outlet with another device.',
       answers: ['Yes', 'No'],
     },
     a_disjoncteur_local: {

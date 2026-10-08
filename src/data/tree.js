@@ -120,9 +120,19 @@ export const DATA = {
       title: 'Le PC a-t-il démarré ? (LED allumée)',
       answers: [
         { label: 'Oui, LED allumée', next: 's_rouge_rebrancher_vga' },
-        { label: 'Non, toujours éteint', next: 'sol_changer_pc' },
+        { label: 'Non, toujours éteint', next: 's_rouge_multiprise' },
       ],
-      src: ['T'],
+      src: ['T', 'REP'],
+    },
+    s_rouge_multiprise: {
+      type: 'question',
+      title: 'La LED rouge de la multiprise est-elle allumée ?',
+      help: "Le PC est branché sur la multiprise : si elle est éteinte, la panne vient de l'alimentation, pas du PC.",
+      answers: [
+        { label: 'Oui, LED rouge allumée', next: 'sol_changer_pc' },
+        { label: 'Non, multiprise éteinte', next: 'a_debut' },
+      ],
+      src: ['REP'],
     },
     s_rouge_rebrancher_vga: {
       type: 'action',
@@ -739,8 +749,27 @@ export const DATA = {
         'Attendre 15 secondes',
       ],
       media: { type: 'photo', label: 'Le PC est dans le compartiment du bas de la machine (entouré en rouge)', file: 'arbres/pc_emplacement.jpg' },
-      next: 'b_led_apres_pc',
+      next: 'b_pc_demarre',
       src: ['T'],
+    },
+    b_pc_demarre: {
+      type: 'question',
+      title: 'Le PC a-t-il démarré ? (LED allumée)',
+      answers: [
+        { label: 'Oui, LED allumée', next: 'b_led_apres_pc' },
+        { label: 'Non, toujours éteint', next: 'b_multiprise' },
+      ],
+      src: ['T', 'REP'],
+    },
+    b_multiprise: {
+      type: 'question',
+      title: 'La LED rouge de la multiprise est-elle allumée ?',
+      help: "Le PC est branché sur la multiprise : si elle est éteinte, la panne vient de l'alimentation, pas du PC.",
+      answers: [
+        { label: 'Oui, LED rouge allumée', next: 'sol_changer_pc' },
+        { label: 'Non, multiprise éteinte', next: 'a_debut' },
+      ],
+      src: ['REP'],
     },
     b_led_apres_pc: {
       type: 'question',
@@ -1097,12 +1126,12 @@ export const DATA = {
     a_debut: {
       type: 'question',
       title: 'La prise ou la multiprise qui alimente la machine a-t-elle du courant ?',
-      help: 'Tester la prise avec un autre appareil.',
+      help: 'Vérifier que la multiprise est allumée (voyant rouge), puis tester la prise avec un autre appareil.',
       answers: [
         { label: 'Oui', next: 'a_cable_machine' },
         { label: 'Non', next: 'a_disjoncteur_local' },
       ],
-      src: ['D24 p.1'],
+      src: ['D24 p.1', 'REP'],
     },
     a_disjoncteur_local: {
       type: 'action',
