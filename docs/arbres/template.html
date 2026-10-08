@@ -50,9 +50,9 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
   <header>
     <div>
       <h1>Arbres de diagnostic EPIMAT</h1>
-      <p class="sub">État actuel de l'appli Logimatiq SAV — source <span class="mono">sav-app/src/data/tree.js</span></p>
+      <p class="sub">État de l'appli Logimatiq SAV au %%DATE%% — généré depuis <span class="mono">sav-app/src/data/tree.js</span> par <span class="mono">docs/arbres/gen.mjs</span></p>
     </div>
-    <nav aria-label="Aller à un arbre"><a href="#p-s">Écran</a><a href="#p-i">Internet / modem</a><a href="#p-b">Badge</a></nav>
+    <nav aria-label="Aller à un arbre">%%NAV%%</nav>
   </header>
 
   <div class="legend">
@@ -61,47 +61,26 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
     <span><i class="sw" style="background:#DDF2D8;border-color:#3E8A2E"></i>Résolu</span>
     <span><i class="sw" style="background:#FBE0D8;border-color:#B5482A"></i>Pièce à changer</span>
     <span><i class="sw" style="background:#FCEBC8;border-color:#B37A12"></i>Appel SAV</span>
-    <span><i class="sw" style="background:#FFF1D6;border-color:#C77700;border-style:dashed"></i>Point à corriger</span>
+    <span><i class="sw" style="background:#ECEBE6;border-color:#86847C"></i>Information</span>
+    <span><i class="sw" style="background:#EEF0FF;border-color:#5B5FC7;border-style:dashed"></i>Renvoi vers un autre arbre</span>
   </div>
 
-  <section class="panel" id="p-s">
-    <div class="bar"><h2>Écran noir / pas d'image <span class="sub mono">· %%S_s%%</span></h2>
-      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
-    <div class="scroll"><pre class="mermaid">
-%%G_s%%
-    </pre></div>
-  </section>
+%%PANELS%%
 
-  <section class="panel" id="p-i">
-    <div class="bar"><h2>Internet / modem hors ligne <span class="sub mono">· %%S_i%%</span></h2>
-      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
-    <div class="scroll"><pre class="mermaid">
-%%G_i%%
-    </pre></div>
-  </section>
-
-  <section class="panel" id="p-b">
-    <div class="bar"><h2>Badge non lu / mauvais numéro <span class="sub mono">· %%S_b%%</span></h2>
-      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
-    <div class="scroll"><pre class="mermaid">
-%%G_b%%
-    </pre></div>
-  </section>
-
-  <h2 class="sec">Points à corriger dans l'existant</h2>
+  <h2 class="sec">Corrigé en octobre 2026 (lots 1 et 2)</h2>
   <div class="notes">
-    <div class="note w"><h3>Badge — « Le lecteur est-il maintenant reconnu ? »</h3><p>Oui et Non mènent à la même étape (test Notepad). La question ne sert à rien en l'état.</p></div>
-    <div class="note w"><h3>Écran — DistEPI ne se lance pas / mauvaise résolution</h3><p>L'arbre s'arrête sur « Redémarrer le PC » sans demander ensuite si ça a marché.</p></div>
-    <div class="note w"><h3>Écran éteint, multiprise allumée</h3><p>On remplace directement l'alimentation de l'écran sans vérifier le bouton marche ni le câble côté écran.</p></div>
-    <div class="note w"><h3>3 conclusions jamais atteintes</h3><p>« Changer le bloc alimentation », « Changer PC ou écran » et « Badge incompatible » existent mais aucune branche n'y mène.</p></div>
+    <div class="note"><h3>Badge — question du port COM</h3><p>Les lecteurs du parc sont en USB : la question dont Oui et Non menaient au même endroit est retirée. Si aucun badge n'est lu, on passe directement au test Bloc-notes.</p></div>
+    <div class="note"><h3>Écran — « Redémarrer le PC »</h3><p>C'est maintenant une procédure, suivie de la question « DistEPI s'affiche-t-il correctement ? » ; sinon, appel SAV.</p></div>
+    <div class="note"><h3>Écran éteint</h3><p>Avant de changer l'alimentation de l'écran, on vérifie que le reste de la machine est sous tension, puis le bouton marche de l'écran et son câble.</p></div>
+    <div class="note"><h3>3 conclusions jamais atteintes</h3><p>« Changer le bloc d'alimentation de l'écran », « Changer PC ou écran » et « Badge incompatible » sont maintenant atteintes.</p></div>
   </div>
 
   <h2 class="sec">Reste à construire</h2>
   <div class="notes">
-    <div class="note"><h3>EPIMAT — mécanique</h3><p>Fiches simples seulement : alimentation (3), tambour (3), trappe (3), moteur (2). Aucun arbre de questions.</p></div>
-    <div class="note"><h3>Logiciel EPIMAT</h3><p>4 symptômes renvoient vers « Arbre à compléter » : démarrage / plantage, synchro, impression, configuration.</p></div>
-    <div class="note"><h3>VETIMAT</h3><p>Placeholder uniquement.</p></div>
-    <div class="note"><h3>TOOLMAT, SmartBox, ELIMAT</h3><p>Absentes de l'appli.</p></div>
+    <div class="note"><h3>Lot 3 — Alimentation</h3><p>Prise et disjoncteur du local, câble secteur, coupe-circuits 24 V / 5 V, fusible 4 A min / 5 A max. L'arbre Écran y renverra ensuite (« tout semble éteint »).</p></div>
+    <div class="note"><h3>Lot 4 — Tambour et trappe</h3><p>Rotation manuelle, codage 6 bits et DEBES, vitesse lente, sécurité tambour, cartes EPI 05, moteur de trappe.</p></div>
+    <div class="note"><h3>Lot 5 — Logiciel EPIMAT</h3><p>Démarrage, synchronisation, configuration. Le symptôme « Problème d'impression » sera retiré : il n'y a pas d'imprimante sur EPIMAT.</p></div>
+    <div class="note"><h3>VETIMAT, TOOLMAT, SmartBox, ELIMAT</h3><p>Plus tard : il faut d'abord une documentation technique et des pannes terrain pour chaque machine.</p></div>
   </div>
 </div>
 

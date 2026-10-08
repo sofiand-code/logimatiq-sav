@@ -50,9 +50,9 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
   <header>
     <div>
       <h1>Arbres de diagnostic EPIMAT</h1>
-      <p class="sub">État actuel de l'appli Logimatiq SAV — source <span class="mono">sav-app/src/data/tree.js</span></p>
+      <p class="sub">État de l'appli Logimatiq SAV au 8 octobre 2026 — généré depuis <span class="mono">sav-app/src/data/tree.js</span> par <span class="mono">docs/arbres/gen.mjs</span></p>
     </div>
-    <nav aria-label="Aller à un arbre"><a href="#p-s">Écran</a><a href="#p-i">Internet / modem</a><a href="#p-b">Badge</a></nav>
+    <nav aria-label="Aller à un arbre"><a href="#p-s">Affichage</a><a href="#p-i">Réseau</a><a href="#p-b">Badge</a></nav>
   </header>
 
   <div class="legend">
@@ -61,11 +61,12 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
     <span><i class="sw" style="background:#DDF2D8;border-color:#3E8A2E"></i>Résolu</span>
     <span><i class="sw" style="background:#FBE0D8;border-color:#B5482A"></i>Pièce à changer</span>
     <span><i class="sw" style="background:#FCEBC8;border-color:#B37A12"></i>Appel SAV</span>
-    <span><i class="sw" style="background:#FFF1D6;border-color:#C77700;border-style:dashed"></i>Point à corriger</span>
+    <span><i class="sw" style="background:#ECEBE6;border-color:#86847C"></i>Information</span>
+    <span><i class="sw" style="background:#EEF0FF;border-color:#5B5FC7;border-style:dashed"></i>Renvoi vers un autre arbre</span>
   </div>
 
   <section class="panel" id="p-s">
-    <div class="bar"><h2>Écran noir / pas d'image <span class="sub mono">· 15 questions · 11 actions</span></h2>
+    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 21 questions · 14 actions · 7 conclusions · 3 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -74,92 +75,123 @@ flowchart TD
   s_debut -->|"Non, débranchée"| s_brancher
   s_led_ecran("Quelle est la couleur du voyant LED de l'écran ?"):::ques
   s_led_ecran -->|"Rouge"| s_rouge_pc_led
-  s_led_ecran -->|"Éteint (aucune LED)"| s_eteint_cable
+  s_led_ecran -->|"Éteint (aucune LED)"| s_eteint_machine
   s_led_ecran -->|"Vert (image visible, autre problème)"| s_vert_symptome
   s_brancher["Brancher la machine au secteur"]:::act
   s_brancher --> s_led_ecran
   s_rouge_pc_led("La LED du PC est-elle allumée ?"):::ques
   s_rouge_pc_led -->|"Oui, LED PC allumée"| s_rouge_rebrancher_vga
   s_rouge_pc_led -->|"Non, PC éteint"| s_rouge_pc_ventilo
-  s_eteint_cable("Le câble d'alimentation de l'écran est-il bien branché ?"):::ques
-  s_eteint_cable -->|"Oui, branché"| s_eteint_multiprise
-  s_eteint_cable -->|"Non, débranché"| s_eteint_brancher_cable
-  s_vert_symptome("Quel est le problème exact ?"):::ques
-  s_vert_symptome -->|"Scintillement ou problème de couleur"| s_vert_vga
-  s_vert_symptome -->|"Écran tactile ne répond pas"| s_vert_usb
-  s_vert_symptome -->|"DistEPI n'est pas lancé (bureau visible)"| s_vert_distepi
-  s_vert_symptome -->|"Mauvaise résolution d'affichage"| s_vert_resolution
-  s_vert_symptome -->|"Écran figé / gelé / bloqué"| s_vert_redemarrer
+  s_eteint_machine("Le reste de la machine est-il sous tension ?"):::ques
+  sol_disjoncteur__0(["Problème secteur / disjoncteur"]):::sav
+  s_eteint_machine -->|"Non, tout semble éteint"| sol_disjoncteur__0
+  s_eteint_machine -->|"Oui, seul l'écran est éteint"| s_eteint_bouton
+  s_vert_symptome("Quel est le problème ?"):::ques
+  s_vert_symptome -->|"L'écran tactile ne répond pas"| s_vert_usb
+  s_vert_symptome -->|"Image abîmée : scintillement, couleurs, écran cassé"| s_vert_image
+  s_vert_symptome -->|"DistEPI n'est pas affiché (bureau Windows visible)"| s_vert_distepi
+  s_vert_symptome -->|"Écran figé / bloqué"| s_vert_redemarrer
+  s_vert_symptome -->|"Message d'erreur Windows ou BIOS"| s_vert_erreur
   s_rouge_rebrancher_vga["Débrancher et rebrancher le câble VGA"]:::act
   s_rouge_rebrancher_vga --> s_rouge_vga_result
   s_rouge_pc_ventilo["Vérifier l'alimentation du PC"]:::act
   s_rouge_pc_ventilo --> s_rouge_pc_demarre
-  s_eteint_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::warn
-  s_eteint_multiprise -->|"Oui, LED rouge allumée"| s_eteint_changer_alim
-  sol_disjoncteur__0(["Problème secteur / disjoncteur"]):::sav
-  s_eteint_multiprise -->|"Non, multiprise éteinte"| sol_disjoncteur__0
-  s_eteint_brancher_cable["Brancher le câble alimentation de l'écran"]:::act
-  s_eteint_brancher_cable --> s_eteint_multiprise
-  s_vert_vga["Vérifier le câble VGA"]:::act
-  s_vert_vga --> s_vert_vga_result
+  s_eteint_bouton["Appuyer sur le bouton marche de l'écran"]:::act
+  s_eteint_bouton --> s_eteint_bouton_result
   s_vert_usb["Vérifier le câble USB entre l'écran et le PC"]:::act
   s_vert_usb --> s_vert_usb_result
+  s_vert_image("Que voit-on à l'écran ?"):::ques
+  s_vert_image -->|"Scintillement ou couleurs anormales"| s_vert_vga
+  s_vert_image -->|"Mauvaise résolution (image trop grande ou coupée)"| s_vert_resolution
+  sol_changer_ecran__1(["Changer l'écran"]):::replace
+  s_vert_image -->|"Écran cassé ou fissuré"| sol_changer_ecran__1
   s_vert_distepi["Lancer le logiciel DistEPI"]:::act
   s_vert_distepi --> s_vert_distepi_result
-  s_vert_resolution["Corriger la résolution (1280 × 720)"]:::act
-  s_vert_resolution --> s_vert_resolution_result
   s_vert_redemarrer["Redémarrer la machine"]:::act
   s_vert_redemarrer --> s_vert_redemarrer_result
+  s_vert_erreur["Noter le message, puis redémarrer le distributeur"]:::act
+  s_vert_erreur --> s_vert_erreur_result
   s_rouge_vga_result("L'image est-elle revenue sur l'écran ?"):::ques
-  sol_resolved__1(["Problème résolu"]):::resolved
-  s_rouge_vga_result -->|"Oui, image OK"| sol_resolved__1
+  sol_resolved__2(["Problème résolu"]):::resolved
+  s_rouge_vga_result -->|"Oui, image OK"| sol_resolved__2
   s_rouge_vga_result -->|"Non, toujours rouge"| s_rouge_changer_vga
   s_rouge_pc_demarre("Le PC a-t-il démarré ? (LED allumée)"):::ques
   s_rouge_pc_demarre -->|"Oui, LED allumée"| s_rouge_rebrancher_vga
-  sol_changer_pc__2(["Changer le PC intégré"]):::replace
-  s_rouge_pc_demarre -->|"Non, toujours éteint"| sol_changer_pc__2
-  s_eteint_changer_alim["Remplacer l'alimentation de l'écran"]:::act
-  s_eteint_changer_alim --> s_eteint_alim_result
-  s_vert_vga_result("Le problème d'image a-t-il disparu ?"):::ques
-  sol_resolved__3(["Problème résolu"]):::resolved
-  s_vert_vga_result -->|"Oui, image stable"| sol_resolved__3
-  sol_changer_ecran__4(["Changer l'écran"]):::replace
-  s_vert_vga_result -->|"Non, problème persiste"| sol_changer_ecran__4
+  sol_changer_pc__3(["Changer le PC intégré"]):::replace
+  s_rouge_pc_demarre -->|"Non, toujours éteint"| sol_changer_pc__3
+  s_eteint_bouton_result("L'écran s'allume-t-il ?"):::ques
+  sol_resolved__4(["Problème résolu"]):::resolved
+  s_eteint_bouton_result -->|"Oui"| sol_resolved__4
+  s_eteint_bouton_result -->|"Non"| s_eteint_cable
   s_vert_usb_result("L'écran tactile répond-il maintenant ?"):::ques
   sol_resolved__5(["Problème résolu"]):::resolved
   s_vert_usb_result -->|"Oui, tactile OK"| sol_resolved__5
   sol_changer_ecran__6(["Changer l'écran"]):::replace
   s_vert_usb_result -->|"Non, toujours inactif"| sol_changer_ecran__6
-  s_vert_distepi_result("DistEPI s'est-il lancé correctement ?"):::warn
+  s_vert_vga["Vérifier le câble VGA"]:::act
+  s_vert_vga --> s_vert_vga_result
+  s_vert_resolution["Corriger la résolution (1280 × 720)"]:::act
+  s_vert_resolution --> s_vert_resolution_result
+  s_vert_distepi_result("DistEPI s'est-il lancé correctement ?"):::ques
   sol_resolved__7(["Problème résolu"]):::resolved
   s_vert_distepi_result -->|"Oui, DistEPI lancé"| sol_resolved__7
-  sol_redemarrer_pc__8(["Redémarrer le PC"]):::sav
-  s_vert_distepi_result -->|"Non, ne s'ouvre pas"| sol_redemarrer_pc__8
-  s_vert_resolution_result("La résolution est-elle correcte maintenant ?"):::warn
-  sol_resolved__9(["Problème résolu"]):::resolved
-  s_vert_resolution_result -->|"Oui, affichage correct"| sol_resolved__9
-  sol_redemarrer_pc__10(["Redémarrer le PC"]):::sav
-  s_vert_resolution_result -->|"Non, toujours incorrecte"| sol_redemarrer_pc__10
+  s_vert_distepi_result -->|"Non, ne s'ouvre pas"| s_redemarrer_distrib
   s_vert_redemarrer_result("La machine fonctionne-t-elle correctement après redémarrage ?"):::ques
-  sol_resolved__11(["Problème résolu"]):::resolved
-  s_vert_redemarrer_result -->|"Oui, tout est OK"| sol_resolved__11
-  sol_changer_pc__12(["Changer le PC intégré"]):::replace
-  s_vert_redemarrer_result -->|"Non, problème persiste"| sol_changer_pc__12
+  sol_resolved__8(["Problème résolu"]):::resolved
+  s_vert_redemarrer_result -->|"Oui, tout est OK"| sol_resolved__8
+  sol_changer_pc__9(["Changer le PC intégré"]):::replace
+  s_vert_redemarrer_result -->|"Non, problème persiste"| sol_changer_pc__9
+  s_vert_erreur_result("Le message d'erreur a-t-il disparu ?"):::ques
+  sol_resolved__10(["Problème résolu"]):::resolved
+  s_vert_erreur_result -->|"Oui"| sol_resolved__10
+  sol_changer_pc__11(["Changer le PC intégré"]):::replace
+  s_vert_erreur_result -->|"Non, il revient"| sol_changer_pc__11
   s_rouge_changer_vga["Remplacer le câble VGA"]:::act
   s_rouge_changer_vga --> s_rouge_apres_changer_vga
-  s_eteint_alim_result("L'écran s'est-il allumé ?"):::ques
-  sol_resolved__13(["Problème résolu"]):::resolved
-  s_eteint_alim_result -->|"Oui, écran allumé"| sol_resolved__13
-  sol_changer_ecran__14(["Changer l'écran"]):::replace
-  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__14
+  s_eteint_cable("Le câble d'alimentation est-il bien branché côté écran et côté bloc d'alimentation ?"):::ques
+  s_eteint_cable -->|"Oui, branché"| s_eteint_multiprise
+  s_eteint_cable -->|"Non, débranché"| s_eteint_brancher_cable
+  s_vert_vga_result("Le problème d'image a-t-il disparu ?"):::ques
+  sol_resolved__12(["Problème résolu"]):::resolved
+  s_vert_vga_result -->|"Oui, image stable"| sol_resolved__12
+  sol_changer_ecran__13(["Changer l'écran"]):::replace
+  s_vert_vga_result -->|"Non, problème persiste"| sol_changer_ecran__13
+  s_vert_resolution_result("La résolution est-elle correcte maintenant ?"):::ques
+  sol_resolved__14(["Problème résolu"]):::resolved
+  s_vert_resolution_result -->|"Oui, affichage correct"| sol_resolved__14
+  s_vert_resolution_result -->|"Non, toujours incorrecte"| s_redemarrer_distrib
+  s_redemarrer_distrib["Redémarrer le distributeur"]:::act
+  s_redemarrer_distrib --> s_redemarrer_distrib_result
   s_rouge_apres_changer_vga("L'image est-elle maintenant visible ?"):::ques
   sol_resolved__15(["Problème résolu"]):::resolved
   s_rouge_apres_changer_vga -->|"Oui, image OK"| sol_resolved__15
-  sol_changer_ecran__16(["Changer l'écran"]):::replace
-  s_rouge_apres_changer_vga -->|"Non, écran rouge"| sol_changer_ecran__16
+  sol_changer_pc_ecran__16(["Changer PC ou écran"]):::replace
+  s_rouge_apres_changer_vga -->|"Non, écran rouge"| sol_changer_pc_ecran__16
+  s_eteint_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::ques
+  s_eteint_multiprise -->|"Oui, LED rouge allumée"| s_eteint_changer_alim
+  sol_disjoncteur__17(["Problème secteur / disjoncteur"]):::sav
+  s_eteint_multiprise -->|"Non, multiprise éteinte"| sol_disjoncteur__17
+  s_eteint_brancher_cable["Brancher le câble d'alimentation de l'écran"]:::act
+  s_eteint_brancher_cable --> s_eteint_cable_result
+  s_redemarrer_distrib_result("Après redémarrage, DistEPI s'affiche-t-il correctement ?"):::ques
+  sol_resolved__18(["Problème résolu"]):::resolved
+  s_redemarrer_distrib_result -->|"Oui"| sol_resolved__18
+  sol_sav__19(["Contacter le SAV"]):::sav
+  s_redemarrer_distrib_result -->|"Non"| sol_sav__19
+  s_eteint_changer_alim["Remplacer l'alimentation de l'écran"]:::act
+  s_eteint_changer_alim --> s_eteint_alim_result
+  s_eteint_cable_result("L'écran s'allume-t-il ?"):::ques
+  sol_resolved__20(["Problème résolu"]):::resolved
+  s_eteint_cable_result -->|"Oui"| sol_resolved__20
+  s_eteint_cable_result -->|"Non"| s_eteint_multiprise
+  s_eteint_alim_result("L'écran s'est-il allumé ?"):::ques
+  sol_changer_alim__21(["Changer le bloc d'alimentation de l'écran"]):::replace
+  s_eteint_alim_result -->|"Oui, écran allumé"| sol_changer_alim__21
+  sol_changer_ecran__22(["Changer l'écran"]):::replace
+  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__22
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
-  classDef warn fill:#FFF1D6,stroke:#C77700,color:#5A3500,stroke-width:2.5px,stroke-dasharray:6 3
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
   classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
   classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
   classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
@@ -168,74 +200,92 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-i">
-    <div class="bar"><h2>Internet / modem hors ligne <span class="sub mono">· 11 questions · 8 actions</span></h2>
+    <div class="bar"><h2>Pas de connexion internet / modem hors ligne <span class="sub mono">· 15 questions · 10 actions · 5 conclusions · 6 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
   i_debut("Quel est le problème ?"):::ques
-  i_debut -->|"LED #quot;online#quot; du modem éteinte"| i_reboot_modem
-  i_debut -->|"LED #quot;online#quot; allumée mais erreur synchro DistEPI"| i_connexion_distante
+  i_debut -->|"LED « Online » éteinte"| i_pwr_led
+  i_debut -->|"LED « Online » allumée mais erreur de synchro DistEPI"| i_eth_led
   i_debut -->|"Déconnexions fréquentes / signal instable"| i_signal_faible
-  i_reboot_modem["Redémarrer le modem"]:::act
-  i_reboot_modem --> i_reboot_result
-  i_connexion_distante("Peut-on se connecter à distance au PC de la machine ?"):::ques
-  i_connexion_distante -->|"Oui, connexion distance OK"| i_clientsynch
-  i_connexion_distante -->|"Non, pas de connexion distance"| i_rj45_check
+  i_pwr_led("La LED PWR du modem est-elle allumée (bleu fixe) ?"):::ques
+  i_pwr_led -->|"Oui"| i_reboot_modem
+  i_pwr_led -->|"Non, modem éteint"| i_alim_modem
+  i_eth_led("La LED ETH du modem clignote-t-elle ?"):::ques
+  i_eth_led -->|"Oui, elle clignote"| i_connexion_distante
+  i_eth_led -->|"Non, éteinte ou fixe"| i_rj45_check
   i_signal_faible["Vérifier les antennes et repositionner le modem"]:::act
   i_signal_faible --> i_signal_result
-  i_reboot_result("La LED #quot;online#quot; est-elle maintenant allumée ?"):::ques
-  sol_resolved__0(["Problème résolu"]):::resolved
-  i_reboot_result -->|"Oui, LED bleue allumée"| sol_resolved__0
-  i_reboot_result -->|"Non, toujours éteinte"| i_antennes_check
-  i_clientsynch["Tester avec ClientSynch DB EPI (Grizzly)"]:::act
-  i_clientsynch --> i_clientsynch_result
-  i_rj45_check["Vérifier le câble RJ45 (PC ↔ Modem)"]:::act
+  i_reboot_modem["Redémarrer le modem"]:::act
+  i_reboot_modem --> i_reboot_result
+  i_alim_modem["Vérifier l'alimentation du modem"]:::act
+  i_alim_modem --> i_alim_modem_result
+  i_connexion_distante("Peut-on se connecter à distance au PC de la machine ?"):::ques
+  i_connexion_distante -->|"Oui, connexion distance OK"| i_test_url
+  i_connexion_distante -->|"Non, pas de connexion distance"| i_rj45_check
+  i_rj45_check["Vérifier le câble RJ45 (PC ↔ modem)"]:::act
   i_rj45_check --> i_rj45_result
   i_signal_result("La connexion est-elle stable maintenant ?"):::ques
-  sol_resolved__1(["Problème résolu"]):::resolved
-  i_signal_result -->|"Oui, connexion stable"| sol_resolved__1
-  sol_antenne_ext__2(["Installer une antenne externe"]):::sav
-  i_signal_result -->|"Non, toujours instable"| sol_antenne_ext__2
-  i_antennes_check["Vérifier les 2 antennes du modem"]:::act
-  i_antennes_check --> i_antennes_result
-  i_clientsynch_result("Le test ClientSynch a-t-il réussi ?"):::ques
-  i_clientsynch_result -->|"Oui, test OK"| i_reboot_pc_distepi
-  sol_sav_serveur__3(["Problème serveur Logimatiq"]):::sav
-  i_clientsynch_result -->|"Non, test échoue"| sol_sav_serveur__3
+  sol_resolved__0(["Problème résolu"]):::resolved
+  i_signal_result -->|"Oui, connexion stable"| sol_resolved__0
+  sol_antenne_ext__1(["Installer une antenne externe"]):::sav
+  i_signal_result -->|"Non, toujours instable"| sol_antenne_ext__1
+  i_reboot_result("La LED « Online » est-elle maintenant allumée ?"):::ques
+  sol_resolved__2(["Problème résolu"]):::resolved
+  i_reboot_result -->|"Oui, LED bleue allumée"| sol_resolved__2
+  i_reboot_result -->|"Non, toujours éteinte"| i_antennes_check
+  i_alim_modem_result("La LED PWR s'allume-t-elle ?"):::ques
+  i_alim_modem_result -->|"Oui"| i_reboot_result
+  sol_changer_modem__3(["Changer le modem GSM"]):::replace
+  i_alim_modem_result -->|"Non"| sol_changer_modem__3
+  i_test_url["Tester l'accès au serveur EPIMAT depuis le PC"]:::act
+  i_test_url --> i_test_url_result
   i_rj45_result("Le PC Windows a-t-il maintenant accès à internet ?"):::ques
   i_rj45_result -->|"Oui, internet OK"| i_clientsynch
   sol_changer_modem__4(["Changer le modem GSM"]):::replace
   i_rj45_result -->|"Non, toujours sans réseau"| sol_changer_modem__4
-  i_antennes_result("La LED #quot;online#quot; s'est-elle allumée ?"):::ques
-  sol_resolved__5(["Problème résolu"]):::resolved
-  i_antennes_result -->|"Oui, LED allumée"| sol_resolved__5
+  i_antennes_check["Vérifier les 2 antennes du modem"]:::act
+  i_antennes_check --> i_antennes_result
+  i_test_url_result("La page s'ouvre-t-elle normalement ?"):::ques
+  i_test_url_result -->|"Oui"| i_clientsynch
+  sol_sav__5(["Contacter le SAV"]):::sav
+  i_test_url_result -->|"Non"| sol_sav__5
+  i_clientsynch["Tester avec ClientSynch DB EPI (Grizzly)"]:::act
+  i_clientsynch --> i_clientsynch_result
+  i_antennes_result("La LED « Online » s'est-elle allumée ?"):::ques
+  sol_resolved__6(["Problème résolu"]):::resolved
+  i_antennes_result -->|"Oui, LED allumée"| sol_resolved__6
   i_antennes_result -->|"Non, toujours éteinte"| i_sim_led
-  i_reboot_pc_distepi["Redémarrer le PC"]:::act
-  i_reboot_pc_distepi --> i_reboot_distepi_result
+  i_clientsynch_result("Le test ClientSynch a-t-il réussi ?"):::ques
+  i_clientsynch_result -->|"Oui, test OK"| i_reboot_pc_distepi
+  sol_sav_serveur__7(["Problème serveur Logimatiq"]):::sav
+  i_clientsynch_result -->|"Non, test échoue"| sol_sav_serveur__7
   i_sim_led("La LED SIM du modem est-elle allumée ?"):::ques
   i_sim_led -->|"Oui, LED SIM allumée"| i_setup_grizzly
   i_sim_led -->|"Non, LED SIM éteinte"| i_reinsertion_sim
-  i_reboot_distepi_result("DistEPI fonctionne correctement après redémarrage ?"):::ques
-  sol_resolved__6(["Problème résolu"]):::resolved
-  i_reboot_distepi_result -->|"Oui, synchro OK"| sol_resolved__6
-  sol_sav_serveur__7(["Problème serveur Logimatiq"]):::sav
-  i_reboot_distepi_result -->|"Non, erreur persiste"| sol_sav_serveur__7
-  i_setup_grizzly["Lancer le setup Grizzly (setup17)"]:::act
+  i_reboot_pc_distepi["Redémarrer le PC"]:::act
+  i_reboot_pc_distepi --> i_reboot_distepi_result
+  i_setup_grizzly["Relancer la configuration du routeur (programme Logimatiq)"]:::act
   i_setup_grizzly --> i_setup_result
   i_reinsertion_sim["Réinsérer la carte SIM"]:::act
   i_reinsertion_sim --> i_sim_result
-  i_setup_result("La LED #quot;online#quot; est-elle maintenant allumée ?"):::ques
+  i_reboot_distepi_result("DistEPI fonctionne-t-il correctement après redémarrage ?"):::ques
   sol_resolved__8(["Problème résolu"]):::resolved
-  i_setup_result -->|"Oui, LED bleue allumée"| sol_resolved__8
-  sol_changer_modem__9(["Changer le modem GSM"]):::replace
-  i_setup_result -->|"Non, toujours éteinte"| sol_changer_modem__9
+  i_reboot_distepi_result -->|"Oui, synchro OK"| sol_resolved__8
+  sol_sav_serveur__9(["Problème serveur Logimatiq"]):::sav
+  i_reboot_distepi_result -->|"Non, erreur persiste"| sol_sav_serveur__9
+  i_setup_result("La LED « Online » est-elle maintenant allumée ?"):::ques
+  sol_resolved__10(["Problème résolu"]):::resolved
+  i_setup_result -->|"Oui, LED bleue allumée"| sol_resolved__10
+  sol_changer_modem__11(["Changer le modem GSM"]):::replace
+  i_setup_result -->|"Non, toujours éteinte"| sol_changer_modem__11
   i_sim_result("La LED SIM est-elle maintenant allumée ?"):::ques
   i_sim_result -->|"Oui, LED SIM allumée"| i_setup_grizzly
-  sol_changer_modem__10(["Changer le modem GSM"]):::replace
-  i_sim_result -->|"Non, toujours éteinte"| sol_changer_modem__10
+  sol_changer_modem__12(["Changer le modem GSM"]):::replace
+  i_sim_result -->|"Non, toujours éteinte"| sol_changer_modem__12
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
-  classDef warn fill:#FFF1D6,stroke:#C77700,color:#5A3500,stroke-width:2.5px,stroke-dasharray:6 3
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
   classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
   classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
   classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
@@ -244,87 +294,122 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-b">
-    <div class="bar"><h2>Badge non lu / mauvais numéro <span class="sub mono">· 13 questions · 12 actions</span></h2>
+    <div class="bar"><h2>Badge non lu / non reconnu / mauvais numéro <span class="sub mono">· 19 questions · 16 actions · 5 conclusions · 4 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
   b_debut("La LED du lecteur de badge est-elle allumée ?"):::ques
   b_debut -->|"Oui, LED allumée"| b_symptome
   b_debut -->|"Non, LED éteinte"| b_pc_led
-  b_symptome("Quel est le problème avec le badge ?"):::ques
-  b_symptome -->|"Badge non lu — aucune réaction"| b_port_com
-  b_symptome -->|"Badge lu mais mauvais numéro affiché"| b_mauvais_notepad
+  b_symptome("Que se passe-t-il quand on présente le badge ?"):::ques
+  b_symptome -->|"Rien : pas de bip, aucune réaction"| b_autre_badge
+  b_symptome -->|"Bip, mais rien ne se passe à l'écran"| b_bip_redemarrer
+  b_symptome -->|"L'écran demande « INITIALISATION BADGE — Tapez votre code ! »"| b_init_badge
+  b_symptome -->|"Badge lu mais refusé, mauvais nom ou mauvais numéro"| b_sync
   b_symptome -->|"Lecture aléatoire / intermittente"| b_alea_badge
   b_pc_led("La LED du PC est-elle allumée ?"):::ques
   b_pc_led -->|"Non, PC éteint"| b_allumer_pc
   b_pc_led -->|"Oui, PC allumé"| b_usb_rebranch
-  b_port_com["Vérifier le port COM (Gestionnaire de périphériques)"]:::act
-  b_port_com --> b_port_com_result
-  b_mauvais_notepad["Vérifier le numéro lu — test Notepad (clavier anglais)"]:::act
-  b_mauvais_notepad --> b_mauvais_result
+  b_autre_badge["Tester avec un autre badge"]:::act
+  b_autre_badge --> b_autre_badge_result
+  b_bip_redemarrer["Redémarrer le distributeur"]:::act
+  b_bip_redemarrer --> b_bip_result
+  b_init_badge["Initialiser le badge (première utilisation sur cette machine)"]:::act
+  b_init_badge --> b_init_result
+  b_sync["Lancer une synchronisation et vérifier la connexion 4G"]:::act
+  b_sync --> b_sync_result
   b_alea_badge["Tester avec un autre badge"]:::act
   b_alea_badge --> b_alea_badge_result
   b_allumer_pc["Allumer le PC"]:::act
-  b_allumer_pc --> b_usb_rebranch
+  b_allumer_pc --> b_led_apres_pc
   b_usb_rebranch["Débrancher et rebrancher le câble USB du lecteur"]:::act
   b_usb_rebranch --> b_led_apres_usb
-  b_port_com_result("Le lecteur est-il maintenant reconnu (réaction au passage du badge) ?"):::warn
-  b_port_com_result -->|"Oui"| b_notepad_langue
-  b_port_com_result -->|"Non"| b_notepad_langue
-  b_mauvais_result("Le numéro lu dans le Bloc-notes correspond-il au badge ?"):::ques
-  b_mauvais_result -->|"Oui, même numéro — mal renseigné en BDD"| b_corriger_bdd
-  b_mauvais_result -->|"Non, numéro différent — lecteur à reprogrammer"| b_reprogrammer
+  b_autre_badge_result("L'autre badge est-il lu ?"):::ques
+  b_autre_badge_result -->|"Oui, l'autre badge est lu"| b_badge_deja_ok
+  b_autre_badge_result -->|"Non, aucun badge n'est lu"| b_notepad_langue
+  b_bip_result("Le badge fonctionne-t-il après redémarrage ?"):::ques
+  sol_resolved__0(["Problème résolu"]):::resolved
+  b_bip_result -->|"Oui"| sol_resolved__0
+  b_bip_result -->|"Non"| b_notepad_langue
+  b_init_result("Le bon nom s'affiche-t-il ?"):::ques
+  sol_resolved__1(["Problème résolu"]):::resolved
+  b_init_result -->|"Oui"| sol_resolved__1
+  b_init_result -->|"Non, nom faux ou inconnu"| b_salarie_extranet
+  b_sync_result("Le badge est-il reconnu maintenant ?"):::ques
+  sol_resolved__2(["Problème résolu"]):::resolved
+  b_sync_result -->|"Oui"| sol_resolved__2
+  b_sync_result -->|"Non"| b_mauvais_notepad
   b_alea_badge_result("L'autre badge fonctionne-t-il correctement ?"):::ques
-  sol_badge_defaillant__0(["Badge défaillant — à remplacer"]):::replace
-  b_alea_badge_result -->|"Oui, lecture stable"| sol_badge_defaillant__0
+  sol_badge_defaillant__3(["Badge défaillant — à remplacer"]):::replace
+  b_alea_badge_result -->|"Oui, lecture stable"| sol_badge_defaillant__3
   b_alea_badge_result -->|"Non, même problème"| b_alea_usb
   b_alea_badge_result -->|"Pas d'autre badge disponible"| b_alea_usb
+  b_led_apres_pc("La LED du lecteur est-elle maintenant allumée ?"):::ques
+  b_led_apres_pc -->|"Oui"| b_symptome
+  b_led_apres_pc -->|"Non"| b_usb_rebranch
   b_led_apres_usb("La LED du lecteur est-elle maintenant allumée ?"):::ques
   b_led_apres_usb -->|"Oui, LED allumée"| b_symptome
   b_led_apres_usb -->|"Non, toujours éteinte"| b_autre_port_usb
+  b_badge_deja_ok("Le premier badge a-t-il déjà fonctionné sur cette machine ?"):::ques
+  sol_badge_defaillant__4(["Badge défaillant — à remplacer"]):::replace
+  b_badge_deja_ok -->|"Oui, il marchait avant"| sol_badge_defaillant__4
+  sol_badge_incompatible__5(["Badge incompatible"]):::info
+  b_badge_deja_ok -->|"Non, c'est un nouveau type de badge"| sol_badge_incompatible__5
   b_notepad_langue["Préparer le test Notepad — passer le clavier en anglais"]:::act
   b_notepad_langue --> b_notepad_test
-  b_corriger_bdd["Corriger le numéro dans la base de données"]:::act
-  b_corriger_bdd --> b_bdd_result
-  b_reprogrammer["Reprogrammer le lecteur de badge"]:::act
-  b_reprogrammer --> b_reprogrammer_result
+  b_salarie_extranet["Vérifier le salarié dans l'extranet EPIMAT"]:::act
+  b_salarie_extranet --> b_salarie_result
+  b_mauvais_notepad["Vérifier le numéro lu — test Notepad (clavier anglais)"]:::act
+  b_mauvais_notepad --> b_mauvais_result
   b_alea_usb["Vérifier le câble USB du lecteur"]:::act
   b_alea_usb --> b_alea_usb_result
   b_autre_port_usb["Essayer un autre port USB"]:::act
   b_autre_port_usb --> b_led_autre_port
   b_notepad_test["Tester la lecture du badge sur Notepad"]:::act
   b_notepad_test --> b_notepad_result
-  b_bdd_result("Le badge est-il maintenant correctement reconnu ?"):::ques
-  sol_resolved__1(["Problème résolu"]):::resolved
-  b_bdd_result -->|"Oui"| sol_resolved__1
-  sol_changer_lecteur__2(["Changer le lecteur de badge"]):::replace
-  b_bdd_result -->|"Non"| sol_changer_lecteur__2
-  b_reprogrammer_result("Le lecteur lit-il correctement sur le Bloc-notes ?"):::ques
-  b_reprogrammer_result -->|"Oui, caractères visibles"| b_admin_base
-  sol_changer_lecteur__3(["Changer le lecteur de badge"]):::replace
-  b_reprogrammer_result -->|"Non, toujours rien"| sol_changer_lecteur__3
+  b_salarie_result("Le badge est-il reconnu maintenant ?"):::ques
+  sol_resolved__6(["Problème résolu"]):::resolved
+  b_salarie_result -->|"Oui"| sol_resolved__6
+  sol_sav__7(["Contacter le SAV"]):::sav
+  b_salarie_result -->|"Non"| sol_sav__7
+  b_mauvais_result("Le numéro lu dans le Bloc-notes correspond-il au badge ?"):::ques
+  b_mauvais_result -->|"Oui, même numéro — mal renseigné en base"| b_corriger_bdd
+  b_mauvais_result -->|"Non, numéro différent — lecteur à reprogrammer"| b_reprogrammer
   b_alea_usb_result("La lecture est-elle stable maintenant ?"):::ques
-  sol_resolved__4(["Problème résolu"]):::resolved
-  b_alea_usb_result -->|"Oui, lecture stable"| sol_resolved__4
-  sol_changer_lecteur__5(["Changer le lecteur de badge"]):::replace
-  b_alea_usb_result -->|"Non, toujours aléatoire"| sol_changer_lecteur__5
+  sol_resolved__8(["Problème résolu"]):::resolved
+  b_alea_usb_result -->|"Oui, lecture stable"| sol_resolved__8
+  sol_changer_lecteur__9(["Changer le lecteur de badge"]):::replace
+  b_alea_usb_result -->|"Non, toujours aléatoire"| sol_changer_lecteur__9
   b_led_autre_port("La LED s'est-elle allumée sur le nouveau port ?"):::ques
   b_led_autre_port -->|"Oui, LED allumée"| b_symptome
-  sol_changer_lecteur__6(["Changer le lecteur de badge"]):::replace
-  b_led_autre_port -->|"Non, toujours éteinte"| sol_changer_lecteur__6
+  sol_changer_lecteur__10(["Changer le lecteur de badge"]):::replace
+  b_led_autre_port -->|"Non, toujours éteinte"| sol_changer_lecteur__10
   b_notepad_result("Que s'affiche-t-il dans le Bloc-notes ?"):::ques
-  b_notepad_result -->|"Des caractères hex apparaissent (ex: 3A8F12B4)"| b_admin_base
+  b_notepad_result -->|"Des caractères apparaissent (ex : 3A8F12B4)"| b_admin_base
   b_notepad_result -->|"Rien ne s'affiche"| b_reprogrammer
+  b_corriger_bdd["Corriger le numéro de badge du salarié"]:::act
+  b_corriger_bdd --> b_bdd_result
+  b_reprogrammer["Reprogrammer le lecteur de badge"]:::act
+  b_reprogrammer --> b_reprogrammer_result
   b_admin_base["Corriger le nombre de caractères dans Admin Base"]:::act
   b_admin_base --> b_admin_result
+  b_bdd_result("Le badge est-il maintenant correctement reconnu ?"):::ques
+  sol_resolved__11(["Problème résolu"]):::resolved
+  b_bdd_result -->|"Oui"| sol_resolved__11
+  sol_changer_lecteur__12(["Changer le lecteur de badge"]):::replace
+  b_bdd_result -->|"Non"| sol_changer_lecteur__12
+  b_reprogrammer_result("Le lecteur lit-il correctement sur le Bloc-notes ?"):::ques
+  b_reprogrammer_result -->|"Oui, caractères visibles"| b_admin_base
+  sol_changer_lecteur__13(["Changer le lecteur de badge"]):::replace
+  b_reprogrammer_result -->|"Non, toujours rien"| sol_changer_lecteur__13
   b_admin_result("Le badge est-il maintenant reconnu dans DistEPI ?"):::ques
-  sol_resolved__7(["Problème résolu"]):::resolved
-  b_admin_result -->|"Oui, badge OK"| sol_resolved__7
-  sol_changer_lecteur__8(["Changer le lecteur de badge"]):::replace
-  b_admin_result -->|"Non, toujours ignoré"| sol_changer_lecteur__8
+  sol_resolved__14(["Problème résolu"]):::resolved
+  b_admin_result -->|"Oui, badge OK"| sol_resolved__14
+  sol_changer_lecteur__15(["Changer le lecteur de badge"]):::replace
+  b_admin_result -->|"Non, toujours ignoré"| sol_changer_lecteur__15
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
-  classDef warn fill:#FFF1D6,stroke:#C77700,color:#5A3500,stroke-width:2.5px,stroke-dasharray:6 3
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
   classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
   classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
   classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
@@ -332,20 +417,20 @@ flowchart TD
     </pre></div>
   </section>
 
-  <h2 class="sec">Points à corriger dans l'existant</h2>
+  <h2 class="sec">Corrigé en octobre 2026 (lots 1 et 2)</h2>
   <div class="notes">
-    <div class="note w"><h3>Badge — « Le lecteur est-il maintenant reconnu ? »</h3><p>Oui et Non mènent à la même étape (test Notepad). La question ne sert à rien en l'état.</p></div>
-    <div class="note w"><h3>Écran — DistEPI ne se lance pas / mauvaise résolution</h3><p>L'arbre s'arrête sur « Redémarrer le PC » sans demander ensuite si ça a marché.</p></div>
-    <div class="note w"><h3>Écran éteint, multiprise allumée</h3><p>On remplace directement l'alimentation de l'écran sans vérifier le bouton marche ni le câble côté écran.</p></div>
-    <div class="note w"><h3>3 conclusions jamais atteintes</h3><p>« Changer le bloc alimentation », « Changer PC ou écran » et « Badge incompatible » existent mais aucune branche n'y mène.</p></div>
+    <div class="note"><h3>Badge — question du port COM</h3><p>Les lecteurs du parc sont en USB : la question dont Oui et Non menaient au même endroit est retirée. Si aucun badge n'est lu, on passe directement au test Bloc-notes.</p></div>
+    <div class="note"><h3>Écran — « Redémarrer le PC »</h3><p>C'est maintenant une procédure, suivie de la question « DistEPI s'affiche-t-il correctement ? » ; sinon, appel SAV.</p></div>
+    <div class="note"><h3>Écran éteint</h3><p>Avant de changer l'alimentation de l'écran, on vérifie que le reste de la machine est sous tension, puis le bouton marche de l'écran et son câble.</p></div>
+    <div class="note"><h3>3 conclusions jamais atteintes</h3><p>« Changer le bloc d'alimentation de l'écran », « Changer PC ou écran » et « Badge incompatible » sont maintenant atteintes.</p></div>
   </div>
 
   <h2 class="sec">Reste à construire</h2>
   <div class="notes">
-    <div class="note"><h3>EPIMAT — mécanique</h3><p>Fiches simples seulement : alimentation (3), tambour (3), trappe (3), moteur (2). Aucun arbre de questions.</p></div>
-    <div class="note"><h3>Logiciel EPIMAT</h3><p>4 symptômes renvoient vers « Arbre à compléter » : démarrage / plantage, synchro, impression, configuration.</p></div>
-    <div class="note"><h3>VETIMAT</h3><p>Placeholder uniquement.</p></div>
-    <div class="note"><h3>TOOLMAT, SmartBox, ELIMAT</h3><p>Absentes de l'appli.</p></div>
+    <div class="note"><h3>Lot 3 — Alimentation</h3><p>Prise et disjoncteur du local, câble secteur, coupe-circuits 24 V / 5 V, fusible 4 A min / 5 A max. L'arbre Écran y renverra ensuite (« tout semble éteint »).</p></div>
+    <div class="note"><h3>Lot 4 — Tambour et trappe</h3><p>Rotation manuelle, codage 6 bits et DEBES, vitesse lente, sécurité tambour, cartes EPI 05, moteur de trappe.</p></div>
+    <div class="note"><h3>Lot 5 — Logiciel EPIMAT</h3><p>Démarrage, synchronisation, configuration. Le symptôme « Problème d'impression » sera retiré : il n'y a pas d'imprimante sur EPIMAT.</p></div>
+    <div class="note"><h3>VETIMAT, TOOLMAT, SmartBox, ELIMAT</h3><p>Plus tard : il faut d'abord une documentation technique et des pannes terrain pour chaque machine.</p></div>
   </div>
 </div>
 
