@@ -198,7 +198,6 @@ export const EN = {
       title: 'What is the color of the screen LED indicator?',
       help: 'Small indicator on the front of the monitor, at the bottom or side.',
       answers: ['Red', 'Off (no LED)', 'Green (image visible, other problem)'],
-      media: 'Touch screen from the 2015 parts list: POWER button at the top of the right edge',
     },
     s_rouge_pc_led: {
       title: 'Is the PC LED on?',
@@ -255,18 +254,6 @@ export const EN = {
       title: 'Is the rest of the machine powered on?',
       help: 'PC LED, badge reader indicator, modem indicators.',
       answers: ['No, everything seems off', 'Yes, only the screen is off'],
-    },
-    s_eteint_bouton: {
-      title: "Press the screen's power button",
-      steps: [
-        "Locate the screen's Power button (in the photo: at the top of the right edge)",
-        'Press it once and wait 5 seconds',
-      ],
-      media: 'Touch screen from the 2015 parts list: POWER button at the top of the right edge',
-    },
-    s_eteint_bouton_result: {
-      title: 'Does the screen turn on?',
-      answers: ['Yes', 'No'],
     },
     s_eteint_cable: {
       title: 'Is the power cable properly connected on the screen side and on the power supply side?',
@@ -747,7 +734,8 @@ export const EN = {
         'Log in to https://epimat.logimatiq.com/client',
         '"Salariés" (Employees) → search for the employee',
         'Check the badge number (7 digits), the profile and access to this machine',
-        'Correct, save, then run a synchronization',
+        'Correct and save',
+        'On the machine, run a synchronization: keyboard plugged into the PC, Shift + L (maintenance menu), then the "Synchroniser" (Synchronize) button',
       ],
     },
     b_salarie_result: {
@@ -758,8 +746,9 @@ export const EN = {
       title: 'Run a synchronization and check the 4G connection',
       steps: [
         "Check that the modem's Online LED is steady blue (otherwise: Internet / modem tree)",
-        'Run a synchronization',
-        'Present the badge again',
+        "Plug a keyboard into the machine's PC",
+        'Shift + L to open the maintenance menu, then click the "Synchroniser" (Synchronize) button',
+        'Wait for the synchronization to finish, then present the badge again',
       ],
     },
     b_sync_result: {
@@ -786,7 +775,8 @@ export const EN = {
       steps: [
         'EPIMAT extranet → "Salariés" (Employees) → employee record → "Modifier" (Edit)',
         'Correct the badge number with the exact number of the physical badge',
-        'Save, synchronize and test again',
+        'Save',
+        'On the machine: Shift + L (maintenance menu), "Synchroniser" (Synchronize) button, then test the badge again',
       ],
     },
     b_bdd_result: {
@@ -867,8 +857,8 @@ export const EN = {
       media: 'The badge reader seen from inside the door (circled in orange)',
     },
     sol_badge_incompatible: {
-      title: 'Incompatible badge',
-      message: 'This type of badge is not read by the machine reader. Contact Support.',
+      title: 'Incompatible badge: reprogram the reader',
+      message: 'The reader is not programmed for this type of badge (MIFARE…). The badge reader must be reprogrammed so that it can read it: contact Support.',
     },
     sol_badge_defaillant: {
       title: 'Defective badge — to replace',

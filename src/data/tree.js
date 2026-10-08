@@ -76,7 +76,6 @@ export const DATA = {
       type: 'question',
       title: "Quelle est la couleur du voyant LED de l'écran ?",
       help: 'Petit voyant situé en façade du moniteur, en bas ou sur le côté.',
-      media: { type: 'photo', label: 'Écran tactile de la liste des pièces 2015 : bouton POWER en haut du bord droit', file: 'arbres/ecran_boutons_2015.jpg' },
       answers: [
         { label: 'Rouge', next: 's_rouge_pc_led', color: 'red' },
         { label: 'Éteint (aucune LED)', next: 's_eteint_machine', color: 'gray' },
@@ -167,7 +166,8 @@ export const DATA = {
       src: ['T'],
     },
 
-    /* ---- Branche éteinte — LED écran éteinte : machine, bouton, câble, puis alimentation
+    /* ---- Branche éteinte — LED écran éteinte : machine, câble, puis alimentation
+       (l'écran 17 pouces s'allume seul : pas d'étape bouton marche)
        (« tout semble éteint » → sol_disjoncteur en attendant l'arbre Alimentation) ---- */
     s_eteint_machine: {
       type: 'question',
@@ -175,29 +175,9 @@ export const DATA = {
       help: 'LED du PC, voyant du lecteur de badge, voyants du modem.',
       answers: [
         { label: 'Non, tout semble éteint', next: 'sol_disjoncteur' },
-        { label: "Oui, seul l'écran est éteint", next: 's_eteint_bouton' },
+        { label: "Oui, seul l'écran est éteint", next: 's_eteint_cable' },
       ],
-      src: ['D24 p.1'],
-    },
-    s_eteint_bouton: {
-      type: 'action',
-      title: "Appuyer sur le bouton marche de l'écran",
-      steps: [
-        "Repérer le bouton Power de l'écran (sur la photo : en haut du bord droit)",
-        'Appuyer une fois et attendre 5 secondes',
-      ],
-      media: { type: 'photo', label: 'Écran tactile de la liste des pièces 2015 : bouton POWER en haut du bord droit', file: 'arbres/ecran_boutons_2015.jpg' },
-      next: 's_eteint_bouton_result',
-      src: ['ME15 p.19'],
-    },
-    s_eteint_bouton_result: {
-      type: 'question',
-      title: "L'écran s'allume-t-il ?",
-      answers: [
-        { label: 'Oui', next: 'sol_resolved' },
-        { label: 'Non', next: 's_eteint_cable' },
-      ],
-      src: ['LOG'],
+      src: ['D24 p.1', 'REP'],
     },
     s_eteint_cable: {
       type: 'question',
@@ -983,10 +963,11 @@ export const DATA = {
         'Se connecter à https://epimat.logimatiq.com/client',
         'Salariés → rechercher le salarié',
         "Vérifier le numéro de badge (7 chiffres), le profil et l'accès à cette machine",
-        'Corriger, enregistrer, puis lancer une synchronisation',
+        'Corriger et enregistrer',
+        'Sur la machine, lancer une synchronisation : clavier branché sur le PC, Maj + L (menu maintenance), puis bouton « Synchroniser »',
       ],
       next: 'b_salarie_result',
-      src: ['MU18 p.7', 'MU18 p.12-13'],
+      src: ['MU18 p.7', 'MU18 p.12-13', 'REP'],
     },
     b_salarie_result: {
       type: 'question',
@@ -1004,11 +985,12 @@ export const DATA = {
       title: 'Lancer une synchronisation et vérifier la connexion 4G',
       steps: [
         'Vérifier que la LED Online du modem est bleue fixe (sinon : arbre Internet / modem)',
-        'Lancer une synchronisation',
-        'Représenter le badge',
+        'Brancher un clavier sur le PC de la machine',
+        'Maj + L pour ouvrir le menu maintenance, puis cliquer sur le bouton « Synchroniser »',
+        'Attendre la fin de la synchronisation, puis représenter le badge',
       ],
       next: 'b_sync_result',
-      src: ['D24 p.1'],
+      src: ['D24 p.1', 'REP'],
     },
     b_sync_result: {
       type: 'question',
@@ -1045,10 +1027,11 @@ export const DATA = {
       steps: [
         'Extranet EPIMAT → Salariés → fiche du salarié → Modifier',
         'Corriger le numéro de badge avec le numéro exact du badge physique',
-        'Enregistrer, synchroniser et retester',
+        'Enregistrer',
+        'Sur la machine : Maj + L (menu maintenance), bouton « Synchroniser », puis retester le badge',
       ],
       next: 'b_bdd_result',
-      src: ['T', 'MU18 p.12-13'],
+      src: ['T', 'MU18 p.12-13', 'REP'],
     },
     b_bdd_result: {
       type: 'question',
@@ -1186,11 +1169,11 @@ export const DATA = {
       src: ['T', 'D24 p.8'],
     },
     sol_badge_incompatible: {
-      type: 'solution', outcome: 'info',
-      title: 'Badge incompatible',
-      message: "Ce type de badge n'est pas lu par le lecteur de la machine. Contacter le SAV.",
+      type: 'solution', outcome: 'sav',
+      title: 'Badge incompatible : reprogrammer le lecteur',
+      message: "Le lecteur n'est pas programmé pour ce type de badge (MIFARE…). Il faut reprogrammer le lecteur de badge pour qu'il le lise : contacter le SAV.",
       sav: true,
-      src: ['LOG'],
+      src: ['LOG', 'REP'],
     },
     sol_badge_defaillant: {
       type: 'solution', outcome: 'replace',

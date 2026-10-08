@@ -66,7 +66,7 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
   </div>
 
   <section class="panel" id="p-s">
-    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 21 questions · 14 actions · 7 conclusions · 3 photos</span></h2>
+    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 20 questions · 13 actions · 7 conclusions · 2 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -85,7 +85,7 @@ flowchart TD
   s_eteint_machine("Le reste de la machine est-il sous tension ?"):::ques
   sol_disjoncteur__0(["Problème secteur / disjoncteur"]):::sav
   s_eteint_machine -->|"Non, tout semble éteint"| sol_disjoncteur__0
-  s_eteint_machine -->|"Oui, seul l'écran est éteint"| s_eteint_bouton
+  s_eteint_machine -->|"Oui, seul l'écran est éteint"| s_eteint_cable
   s_vert_symptome("Quel est le problème ?"):::ques
   s_vert_symptome -->|"L'écran tactile ne répond pas"| s_vert_usb
   s_vert_symptome -->|"Image abîmée : scintillement, couleurs, écran cassé"| s_vert_image
@@ -96,8 +96,9 @@ flowchart TD
   s_rouge_rebrancher_vga --> s_rouge_vga_result
   s_rouge_pc_ventilo["Vérifier l'alimentation du PC"]:::act
   s_rouge_pc_ventilo --> s_rouge_pc_demarre
-  s_eteint_bouton["Appuyer sur le bouton marche de l'écran"]:::act
-  s_eteint_bouton --> s_eteint_bouton_result
+  s_eteint_cable("Le câble d'alimentation est-il bien branché côté écran et côté bloc d'alimentation ?"):::ques
+  s_eteint_cable -->|"Oui, branché"| s_eteint_multiprise
+  s_eteint_cable -->|"Non, débranché"| s_eteint_brancher_cable
   s_vert_usb["Vérifier le câble USB entre l'écran et le PC"]:::act
   s_vert_usb --> s_vert_usb_result
   s_vert_image("Que voit-on à l'écran ?"):::ques
@@ -119,10 +120,12 @@ flowchart TD
   s_rouge_pc_demarre -->|"Oui, LED allumée"| s_rouge_rebrancher_vga
   sol_changer_pc__3(["Changer le PC intégré"]):::replace
   s_rouge_pc_demarre -->|"Non, toujours éteint"| sol_changer_pc__3
-  s_eteint_bouton_result("L'écran s'allume-t-il ?"):::ques
-  sol_resolved__4(["Problème résolu"]):::resolved
-  s_eteint_bouton_result -->|"Oui"| sol_resolved__4
-  s_eteint_bouton_result -->|"Non"| s_eteint_cable
+  s_eteint_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::ques
+  s_eteint_multiprise -->|"Oui, LED rouge allumée"| s_eteint_changer_alim
+  sol_disjoncteur__4(["Problème secteur / disjoncteur"]):::sav
+  s_eteint_multiprise -->|"Non, multiprise éteinte"| sol_disjoncteur__4
+  s_eteint_brancher_cable["Brancher le câble d'alimentation de l'écran"]:::act
+  s_eteint_brancher_cable --> s_eteint_cable_result
   s_vert_usb_result("L'écran tactile répond-il maintenant ?"):::ques
   sol_resolved__5(["Problème résolu"]):::resolved
   s_vert_usb_result -->|"Oui, tactile OK"| sol_resolved__5
@@ -148,47 +151,38 @@ flowchart TD
   s_vert_erreur_result -->|"Non, il revient"| sol_changer_pc__11
   s_rouge_changer_vga["Remplacer le câble VGA"]:::act
   s_rouge_changer_vga --> s_rouge_apres_changer_vga
-  s_eteint_cable("Le câble d'alimentation est-il bien branché côté écran et côté bloc d'alimentation ?"):::ques
-  s_eteint_cable -->|"Oui, branché"| s_eteint_multiprise
-  s_eteint_cable -->|"Non, débranché"| s_eteint_brancher_cable
-  s_vert_vga_result("Le problème d'image a-t-il disparu ?"):::ques
+  s_eteint_changer_alim["Remplacer l'alimentation de l'écran"]:::act
+  s_eteint_changer_alim --> s_eteint_alim_result
+  s_eteint_cable_result("L'écran s'allume-t-il ?"):::ques
   sol_resolved__12(["Problème résolu"]):::resolved
-  s_vert_vga_result -->|"Oui, image stable"| sol_resolved__12
-  sol_changer_ecran__13(["Changer l'écran"]):::replace
-  s_vert_vga_result -->|"Non, problème persiste"| sol_changer_ecran__13
+  s_eteint_cable_result -->|"Oui"| sol_resolved__12
+  s_eteint_cable_result -->|"Non"| s_eteint_multiprise
+  s_vert_vga_result("Le problème d'image a-t-il disparu ?"):::ques
+  sol_resolved__13(["Problème résolu"]):::resolved
+  s_vert_vga_result -->|"Oui, image stable"| sol_resolved__13
+  sol_changer_ecran__14(["Changer l'écran"]):::replace
+  s_vert_vga_result -->|"Non, problème persiste"| sol_changer_ecran__14
   s_vert_resolution_result("La résolution est-elle correcte maintenant ?"):::ques
-  sol_resolved__14(["Problème résolu"]):::resolved
-  s_vert_resolution_result -->|"Oui, affichage correct"| sol_resolved__14
+  sol_resolved__15(["Problème résolu"]):::resolved
+  s_vert_resolution_result -->|"Oui, affichage correct"| sol_resolved__15
   s_vert_resolution_result -->|"Non, toujours incorrecte"| s_redemarrer_distrib
   s_redemarrer_distrib["Redémarrer le distributeur"]:::act
   s_redemarrer_distrib --> s_redemarrer_distrib_result
   s_rouge_apres_changer_vga("L'image est-elle maintenant visible ?"):::ques
-  sol_resolved__15(["Problème résolu"]):::resolved
-  s_rouge_apres_changer_vga -->|"Oui, image OK"| sol_resolved__15
-  sol_changer_pc_ecran__16(["Changer PC ou écran"]):::replace
-  s_rouge_apres_changer_vga -->|"Non, écran rouge"| sol_changer_pc_ecran__16
-  s_eteint_multiprise("La LED rouge de la multiprise est-elle allumée ?"):::ques
-  s_eteint_multiprise -->|"Oui, LED rouge allumée"| s_eteint_changer_alim
-  sol_disjoncteur__17(["Problème secteur / disjoncteur"]):::sav
-  s_eteint_multiprise -->|"Non, multiprise éteinte"| sol_disjoncteur__17
-  s_eteint_brancher_cable["Brancher le câble d'alimentation de l'écran"]:::act
-  s_eteint_brancher_cable --> s_eteint_cable_result
-  s_redemarrer_distrib_result("Après redémarrage, DistEPI s'affiche-t-il correctement ?"):::ques
-  sol_resolved__18(["Problème résolu"]):::resolved
-  s_redemarrer_distrib_result -->|"Oui"| sol_resolved__18
-  sol_sav__19(["Contacter le SAV"]):::sav
-  s_redemarrer_distrib_result -->|"Non"| sol_sav__19
-  s_eteint_changer_alim["Remplacer l'alimentation de l'écran"]:::act
-  s_eteint_changer_alim --> s_eteint_alim_result
-  s_eteint_cable_result("L'écran s'allume-t-il ?"):::ques
-  sol_resolved__20(["Problème résolu"]):::resolved
-  s_eteint_cable_result -->|"Oui"| sol_resolved__20
-  s_eteint_cable_result -->|"Non"| s_eteint_multiprise
+  sol_resolved__16(["Problème résolu"]):::resolved
+  s_rouge_apres_changer_vga -->|"Oui, image OK"| sol_resolved__16
+  sol_changer_pc_ecran__17(["Changer PC ou écran"]):::replace
+  s_rouge_apres_changer_vga -->|"Non, écran rouge"| sol_changer_pc_ecran__17
   s_eteint_alim_result("L'écran s'est-il allumé ?"):::ques
-  sol_changer_alim__21(["Changer le bloc d'alimentation de l'écran"]):::replace
-  s_eteint_alim_result -->|"Oui, écran allumé"| sol_changer_alim__21
-  sol_changer_ecran__22(["Changer l'écran"]):::replace
-  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__22
+  sol_changer_alim__18(["Changer le bloc d'alimentation de l'écran"]):::replace
+  s_eteint_alim_result -->|"Oui, écran allumé"| sol_changer_alim__18
+  sol_changer_ecran__19(["Changer l'écran"]):::replace
+  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__19
+  s_redemarrer_distrib_result("Après redémarrage, DistEPI s'affiche-t-il correctement ?"):::ques
+  sol_resolved__20(["Problème résolu"]):::resolved
+  s_redemarrer_distrib_result -->|"Oui"| sol_resolved__20
+  sol_sav__21(["Contacter le SAV"]):::sav
+  s_redemarrer_distrib_result -->|"Non"| sol_sav__21
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
@@ -353,7 +347,7 @@ flowchart TD
   b_badge_deja_ok("Le premier badge a-t-il déjà fonctionné sur cette machine ?"):::ques
   sol_badge_defaillant__4(["Badge défaillant — à remplacer"]):::replace
   b_badge_deja_ok -->|"Oui, il marchait avant"| sol_badge_defaillant__4
-  sol_badge_incompatible__5(["Badge incompatible"]):::info
+  sol_badge_incompatible__5(["Badge incompatible : reprogrammer le lecteur"]):::sav
   b_badge_deja_ok -->|"Non, c'est un nouveau type de badge"| sol_badge_incompatible__5
   b_notepad_langue["Préparer le test Notepad — passer le clavier en anglais"]:::act
   b_notepad_langue --> b_notepad_test
