@@ -198,8 +198,13 @@ export const EN = {
     },
     s_led_ecran: {
       title: 'What is the color of the screen LED indicator?',
-      help: 'Small indicator on the front of the monitor, at the bottom or side.',
+      help: 'The "Power Led" indicator on the back of the screen, above the adjustment buttons (see the photos).',
       answers: ['Red', 'Off (no LED)', 'Green (image visible, other problem)'],
+      media: [
+        '"Power Led" indicator on the back of the screen: off',
+        '"Power Led" indicator: red',
+        '"Power Led" indicator: green',
+      ],
     },
     s_rouge_pc_led: {
       title: 'Is the PC LED on?',
@@ -716,6 +721,7 @@ export const EN = {
         'Open Notepad: Start → Notepad',
         'Click in the Notepad text area',
       ],
+      media: 'Windows taskbar: choose ENG, English (United States)',
     },
     b_notepad_test: {
       title: 'Test badge reading on Notepad',
@@ -729,32 +735,75 @@ export const EN = {
       answers: ['Characters appear (e.g.: 3A8F12B4)', 'Nothing appears'],
     },
     b_admin_base: {
-      title: 'Fix the character count in Admin Base',
+      title: 'Correct the number of badge digits in Admin Base',
+      help: 'Admin Base (C:\\EPI\\AdminBase.exe) manages the EPIMAT database on the machine\'s PC: do not touch any other button ("Supprimer Base" (delete database), "Restaurer Base" (restore database)…).',
       steps: [
-        'In DistEPI, go to "Admin Base"',
-        'Find the badge character count parameter',
-        'Count the number of characters read in Notepad',
-        'Correct the parameter to match',
-        'Save and restart DistEPI',
+        'Count the number of digits read in Notepad',
+        'Run C:\\EPI\\AdminBase.exe',
+        'Click "Connecter la base" (connect the database): the indicator turns to "CONNECTE" (connected, green)',
+        'In the field under "Format Badge" (e.g. F00:XXXXXXX), each X is one digit of the badge: enter as many X as digits read',
+        'Click the "Format Badge" button to confirm, then restart DistEPI',
       ],
-      media: 'Admin Base — character count parameter (photos coming soon)',
+      media: [
+        'C:\\EPI folder: AdminBase.exe',
+        'Admin Base connected ("CONNECTE" indicator): "Format Badge" field at the bottom right, one X per digit',
+      ],
     },
     b_admin_result: {
       title: 'Is the badge now recognized in DistEPI?',
       answers: ['Yes, badge OK', 'No, still ignored'],
     },
     b_reprogrammer: {
-      title: 'Reprogram the badge reader',
+      title: 'Reprogram the reader — 1. find the badge technology',
+      help: 'Elatec TWN4 reader, programmed with AppBlaster on the machine\'s PC. First load the "Tracer" firmware, which types the badge technology.',
       steps: [
-        'Open the reader programming software',
-        'Follow the reprogramming procedure',
-        'Re-test with Notepad after reprogramming',
+        'Open the C:\\EPI\\TWN4DevPack480 Nouveau folder and run AppBlaster.exe',
+        '"Program Firmware Image" → "Select Image" → Firmware folder → TWN4_xKx480_TRC229_Multi_Tracer.bix',
+        'Click "Program Image" and wait for "Done."',
+        'Windows keyboard in English (ENG), open Notepad and present the badge',
+        'Write down the technology displayed (e.g. ISO14443A/MIFARE Classic)',
       ],
-      media: 'Reader reprogramming procedure (tutorial coming soon)',
+      media: [
+        'TWN4DevPack480 folder: AppBlaster.exe and its menu ("Program Firmware Image", "New Project (Configurable)")',
+        'Firmware folder: choose TWN4_xKx480_TRC229_Multi_Tracer.bix',
+        '"Program Image" finished: "Done."',
+        'Notepad: the reader types the badge technology (here MIFARE Classic) and its UID (hidden)',
+      ],
+    },
+    b_reprog_projet: {
+      title: 'Reprogram the reader — 2. program it for this technology',
+      steps: [
+        'In AppBlaster: "New Project (Configurable)" → double-click the "Multi Keyboard V4.80, App Standard V2.04" template',
+        '"Transponder Types" → choose the category (e.g. MIFARE) then the type (e.g. MIFARE Classic) → double-click to add it to "Active Transponder Types"',
+        'Under the added type, "Output Format": Hexadecimal or Decimal depending on the expected number',
+        'Click "Create Image", then "Program Image", and wait for "Done."',
+        'Test again in Notepad (keyboard in English) by presenting the badge',
+      ],
+      media: [
+        'New Project (Configurable): "Multi Keyboard V4.80, App Standard V2.04" template',
+        'Transponder Types: MIFARE → MIFARE Classic, added to "Active Transponder Types"',
+        'Output Format: Hexadecimal or Decimal',
+        '"Create Image" then "Program Image": "Done." at the bottom',
+      ],
     },
     b_reprogrammer_result: {
-      title: 'Does the reader read correctly in Notepad?',
-      answers: ['Yes, characters visible', 'No, still nothing'],
+      title: 'In Notepad, is the number read the badge number?',
+      answers: ['Yes', 'No: different number or reversed', 'Nothing appears'],
+    },
+    b_reprog_iterer: {
+      title: "Adjust the reader's output format",
+      help: 'Some badge numbers are read backwards: it sometimes takes several attempts.',
+      steps: [
+        'In the AppBlaster project, change "Output Format" (Hexadecimal ↔ Decimal)',
+        'Or, in "Bit Manipulation", tick "Reverse Byte Order"',
+        '"Create Image", "Program Image", then test again in Notepad',
+        'Repeat until you get the right number',
+      ],
+      media: 'Bit Manipulation: "Reverse Byte Order"',
+    },
+    b_reprog_iterer_result: {
+      title: 'Is the number read correct now?',
+      answers: ['Yes', 'No, still not'],
     },
     b_bip_redemarrer: {
       title: 'Restart the dispenser',
@@ -993,10 +1042,6 @@ export const EN = {
       title: 'Replace the badge reader',
       message: 'The badge reader is faulty. Replace it (move the connector over to the new reader), check that it beeps when a badge is presented, and contact Support.',
       media: 'The badge reader seen from inside the door (circled in orange)',
-    },
-    sol_badge_incompatible: {
-      title: 'Incompatible badge: reprogram the reader',
-      message: 'The reader is not programmed for this type of badge (MIFARE…). The badge reader must be reprogrammed so that it can read it: contact Support.',
     },
     sol_badge_defaillant: {
       title: 'Defective badge — to replace',
