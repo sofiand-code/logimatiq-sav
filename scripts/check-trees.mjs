@@ -7,7 +7,8 @@
    - toutes les réponses d'une question mènent au même endroit ;
    - un nœud ou un symptôme n'a pas sa traduction EN (ou un nombre de
      réponses / d'étapes / de légendes différent du français) ;
-   - une image citée dans `media` est absente de public/.
+   - une image citée dans `media` est absente de public/ ;
+   - une fiche de l'onglet Pannes renvoie vers un symptôme absent ou n'a pas sa traduction EN.
    ========================================================================== */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -83,6 +84,17 @@ for (const [id, n] of Object.entries(nodes))
   for (const m of mediaList(n))
     for (const f of m.files || (m.file ? [m.file] : []))
       if (!fs.existsSync(path.join(app, 'public', f))) err('image', id, `« public/${f} » introuvable`);
+
+/* 6. Onglet Pannes : bouton « Lancer le diagnostic » vers un symptôme existant, traduction EN complète */
+const { FAULTS } = await import(pathToFileURL(path.join(app, 'src/data/faults-data.js')).href);
+for (const f of FAULTS) {
+  if (f.diag && !symptoms.some(s => s.id === f.diag && s.rootNode !== 'tbd'))
+    err('pannes', f.id, `« Lancer le diagnostic » vers « ${f.diag} », symptôme absent ou pas encore codé`);
+  if (!f.title_en) err('pannes', f.id, 'titre EN manquant');
+  if ((f.symptoms_en || []).length !== f.symptoms.length)
+    err('pannes', f.id, `symptômes EN : ${(f.symptoms_en || []).length} pour ${f.symptoms.length} en FR`);
+  for (const [i, s] of f.steps.entries()) if (!s.text_en) err('pannes', f.id, `étape ${i + 1} sans texte EN`);
+}
 
 /* Rapport */
 const by = errors.reduce((m, e) => ((m[e.rule] ||= []).push(e), m), {});
