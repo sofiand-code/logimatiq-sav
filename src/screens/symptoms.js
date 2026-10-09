@@ -10,6 +10,8 @@ const CATEGORY_BADGE = {
   'Affichage': { bg: '#EFF5FB', color: '#0F4C81' },
   'Réseau':    { bg: '#ECFDF5', color: '#059669' },
   'Badge':     { bg: '#FFFBEB', color: '#D97706' },
+  'Tambour':   { bg: '#EFF5FB', color: '#0F4C81' },
+  'Trappe':    { bg: '#FFF7ED', color: '#C2410C' },
   'Logiciel':  { bg: '#EFF5FB', color: '#1E6CB8' },
   'Config':    { bg: '#F5F3FF', color: '#7C3AED' },
   '—':         { bg: '#F1F5F9', color: '#94A3B8' },

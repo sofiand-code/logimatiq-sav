@@ -1,10 +1,10 @@
 /* ============================================================================
    DATA — Logimatiq SAV
-   4 arbres EPIMAT : Écran, Internet / modem, Badge, Alimentation
-   Préfixes de nœuds : s_ (écran) · i_ (internet / modem) · b_ (badge) · a_ (alimentation)
+   6 arbres EPIMAT : Écran, Internet / modem, Badge, Alimentation, Tambour, Trappe
+   Préfixes de nœuds : s_ (écran) · i_ (internet / modem) · b_ (badge) · a_ (alimentation) · t_ (tambour) · tr_ (trappe)
    Types : question (answers → next) · action (steps → next) · solution (outcome)
 
-   Refonte d'octobre 2026 (lots 1, 2, 3). Chaque nœud porte un champ `src`,
+   Refonte d'octobre 2026 (lots 1, 2, 3, 4). Chaque nœud porte un champ `src`,
    non affiché dans l'app, qui cite ses sources :
      T     arbres validés sur le terrain (mai 2026)
      R     repères de l'équipe Logimatiq
@@ -18,9 +18,16 @@
      SIM   procédure SIM / APN (2026)
      IM    installation du modem
      IB    initialisation des badges
+     TU    tutoriel EPIMAT (distribution)
      FI    fiches d'intervention
      REP   réponses de l'équipe Logimatiq (octobre 2026)
      LOG   logique de diagnostic déduite des sources, à valider sur le terrain
+     E05   procédure « EPI 05 sécurité tambour HS »
+     VL    procédure de réglage de la vitesse lente (carte GR76)
+     L34   réglage des circuits LOG 03 / LOG 04
+     L04   remplacement du circuit LOG 04
+     KIT   mallette du kit de dépannage
+     PAP   câblage du moteur pas à pas et de son contrôleur
    Images : public/arbres/ (media : un objet, ou une liste d'objets).
    Après toute modification : npm run check-trees
    ========================================================================== */
@@ -36,6 +43,8 @@ export const DATA = {
       { id: 't.epimat.screen', title: "Écran noir / pas d'image / écran figé", category: 'Affichage', rootNode: 's_debut', icon: 'screen' },
       { id: 't.epimat.internet', title: 'Pas de connexion internet / modem hors ligne', category: 'Réseau', rootNode: 'i_debut', icon: 'antenna' },
       { id: 't.epimat.badge', title: 'Badge non lu / non reconnu / mauvais numéro', category: 'Badge', rootNode: 'b_debut', icon: 'badge' },
+      { id: 't.epimat.tambour', title: '« EN PANNE » / tambour bloqué ou mal positionné', category: 'Tambour', rootNode: 't_debut', icon: 'drum' },
+      { id: 't.epimat.trappe', title: 'Trappe bloquée / « Problème de distribution » / casier vide', category: 'Trappe', rootNode: 'tr_debut', icon: 'hatch' },
     ],
     logiciel: [
       { id: 't.log.demarrage', title: 'Le logiciel ne démarre pas / plante', category: 'Logiciel', rootNode: 'tbd', icon: 'pc' },
@@ -1305,6 +1314,524 @@ export const DATA = {
     },
 
     /* ====================================================================
+       ARBRE 5 — TAMBOUR  (préfixe t_) — EPIMAT 13 et 14 (cartes EPI 05 : EPIMAT 13 seulement)
+       Point d'entrée : t_debut
+       ==================================================================== */
+    t_debut: {
+      type: 'question',
+      title: 'Quel est le problème du tambour ?',
+      answers: [
+        { label: "L'écran indique « EN PANNE » / le tambour ne tourne plus", next: 't_rotation_manuelle' },
+        { label: "L'écran affiche « Disjoncteur déclenché »", next: 't_coupe_circuit_24v' },
+        { label: "Le tambour s'arrête sur la mauvaise colonne", next: 't_position' },
+        { label: "Le tambour dépasse la colonne ou s'arrête décalé", next: 't_vitesse' },
+        { label: 'Un article ou un objet bloque le tambour', next: 't_bloque' },
+      ],
+      src: ['D24 p.1', 'REP'],
+    },
+    t_rotation_manuelle: {
+      type: 'question',
+      title: 'Le tambour tourne-t-il avec le bouton « Drum rotation » (rotation manuelle) ?',
+      help: "Bouton en haut du châssis, à l'avant droit. Sécurité : ne jamais mettre les mains dans la machine pendant une rotation du tambour.",
+      answers: [
+        { label: 'Non, il ne tourne pas', next: 't_coupe_circuit_24v' },
+        { label: 'Oui, il tourne', next: 't_trappes_fermees' },
+      ],
+      src: ['D24 p.1', 'MU18 p.46', 'MF12 p.2', 'REP'],
+    },
+    t_coupe_circuit_24v: {
+      type: 'action',
+      title: "Réarmer le coupe-circuit 24 V de l'alimentation générale",
+      help: "C'est le « disjoncteur tambour » des manuels.",
+      steps: [
+        "Coulisser la platine du tableau électrique vers l'avant",
+        'Si le bouton du coupe-circuit 24 V (3 A) est sorti, appuyer pour le réarmer',
+        "S'il redéclenche aussitôt, ne pas insister",
+      ],
+      media: { type: 'photo', label: 'Alimentation générale, en haut de la platine : fusibles réarmables 24 V (3 A) et 5 V (1 A)', file: 'arbres/alim_generale_fusibles.jpg' },
+      next: 't_coupe_result',
+      src: ['D24 p.1', 'MF12 p.11', 'REP'],
+    },
+    t_coupe_result: {
+      type: 'question',
+      title: 'Le tambour tourne-t-il maintenant avec le bouton « Drum rotation » ?',
+      help: 'Sécurité : ne jamais mettre les mains dans la machine pendant une rotation du tambour.',
+      answers: [
+        { label: 'Oui', next: 't_recaler' },
+        { label: 'Non', next: 'sol_sav_tambour' },
+      ],
+      src: ['D24 p.1', 'REP'],
+    },
+    t_recaler: {
+      type: 'action',
+      title: 'Recaler les EPI',
+      help: "Pas de recalibrage du tambour à faire : au lancement de DistEPI, il s'initialise seul (il va à la colonne la plus proche pour valider le capteur CP1 et connaître son numéro de colonne). Sécurité : ne jamais mettre les mains dans la machine pendant une rotation du tambour.",
+      steps: [
+        'Avec le bouton « Drum rotation », faire faire un tour complet au tambour',
+      ],
+      next: 't_test_distrib',
+      src: ['D24 p.1', 'REP'],
+    },
+    t_test_distrib: {
+      type: 'question',
+      title: 'La distribution test fonctionne-t-elle ?',
+      help: 'Passer un badge, choisir une famille puis un article, OK, puis Terminer.',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'sol_sav' },
+      ],
+      src: ['TU p.1-2'],
+    },
+    t_trappes_fermees: {
+      type: 'question',
+      title: 'Toutes les trappes sont-elles bien fermées ?',
+      help: "Le tambour ne tourne pas tant qu'une trappe n'est pas détectée fermée.",
+      answers: [
+        { label: 'Non, une trappe est ouverte ou mal fermée', next: 't_fermer_trappe' },
+        { label: 'Oui, toutes fermées', next: 't_cable_scsi' },
+      ],
+      src: ['D24 p.1', 'ME15 p.16'],
+    },
+    t_fermer_trappe: {
+      type: 'action',
+      title: 'Fermer la trappe',
+      steps: [
+        "Retirer l'article ou l'obstacle qui empêche la fermeture",
+        'Refermer la trappe',
+      ],
+      next: 't_fermer_result',
+      src: ['D24 p.1'],
+    },
+    t_fermer_result: {
+      type: 'question',
+      title: 'La machine fonctionne-t-elle à nouveau ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 't_cable_scsi' },
+      ],
+      src: ['LOG'],
+    },
+    t_cable_scsi: {
+      type: 'action',
+      title: 'Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)',
+      help: "C'est la liaison entre le PC et la machine. Mal enfoncé, il donne des pannes bizarres : certains capteurs s'allument et d'autres non, le tambour ne tourne pas alors que tout semble bon. C'est presque le premier contrôle à faire. Pas besoin d'éteindre la machine.",
+      steps: [
+        'Repérer le câble SCSI blanc entre le PC (carte Advantech) et la carte EPI 01 du tableau électrique',
+        "Vérifier qu'il est bien enfoncé des deux côtés",
+        'Au besoin, le débrancher complètement puis le rebrancher fermement',
+      ],
+      media: { type: 'photo', label: "Platine du tableau électrique tirée vers l'avant : la carte EPI 01 est à droite, avec ses nappes", file: 'arbres/platine_epi01.jpg' },
+      next: 't_cable_scsi_result',
+      src: ['REP', 'MF12 p.11'],
+    },
+    t_cable_scsi_result: {
+      type: 'question',
+      title: 'La machine fonctionne-t-elle à nouveau ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 't_ouvrir_debes' },
+      ],
+      src: ['LOG'],
+    },
+    t_ouvrir_debes: {
+      type: 'action',
+      title: 'Ouvrir DEBES',
+      help: 'Case STATUS : « NoDevice … - OK » = le PC dialogue avec la carte Advantech. Sinon, le numéro de la carte Advantech est mal renseigné dans AUTOMAT.INI : le technicien le corrige.',
+      steps: [
+        'Brancher un clavier sur le PC de la machine',
+        'Fermer DistEPI : touches Maj + F',
+        'Lancer C:\\EPI\\DebesEPI.exe',
+        'À la fin des tests : fermer DEBES (bouton « Fermeture ») et relancer DistEPI',
+      ],
+      media: { type: 'photo', label: 'DEBES : boutons de rotation du tambour et des trappes ; voyants FCPF (trappe fermée), CPT1 à CPT6 (position), Sécu tambour OK', file: 'arbres/debes_ecran.jpg' },
+      next: 't_debes_fcpf',
+      src: ['REP', 'ME15 p.18', 'D24 p.2'],
+    },
+    t_debes_fcpf: {
+      type: 'question',
+      title: 'Dans DEBES, les voyants FCPF (trappes fermées) sont-ils tous verts ?',
+      help: 'FCPF1 à FCPF13 : capteur « trappe fermée » de chaque trappe ou porte.',
+      media: { type: 'photo', label: 'DEBES : boutons de rotation du tambour et des trappes ; voyants FCPF (trappe fermée), CPT1 à CPT6 (position), Sécu tambour OK', file: 'arbres/debes_ecran.jpg' },
+      answers: [
+        { label: 'Non, un voyant FCPF est éteint', next: 'tr_capteur' },
+        { label: 'Oui, tous verts', next: 't_secu_tambour' },
+      ],
+      src: ['ME15 p.15-16'],
+    },
+    t_secu_tambour: {
+      type: 'question',
+      title: 'Dans DEBES, le voyant « Sécu tambour OK » est-il vert ?',
+      help: "S'il est éteint alors que toutes les trappes sont fermées, une carte de trappe bloque la sécurité du tambour.",
+      media: { type: 'photo', label: 'DEBES : boutons de rotation du tambour et des trappes ; voyants FCPF (trappe fermée), CPT1 à CPT6 (position), Sécu tambour OK', file: 'arbres/debes_ecran.jpg' },
+      answers: [
+        { label: 'Non, il est éteint', next: 't_modele_secu' },
+        { label: 'Oui, il est vert', next: 'sol_sav_tambour' },
+      ],
+      src: ['D24 p.2', 'E05 p.1', 'REP'],
+    },
+    t_modele_secu: {
+      type: 'question',
+      title: 'La machine a-t-elle des trappes (EPIMAT 13) ou des portes à gâche (EPIMAT 14) ?',
+      help: "Ça se voit sur la façade : l'EPIMAT 14 a des portes manuelles à gâche, pilotées par des cartes EPI 02.",
+      media: { type: 'photo', label: 'EPIMAT 13 : façade à trappes, avec les moteurs de trappe (manuel 2012)', file: 'arbres/epimat13_trappes.jpg' },
+      answers: [
+        { label: 'Des trappes (EPIMAT 13)', next: 't_test_epi05' },
+        { label: 'Des portes à gâche (EPIMAT 14)', next: 'sol_sav_epi02' },
+      ],
+      src: ['REP'],
+    },
+    t_test_epi05: {
+      type: 'action',
+      title: 'Trouver la carte EPI 05 qui bloque le tambour',
+      help: 'Sécurité : ne jamais mettre les mains dans la machine pendant une rotation du tambour.',
+      steps: [
+        'Porte ouverte, retirer le capot des cartes EPI 05',
+        'Débrancher toutes les cartes EPI 05',
+        'Sur la carte à tester, mettre la configuration de test (DIP)',
+        'Brancher cette carte seule',
+        'Dans DEBES, lancer « Rotation TAMBOUR » : si le tambour tourne, la carte est bonne',
+        "Remettre sa configuration d'origine et recommencer avec la carte suivante",
+      ],
+      media: [
+        { type: 'photo', label: 'Les cartes EPI 05, une par trappe, derrière la façade (EPIMAT 13)', file: 'arbres/epi05_cartes.jpg' },
+        { type: 'photo', label: 'Carte EPI 05 : interrupteurs DIP de configuration', file: 'arbres/epi05_dip_test.jpg' },
+      ],
+      next: 't_test_epi05_result',
+      src: ['E05 p.1-2', 'D24 p.1', 'D24 p.5', 'REP'],
+    },
+    t_test_epi05_result: {
+      type: 'question',
+      title: 'Avez-vous trouvé la carte EPI 05 qui empêche la rotation ?',
+      answers: [
+        { label: 'Oui', next: 'sol_changer_epi05' },
+        { label: 'Non', next: 'sol_sav_tambour' },
+      ],
+      src: ['E05 p.2'],
+    },
+    t_position: {
+      type: 'action',
+      title: 'Lire la position du tambour dans DEBES',
+      steps: [
+        'Fermer DistEPI (Maj + F, clavier branché) et lancer DEBES (C:\\EPI\\DebesEPI.exe)',
+        'Regarder la case « Position Colonne » (« Column Position » sur les anciennes versions)',
+        'Elle est calculée par les capteurs CPT1 à CPT6 (circuit LOG 03) : voyant éteint = trou du disque = bit à 1',
+        'Poids : CPT1 = 1, CPT2 = 2, CPT3 = 4, CPT4 = 8, CPT5 = 16, CPT6 = 32 (ex : CPT3 et CPT6 éteints = 36)',
+        'Comparer avec la colonne réellement face à la trappe',
+      ],
+      media: { type: 'photo', label: 'DEBES : boutons de rotation du tambour et des trappes ; voyants FCPF (trappe fermée), CPT1 à CPT6 (position), Sécu tambour OK', file: 'arbres/debes_ecran.jpg' },
+      next: 't_position_result',
+      src: ['ME15 p.15-16', 'REP'],
+    },
+    t_position_result: {
+      type: 'question',
+      title: 'La position affichée correspond-elle à la colonne réelle ?',
+      answers: [
+        { label: 'Oui', next: 't_arret_cp1' },
+        { label: 'Non', next: 't_pos_scsi' },
+      ],
+      src: ['ME15 p.15'],
+    },
+    t_pos_scsi: {
+      type: 'action',
+      title: 'Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)',
+      help: "Mal enfoncé, ce câble donne des pannes bizarres : certains capteurs s'allument et d'autres non. Pas besoin d'éteindre la machine.",
+      steps: [
+        'Repérer le câble SCSI blanc entre le PC (carte Advantech) et la carte EPI 01 du tableau électrique',
+        "Vérifier qu'il est bien enfoncé des deux côtés",
+        'Au besoin, le débrancher complètement puis le rebrancher fermement',
+      ],
+      media: { type: 'photo', label: "Platine du tableau électrique tirée vers l'avant : la carte EPI 01 est à droite, avec ses nappes", file: 'arbres/platine_epi01.jpg' },
+      next: 't_pos_scsi_result',
+      src: ['REP', 'MF12 p.11'],
+    },
+    t_pos_scsi_result: {
+      type: 'question',
+      title: 'La position affichée dans DEBES est-elle juste maintenant ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 't_aligner_log03' },
+      ],
+      src: ['LOG'],
+    },
+    t_arret_cp1: {
+      type: 'question',
+      title: "Le tambour s'arrête-t-il bien en face de la colonne ?",
+      help: "L'arrêt sur position est donné par le capteur CP1 (circuit LOG 04) quand la fente du disque passe dans la fourche.",
+      answers: [
+        { label: 'Oui', next: 'sol_sav' },
+        { label: "Non, il s'arrête décalé", next: 't_vitesse' },
+      ],
+      src: ['ME15 p.16', 'L34 p.2'],
+    },
+    t_aligner_log03: {
+      type: 'action',
+      title: "Nettoyer le disque, puis vérifier l'alignement des capteurs LOG 03 et LOG 04",
+      steps: [
+        'Nettoyer le disque du tambour au pinceau pour enlever la poussière',
+        'Les 2 circuits sont au-dessus du tambour, au centre, sur une équerre fixée à la barre oméga',
+        'LOG 03 : les 6 capteurs doivent être alignés sur les trous du disque',
+        'LOG 04 : la fourche doit être alignée sur la fente du disque, sans frotter le disque',
+        'Si besoin, desserrer le circuit et le décaler légèrement',
+      ],
+      media: { type: 'photo', label: 'Les circuits LOG 03 / LOG 04 au-dessus du tambour, sur leur équerre', file: 'arbres/log03_log04.jpg' },
+      next: 't_aligner_result',
+      src: ['L34 p.1-2', 'MF12 p.12', 'ME15 p.13-14', 'REP'],
+    },
+    t_aligner_result: {
+      type: 'question',
+      title: 'La position est-elle juste maintenant ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'sol_changer_log03' },
+      ],
+      src: ['LOG'],
+    },
+    t_vitesse: {
+      type: 'action',
+      title: 'Régler la vitesse lente du tambour (carte GR76)',
+      help: "Le tambour dépasse la colonne ou s'arrête décalé : on règle sa vitesse lente. Sécurité : ne jamais mettre les mains dans la machine pendant une rotation du tambour.",
+      steps: [
+        "Sur le tableau électrique, repérer la carte GR76 (dissipateur noir ; « GR 74 » sur les photos des anciens manuels, c'est la même carte)",
+        'Potentiomètre bleu 1 tour : sens horaire = plus lent, sens antihoraire = plus rapide',
+        "Tourner d'un quart de tour entre chaque test",
+        'Tester dans DEBES (DistEPI fermé avec Maj + F) avec « Vitesse Lente TAMBOUR » et « Rotation TAMBOUR »',
+      ],
+      media: { type: 'photo', label: 'Carte GR76 : potentiomètre bleu de la vitesse lente', file: 'arbres/gr76_potentiometre.jpg' },
+      next: 't_vitesse_result',
+      src: ['VL p.1', 'ME15 p.15', 'REP'],
+    },
+    t_vitesse_result: {
+      type: 'question',
+      title: "Le tambour s'arrête-t-il correctement sur chaque colonne ?",
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 't_aligner_log03' },
+      ],
+      src: ['LOG'],
+    },
+    t_bloque: {
+      type: 'action',
+      title: 'Dégager le tambour',
+      help: 'Sécurité : ne jamais mettre les mains dans la machine pendant une rotation du tambour.',
+      steps: [
+        "Retirer l'article ou l'objet coincé",
+        "Si le coupe-circuit 24 V de l'alimentation générale a déclenché, le réarmer",
+        'Faire faire un tour complet au tambour avec le bouton « Drum rotation » pour recaler les EPI',
+      ],
+      next: 't_test_distrib',
+      src: ['D24 p.1', 'REP'],
+    },
+
+    /* ====================================================================
+       ARBRE 6 — TRAPPE  (préfixe tr_) — EPIMAT 13 ; EPIMAT 14 (portes, EPI 02) → SAV après le test DEBES
+       Point d'entrée : tr_debut (aussi depuis l'arbre Tambour : voyant FCPF éteint)
+       ==================================================================== */
+    tr_debut: {
+      type: 'question',
+      title: 'Quel est le problème de trappe ?',
+      answers: [
+        { label: "L'écran affiche « Problème de distribution » après validation d'un EPI", next: 'tr_debes_test' },
+        { label: "La LED de la trappe s'allume mais la trappe reste bloquée", next: 'tr_debes_test' },
+        { label: "La trappe s'ouvre mais le casier est vide", next: 'tr_casier_vide' },
+        { label: "Une trappe ne se referme pas, ou l'écran affiche « Fermer la trappe »", next: 'tr_capteur' },
+      ],
+      src: ['D24 p.1', 'REP'],
+    },
+    tr_debes_test: {
+      type: 'action',
+      title: 'Tester la trappe (ou la porte) dans DEBES',
+      help: "Même test sur l'EPIMAT 13 (trappes) et l'EPIMAT 14 (portes).",
+      steps: [
+        'Noter le numéro de la trappe (trappe 1 = en bas)',
+        'Fermer DistEPI (Maj + F, clavier branché) et lancer DEBES (C:\\EPI\\DebesEPI.exe)',
+        'Cliquer « Trappe N Ouvrir » puis « N Fermer »',
+        'Observer les voyants FCPF N (trappe fermée) et FCPO (trappe ouverte)',
+        'À la fin : fermer DEBES (« Fermeture ») et relancer DistEPI',
+      ],
+      media: { type: 'photo', label: 'DEBES : boutons de rotation du tambour et des trappes ; voyants FCPF (trappe fermée), CPT1 à CPT6 (position), Sécu tambour OK', file: 'arbres/debes_ecran.jpg' },
+      next: 'tr_debes_result',
+      src: ['ME15 p.15-16', 'ME15 p.4', 'REP'],
+    },
+    tr_debes_result: {
+      type: 'question',
+      title: "La trappe s'ouvre-t-elle et se referme-t-elle avec DEBES ?",
+      answers: [
+        { label: 'Oui', next: 'tr_obstacle' },
+        { label: 'Non', next: 'tr_scsi' },
+      ],
+      src: ['ME15 p.15'],
+    },
+    tr_scsi: {
+      type: 'action',
+      title: 'Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)',
+      help: "Mal enfoncé, ce câble donne des pannes bizarres : certains capteurs s'allument et d'autres non. Pas besoin d'éteindre la machine.",
+      steps: [
+        'Repérer le câble SCSI blanc entre le PC (carte Advantech) et la carte EPI 01 du tableau électrique',
+        "Vérifier qu'il est bien enfoncé des deux côtés",
+        'Au besoin, le débrancher complètement puis le rebrancher fermement',
+      ],
+      media: { type: 'photo', label: "Platine du tableau électrique tirée vers l'avant : la carte EPI 01 est à droite, avec ses nappes", file: 'arbres/platine_epi01.jpg' },
+      next: 'tr_scsi_result',
+      src: ['REP', 'MF12 p.11'],
+    },
+    tr_scsi_result: {
+      type: 'question',
+      title: "La trappe s'ouvre-t-elle et se referme-t-elle maintenant avec DEBES ?",
+      answers: [
+        { label: 'Oui', next: 'tr_obstacle' },
+        { label: 'Non', next: 'tr_modele' },
+      ],
+      src: ['LOG'],
+    },
+    tr_modele: {
+      type: 'question',
+      title: 'La machine a-t-elle des trappes (EPIMAT 13) ou des portes à gâche (EPIMAT 14) ?',
+      help: "Ça se voit sur la façade : l'EPIMAT 14 a des portes manuelles à gâche, pilotées par des cartes EPI 02.",
+      media: { type: 'photo', label: 'EPIMAT 13 : façade à trappes, avec les moteurs de trappe (manuel 2012)', file: 'arbres/epimat13_trappes.jpg' },
+      answers: [
+        { label: 'Des trappes (EPIMAT 13)', next: 'tr_motorisee' },
+        { label: 'Des portes à gâche (EPIMAT 14)', next: 'sol_sav_epi02' },
+      ],
+      src: ['REP'],
+    },
+    tr_obstacle: {
+      type: 'action',
+      title: 'Vérifier la trappe, puis refaire une distribution',
+      steps: [
+        "Vérifier qu'aucun article ne gêne l'ouverture ou la fermeture",
+        'Refaire une distribution test',
+      ],
+      next: 'tr_obstacle_result',
+      src: ['D24 p.1'],
+    },
+    tr_obstacle_result: {
+      type: 'question',
+      title: 'La distribution fonctionne-t-elle ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'sol_condamner_trappe' },
+      ],
+      src: ['LOG'],
+    },
+    tr_motorisee: {
+      type: 'question',
+      title: "La trappe s'ouvre-t-elle seule (trappe motorisée) ?",
+      help: "Sur l'EPIMAT 13, les trappes sont à moteur ou manuelles selon la machine (paramètre MANUEL de DistEPI).",
+      answers: [
+        { label: 'Oui, motorisée', next: 'tr_verif_moteur' },
+        { label: "Non, l'utilisateur l'ouvre après déverrouillage", next: 'tr_verif_verrou' },
+      ],
+      src: ['DS p.4', 'PAP', 'REP'],
+    },
+    tr_verif_moteur: {
+      type: 'action',
+      title: 'Vérifier le moteur de la trappe',
+      steps: [
+        'Retirer le capot de protection (3 vis M4, clé de 7 mm)',
+        'Vérifier le connecteur MOTOR sur la carte EPI 05 de la trappe',
+        "Vérifier qu'il n'y a pas de jeu entre le pignon du moteur et la crémaillère blanche de la trappe",
+        'Retester dans DEBES',
+      ],
+      media: { type: 'photo', label: 'Moteur de trappe et sa carte EPI 05 (EPIMAT 13)', file: 'arbres/moteur_trappe.jpg' },
+      next: 'tr_moteur_result',
+      src: ['MF12 p.5-7'],
+    },
+    tr_moteur_result: {
+      type: 'question',
+      title: 'La trappe fonctionne-t-elle ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'sol_condamner_trappe' },
+      ],
+      src: ['LOG'],
+    },
+    tr_verif_verrou: {
+      type: 'action',
+      title: 'Vérifier le verrou électrique de la trappe',
+      steps: [
+        'Retirer le capot de protection (3 vis M4, clé de 7 mm)',
+        'Vérifier le connecteur LOCK (électro-aimant) sur la carte EPI 05 de la trappe',
+        "Retester l'ouverture dans DEBES",
+      ],
+      media: { type: 'photo', label: 'Carte EPI 05 : connecteurs MOTOR et LOCK en bas', file: 'arbres/epi05_carte.jpg' },
+      next: 'tr_verrou_result',
+      src: ['ME15 p.6', 'KIT p.3'],
+    },
+    tr_verrou_result: {
+      type: 'question',
+      title: 'La trappe fonctionne-t-elle ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'sol_condamner_trappe' },
+      ],
+      src: ['LOG'],
+    },
+    tr_casier_vide: {
+      type: 'action',
+      title: 'Vérifier le stock de cet emplacement',
+      steps: [
+        "Noter la colonne et l'étage concernés",
+        'Corriger le stock depuis le menu de remplissage (badge de maintenance → Vider / Remplir)',
+        "Vérifier le contenu de l'emplacement dans l'extranet (Machines)",
+      ],
+      next: 'tr_casier_result',
+      src: ['MU18 p.46', 'LOG'],
+    },
+    tr_casier_result: {
+      type: 'question',
+      title: 'Le problème se reproduit-il sur cet emplacement ?',
+      answers: [
+        { label: 'Non', next: 'sol_resolved' },
+        { label: 'Oui', next: 't_position' },
+      ],
+      src: ['LOG'],
+    },
+    tr_capteur: {
+      type: 'question',
+      title: "Dans DEBES, le voyant FCPF de cette trappe s'allume-t-il quand on la ferme à la main ?",
+      help: "FCPF = capteur « trappe fermée ». Si DEBES n'est pas ouvert : fermer DistEPI (Maj + F), puis lancer C:\\EPI\\DebesEPI.exe.",
+      media: { type: 'photo', label: 'DEBES : boutons de rotation du tambour et des trappes ; voyants FCPF (trappe fermée), CPT1 à CPT6 (position), Sécu tambour OK', file: 'arbres/debes_ecran.jpg' },
+      answers: [
+        { label: 'Non, il reste éteint', next: 'tr_capteur_scsi' },
+        { label: 'Oui', next: 'tr_debes_test' },
+      ],
+      src: ['ME15 p.16', 'REP'],
+    },
+    tr_capteur_scsi: {
+      type: 'action',
+      title: 'Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)',
+      help: "Mal enfoncé, ce câble donne des pannes bizarres : certains capteurs s'allument et d'autres non. Pas besoin d'éteindre la machine.",
+      steps: [
+        'Repérer le câble SCSI blanc entre le PC (carte Advantech) et la carte EPI 01 du tableau électrique',
+        "Vérifier qu'il est bien enfoncé des deux côtés",
+        'Au besoin, le débrancher complètement puis le rebrancher fermement',
+      ],
+      media: { type: 'photo', label: "Platine du tableau électrique tirée vers l'avant : la carte EPI 01 est à droite, avec ses nappes", file: 'arbres/platine_epi01.jpg' },
+      next: 'tr_capteur_scsi_result',
+      src: ['REP', 'MF12 p.11'],
+    },
+    tr_capteur_scsi_result: {
+      type: 'question',
+      title: "Le voyant FCPF s'allume-t-il maintenant quand la trappe est fermée ?",
+      answers: [
+        { label: 'Oui', next: 'tr_debes_test' },
+        { label: 'Non, il reste éteint', next: 'tr_modele_capteur' },
+      ],
+      src: ['LOG'],
+    },
+    tr_modele_capteur: {
+      type: 'question',
+      title: 'La machine a-t-elle des trappes (EPIMAT 13) ou des portes à gâche (EPIMAT 14) ?',
+      help: "Ça se voit sur la façade : l'EPIMAT 14 a des portes manuelles à gâche, pilotées par des cartes EPI 02.",
+      media: { type: 'photo', label: 'EPIMAT 13 : façade à trappes, avec les moteurs de trappe (manuel 2012)', file: 'arbres/epimat13_trappes.jpg' },
+      answers: [
+        { label: 'Des trappes (EPIMAT 13)', next: 'sol_changer_epi05' },
+        { label: 'Des portes à gâche (EPIMAT 14)', next: 'sol_sav_epi02' },
+      ],
+      src: ['REP'],
+    },
+
+    /* ====================================================================
        SOLUTIONS COMMUNES
        ==================================================================== */
     sol_resolved: {
@@ -1406,6 +1933,42 @@ export const DATA = {
       message: 'Ce badge spécifique est défaillant (les autres badges fonctionnent). Remplacer le badge auprès du SAV.',
       sav: true,
       src: ['T'],
+    },
+    sol_sav_tambour: {
+      type: 'solution', outcome: 'sav',
+      title: 'Tambour : intervention SAV',
+      message: 'À vérifier par le SAV : coupe-circuit 24 V (disjoncteur tambour), moteur M1, carte rotation tambour (EPI RT), carte vitesse lente (GR76).',
+      sav: true,
+      src: ['D24 p.6-7', 'ME15 p.19'],
+    },
+    sol_changer_epi05: {
+      type: 'solution', outcome: 'replace',
+      title: 'Changer la carte trappe EPI 05',
+      message: "Carte EPI 05 défectueuse. La remplacer (kit dépannage) en reprenant exactement les cavaliers et switches de l'ancienne carte (« ne pas oublier de changer les cavaliers »). Contacter le SAV.",
+      media: { type: 'photo', label: 'Carte EPI 05 : connecteurs MOTOR et LOCK en bas', file: 'arbres/epi05_carte.jpg' },
+      sav: true,
+      src: ['D24 p.5', 'MF12 p.5-6', 'ME15 p.5-7'],
+    },
+    sol_changer_log03: {
+      type: 'solution', outcome: 'replace',
+      title: 'Changer le capteur disque tambour (LOG 03 / LOG 04)',
+      message: 'Remplacer le circuit en cause (LOG 03 : capteurs CPT1-CPT6 ; LOG 04 : CP1, nappe 14 fils vers la carte principale). Contacter le SAV.',
+      sav: true,
+      src: ['L04', 'MF12 p.12', 'D24 p.9'],
+    },
+    sol_sav_epi02: {
+      type: 'solution', outcome: 'sav',
+      title: 'EPIMAT 14 : à faire vérifier par le SAV',
+      message: "Sur l'EPIMAT 14 (portes à gâche, cartes EPI 02), la suite du diagnostic n'est pas encore décrite dans l'app. Contacter le SAV en lui transmettant le rapport du diagnostic.",
+      sav: true,
+      src: ['REP'],
+    },
+    sol_condamner_trappe: {
+      type: 'solution', outcome: 'sav',
+      title: 'Trappe défectueuse : la condamner, puis SAV',
+      message: 'Condamner cette trappe dans DistEPI pour continuer à utiliser la machine, puis contacter le SAV pour la réparation.',
+      sav: true,
+      src: ['D24 p.1', 'REP'],
     },
 
     /* Placeholder machines non développées */
