@@ -114,6 +114,46 @@ for (const f of FICHES) {
   for (const s of f.solutions) if (!nodes[s]) warnings.push(`fiche ${f.id} : la conclusion « ${s} » n'est pas dans les arbres codés`);
 }
 
+/* 8. Scénarios de test : « panne X → l'app conclut Y » (scripts/scenarios.mjs) */
+const { SCENARIOS, REGLES } = await import(pathToFileURL(path.join(app, 'scripts/scenarios.mjs')).href);
+let joues = 0;
+for (const sc of SCENARIOS) {
+  const sym = symptoms.find(s => s.id === sc.symptome);
+  if (!sym || !nodes[sym.rootNode]) continue;              // lot pas encore codé ici
+  joues++;
+  let id = sym.rootNode, i = 0, guard = 0, fail = null;
+  while (id !== sc.attendu && guard++ < 100) {
+    const n = nodes[id];
+    if (n.type === 'action') { id = n.next; continue; }
+    if (n.type === 'solution') { fail = `s'arrête sur « ${id} »`; break; }
+    const want = sc.reponses[i++];
+    if (want === undefined) { fail = `plus de réponse à donner à « ${id} »`; break; }
+    const exact = n.answers.filter(a => a.label === want);
+    const part = n.answers.filter(a => a.label.includes(want));
+    const pick = exact.length ? exact : part;
+    if (pick.length !== 1) { fail = `réponse « ${want} » ${pick.length ? 'ambiguë' : 'introuvable'} à « ${id} »`; break; }
+    id = pick[0].next;
+  }
+  if (!fail && id !== sc.attendu) fail = 'boucle';
+  if (!fail && i < sc.reponses.length) fail = `arrivé sur « ${sc.attendu} » avec ${sc.reponses.length - i} réponse(s) en trop`;
+  if (fail) err('scénario', sc.nom, `${fail} (attendu : « ${sc.attendu} »)`);
+}
+
+/* 9. Règles sur tous les chemins possibles (scripts/scenarios.mjs, REGLES) */
+for (const r of REGLES) {
+  const seen9 = new Set(), stack9 = roots.filter(x => nodes[x]);
+  while (stack9.length) {
+    const id = stack9.pop();
+    if (seen9.has(id) || (r.garde || []).includes(id)) continue;
+    seen9.add(id);
+    const n = nodes[id];
+    const next = n.type === 'question' ? n.answers.filter(a => !(r.viaReponse && r.viaReponse.test(a.label))).map(a => a.next)
+               : n.type === 'action' ? [n.next] : [];
+    for (const t of next) if (nodes[t]) stack9.push(t);
+  }
+  for (const c of r.cible) if (seen9.has(c)) err('règle', c, r.nom);
+}
+
 /* Rapport */
 const by = errors.reduce((m, e) => ((m[e.rule] ||= []).push(e), m), {});
 for (const [rule, list] of Object.entries(by)) {
@@ -121,6 +161,7 @@ for (const [rule, list] of Object.entries(by)) {
   for (const e of list) console.log(`  - ${e.id} : ${e.msg}`);
 }
 if (warnings.length) console.log(`\n⚠ avertissements (${warnings.length})\n  - ${warnings.join('\n  - ')}`);
+console.log(`Scénarios joués : ${joues} / ${SCENARIOS.length} · règles : ${REGLES.length}`);
 console.log(errors.length
   ? `\n${errors.length} problème(s) — échec.`
   : `\nOK — ${Object.keys(nodes).length} nœuds, ${roots.length} points d'entrée.`);

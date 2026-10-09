@@ -1666,6 +1666,28 @@ export const DATA = {
       title: "Le tambour s'arrête-t-il correctement sur chaque colonne ?",
       answers: [
         { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 't_vit_scsi' },
+      ],
+      src: ['LOG'],
+    },
+    t_vit_scsi: {
+      type: 'action',
+      title: 'Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)',
+      help: "Mal enfoncé, ce câble donne des pannes bizarres : certains capteurs s'allument et d'autres non. Pas besoin d'éteindre la machine.",
+      steps: [
+        'Repérer le câble SCSI blanc entre le PC (carte Advantech) et la carte EPI 01 du tableau électrique',
+        "Vérifier qu'il est bien enfoncé des deux côtés",
+        'Au besoin, le débrancher complètement puis le rebrancher fermement',
+      ],
+      media: { type: 'photo', label: "Platine du tableau électrique tirée vers l'avant : la carte EPI 01 est à droite, avec ses nappes", file: 'arbres/platine_epi01.jpg' },
+      next: 't_vit_scsi_result',
+      src: ['REP', 'MF12 p.11'],
+    },
+    t_vit_scsi_result: {
+      type: 'question',
+      title: "Le tambour s'arrête-t-il correctement maintenant ?",
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
         { label: 'Non', next: 't_aligner_log03' },
       ],
       src: ['LOG'],

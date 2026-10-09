@@ -1184,6 +1184,20 @@ export const EN = {
       title: 'Does the drum stop correctly at each column?',
       answers: ['Yes', 'No'],
     },
+    t_vit_scsi: {
+      title: 'Check the white SCSI cable (PC ↔ EPI 01 board)',
+      help: 'If this cable is not fully seated, it causes strange faults: some sensors light up and others do not. No need to switch the machine off.',
+      steps: [
+        'Find the white SCSI cable between the PC (Advantech board) and the EPI 01 board of the electrical panel',
+        'Check that it is fully seated at both ends',
+        'If needed, unplug it completely, then plug it back in firmly',
+      ],
+      media: 'Electrical panel plate pulled forward: the EPI 01 board is on the right, with its ribbon cables',
+    },
+    t_vit_scsi_result: {
+      title: 'Does the drum stop correctly now?',
+      answers: ['Yes', 'No'],
+    },
     t_bloque: {
       title: 'Free the drum',
       help: 'Safety: never put your hands inside the machine while the drum is turning.',

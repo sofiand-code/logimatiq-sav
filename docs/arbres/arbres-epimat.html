@@ -500,7 +500,7 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-t">
-    <div class="bar"><h2>« EN PANNE » / tambour bloqué ou mal positionné <span class="sub mono">· 16 questions · 11 actions · 6 conclusions · 9 photos</span></h2>
+    <div class="bar"><h2>« EN PANNE » / tambour bloqué ou mal positionné <span class="sub mono">· 17 questions · 12 actions · 6 conclusions · 9 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -534,7 +534,7 @@ flowchart TD
   t_vitesse_result("Le tambour s'arrête-t-il correctement sur chaque colonne ?"):::ques
   sol_resolved__1(["Problème résolu"]):::resolved
   t_vitesse_result -->|"Oui"| sol_resolved__1
-  t_vitesse_result -->|"Non"| t_aligner_log03
+  t_vitesse_result -->|"Non"| t_vit_scsi
   t_test_distrib("La distribution test fonctionne-t-elle ?"):::ques
   sol_resolved__2(["Problème résolu"]):::resolved
   t_test_distrib -->|"Oui"| sol_resolved__2
@@ -552,8 +552,8 @@ flowchart TD
   t_arret_cp1 -->|"Non, il s'arrête décalé"| t_vitesse
   t_pos_scsi["Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)"]:::act
   t_pos_scsi --> t_pos_scsi_result
-  t_aligner_log03["Nettoyer le disque, puis vérifier l'alignement des capteurs LOG 03 et LOG 04"]:::act
-  t_aligner_log03 --> t_aligner_result
+  t_vit_scsi["Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)"]:::act
+  t_vit_scsi --> t_vit_scsi_result
   t_fermer_result("La machine fonctionne-t-elle à nouveau ?"):::ques
   sol_resolved__5(["Problème résolu"]):::resolved
   t_fermer_result -->|"Oui"| sol_resolved__5
@@ -566,32 +566,38 @@ flowchart TD
   sol_resolved__7(["Problème résolu"]):::resolved
   t_pos_scsi_result -->|"Oui"| sol_resolved__7
   t_pos_scsi_result -->|"Non"| t_aligner_log03
-  t_aligner_result("La position est-elle juste maintenant ?"):::ques
+  t_vit_scsi_result("Le tambour s'arrête-t-il correctement maintenant ?"):::ques
   sol_resolved__8(["Problème résolu"]):::resolved
-  t_aligner_result -->|"Oui"| sol_resolved__8
-  sol_changer_log03__9(["Changer le capteur disque tambour (LOG 03 / LOG 04)"]):::replace
-  t_aligner_result -->|"Non"| sol_changer_log03__9
+  t_vit_scsi_result -->|"Oui"| sol_resolved__8
+  t_vit_scsi_result -->|"Non"| t_aligner_log03
   t_ouvrir_debes["Ouvrir DEBES"]:::act
   t_ouvrir_debes --> t_debes_fcpf
+  t_aligner_log03["Nettoyer le disque, puis vérifier l'alignement des capteurs LOG 03 et LOG 04"]:::act
+  t_aligner_log03 --> t_aligner_result
   t_debes_fcpf("Dans DEBES, les voyants FCPF (trappes fermées) sont-ils tous verts ?"):::ques
-  tr_capteur__10[["→ Dans DEBES, le voyant FCPF de cette trappe s'allume-t-il quand on la ferme à la main ?"]]:::link
-  t_debes_fcpf -->|"Non, un voyant FCPF est éteint"| tr_capteur__10
+  tr_capteur__9[["→ Dans DEBES, le voyant FCPF de cette trappe s'allume-t-il quand on la ferme à la main ?"]]:::link
+  t_debes_fcpf -->|"Non, un voyant FCPF est éteint"| tr_capteur__9
   t_debes_fcpf -->|"Oui, tous verts"| t_secu_tambour
+  t_aligner_result("La position est-elle juste maintenant ?"):::ques
+  sol_resolved__10(["Problème résolu"]):::resolved
+  t_aligner_result -->|"Oui"| sol_resolved__10
+  sol_changer_log03__11(["Changer le capteur disque tambour (LOG 03 / LOG 04)"]):::replace
+  t_aligner_result -->|"Non"| sol_changer_log03__11
   t_secu_tambour("Dans DEBES, le voyant « Sécu tambour OK » est-il vert ?"):::ques
   t_secu_tambour -->|"Non, il est éteint"| t_modele_secu
-  sol_sav_tambour__11(["Tambour : intervention SAV"]):::sav
-  t_secu_tambour -->|"Oui, il est vert"| sol_sav_tambour__11
+  sol_sav_tambour__12(["Tambour : intervention SAV"]):::sav
+  t_secu_tambour -->|"Oui, il est vert"| sol_sav_tambour__12
   t_modele_secu("La machine a-t-elle des trappes (EPIMAT 13) ou des portes à gâche (EPIMAT 14) ?"):::ques
   t_modele_secu -->|"Des trappes (EPIMAT 13)"| t_test_epi05
-  sol_sav_epi02__12(["EPIMAT 14 : à faire vérifier par le SAV"]):::sav
-  t_modele_secu -->|"Des portes à gâche (EPIMAT 14)"| sol_sav_epi02__12
+  sol_sav_epi02__13(["EPIMAT 14 : à faire vérifier par le SAV"]):::sav
+  t_modele_secu -->|"Des portes à gâche (EPIMAT 14)"| sol_sav_epi02__13
   t_test_epi05["Trouver la carte EPI 05 qui bloque le tambour"]:::act
   t_test_epi05 --> t_test_epi05_result
   t_test_epi05_result("Avez-vous trouvé la carte EPI 05 qui empêche la rotation ?"):::ques
-  sol_changer_epi05__13(["Changer la carte trappe EPI 05"]):::replace
-  t_test_epi05_result -->|"Oui"| sol_changer_epi05__13
-  sol_sav_tambour__14(["Tambour : intervention SAV"]):::sav
-  t_test_epi05_result -->|"Non"| sol_sav_tambour__14
+  sol_changer_epi05__14(["Changer la carte trappe EPI 05"]):::replace
+  t_test_epi05_result -->|"Oui"| sol_changer_epi05__14
+  sol_sav_tambour__15(["Tambour : intervention SAV"]):::sav
+  t_test_epi05_result -->|"Non"| sol_sav_tambour__15
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
