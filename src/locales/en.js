@@ -452,21 +452,88 @@ export const EN = {
 
     /* === ARBRE INTERNET === */
     i_debut: {
-      title: 'What is the problem?',
-      help: 'Four-Faith modem indicators: steady blue Online = internet OK; blinking ETH = link with the PC OK.',
-      answers: [
-        '"Online" LED off',
-        '"Online" LED on but DistEPI sync error',
-        'Frequent disconnections / unstable signal',
-      ],
+      title: 'Are all 6 modem indicators normal?',
+      help: 'Normal: PWR steady blue, SYS blinking, SIM on, at least one signal bar on, Online steady blue, ETH blinking (the RJ45 cable links the PC, switched on, to the modem).',
+      answers: ['Yes, all normal', 'No, at least one indicator is not normal'],
       media: [
         'Location of the modem in the machine (circled in red)',
         'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
       ],
     },
+    i_tous_ok: {
+      title: 'All indicators are normal: what is the problem?',
+      answers: ['Synchronization error in DistEPI', 'Frequent disconnections'],
+    },
+    i_relancer_synchro: {
+      title: 'Run a synchronization',
+      steps: [
+        "Plug a keyboard into the machine's PC",
+        'Shift + L opens the DistEPI maintenance menu',
+        'Press "Synchroniser" (Synchronize)',
+        'Wait for the "synchro effectué" (sync done) message',
+      ],
+    },
+    i_relancer_synchro_result: {
+      title: 'Did the synchronization succeed?',
+      answers: ['Yes, "synchro effectué"', 'No, synchronization error'],
+    },
     i_pwr_led: {
-      title: "Is the modem's PWR LED on (steady blue)?",
+      title: 'Is the PWR indicator steady blue?',
+      help: 'Check the indicators in this order: PWR, SYS, SIM, signal, Online, ETH.',
       answers: ['Yes', 'No, modem off'],
+      media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
+    },
+    i_multiprise_modem: {
+      title: 'Is the red LED of the internal power strip on?',
+      help: 'White power strip on the electrical panel plate, inside the machine (open the front, slide the plate forward). The modem is plugged into it: if it is off, the fault comes from the power supply, not from the modem.',
+      answers: ['Yes, red LED on', 'No, power strip off'],
+      media: 'Electrical panel plate: the internal power strip (white) is in the middle, below the EPI RT board',
+    },
+    i_sys_led: {
+      title: 'Is the SYS indicator blinking?',
+      help: "A blinking SYS = the modem's system is running.",
+      answers: ['Yes, it is blinking', 'No, steady or off'],
+      media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
+    },
+    i_reboot_sys: {
+      title: 'Restart the modem',
+      steps: [
+        'Unplug the modem power (jack): it has no switch',
+        'Wait 30 seconds',
+        'Plug the power back in',
+        'Wait 2 to 3 minutes',
+      ],
+      media: 'Modem connectors: 2 antennas, power (PWR) and the RJ45 cable from the PC on ETH',
+    },
+    i_sys_result: {
+      title: 'Is the SYS indicator blinking now?',
+      answers: ['Yes', 'No, still steady or off'],
+    },
+    i_signal_led: {
+      title: 'Is at least one signal bar on?',
+      help: 'Bars in the middle of the modem. No bar = the modem does not pick up the mobile network.',
+      answers: ['Yes', 'No, no bar'],
+      media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
+    },
+    i_signal_aucun: {
+      title: 'Help the modem pick up the network',
+      steps: [
+        'Check that both antennas are properly screwed onto the modem',
+        'Straighten the antennas vertically',
+        'If possible, move the modem closer to a window',
+        'Check with a mobile phone that the network is available in the room',
+        'Wait 1 to 2 minutes',
+      ],
+      media: 'Modem connectors: 2 antennas, power (PWR) and the RJ45 cable from the PC on ETH',
+    },
+    i_signal_aucun_result: {
+      title: 'Is at least one signal bar on now?',
+      answers: ['Yes', 'No, still no bar'],
+    },
+    i_online_led: {
+      title: 'Is the Online indicator steady blue?',
+      help: 'Online steady blue = the modem is connected to the internet.',
+      answers: ['Yes', 'No, off'],
       media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
     },
     i_alim_modem: {
@@ -481,6 +548,19 @@ export const EN = {
     i_alim_modem_result: {
       title: 'Does the PWR LED turn on?',
       answers: ['Yes', 'No'],
+    },
+    i_bloc_modem: {
+      title: 'Try another power adapter',
+      steps: [
+        "Unplug the modem's power adapter from the internal power strip",
+        'Replace it with another identical adapter (same voltage, same jack)',
+        'Plug the jack back into the modem and wait 1 minute',
+      ],
+      media: 'Modem connectors: 2 antennas, power (PWR) and the RJ45 cable from the PC on ETH',
+    },
+    i_bloc_modem_result: {
+      title: 'Is the PWR indicator steady blue now?',
+      answers: ['Yes', 'No, still off'],
     },
     i_reboot_modem: {
       title: 'Restart the modem',
@@ -510,9 +590,9 @@ export const EN = {
       answers: ['Yes, LED on', 'No, still off'],
     },
     i_sim_led: {
-      title: 'Is the modem SIM LED on?',
-      help: 'Blue SIM LED = SIM card detected.',
-      answers: ['Yes, SIM LED on', 'No, SIM LED off'],
+      title: 'Is the SIM indicator on?',
+      help: 'SIM on = SIM card detected.',
+      answers: ['Yes, SIM on', 'No, SIM off'],
       media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
     },
     i_reinsertion_sim: {
@@ -559,20 +639,46 @@ export const EN = {
       title: 'Is the "Online" LED now on?',
       answers: ['Yes, blue LED on', 'No, still off'],
     },
-    i_eth_led: {
-      title: "Is the modem's ETH LED blinking?",
-      help: "Blinking ETH = the modem is exchanging data with the machine's PC.",
-      answers: ['Yes, it is blinking', 'No, off or steady'],
+    i_reset_online: {
+      title: 'Reset the modem (RST button)',
+      help: 'Last try before having the modem replaced: the reset erases the configuration, the APN must be set again afterwards.',
+      steps: [
+        'Note the modem APN before the reset (PC browser → 192.168.1.1 → Setup), if it is not already noted',
+        'On the indicator side of the modem, find the small hole marked RST',
+        'Push a pointed tool (paper clip, thin pen) into the hole and keep it pressed until the indicators change (they go off or blink together)',
+        'Release, then wait for the modem to restart (2 to 3 minutes)',
+        'Set the APN again: run setup_config_routeur_four_faith (C:\\EPI folder), answer Yes to "routeur installé par Logimatiq" (router installed by Logimatiq) and choose the same APN',
+        'Wait 2 to 3 minutes and look at the Online indicator',
+      ],
       media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
     },
-    i_connexion_distante: {
-      title: "Can we connect remotely to the machine's PC?",
-      help: 'Only if you have your own remote access software installed on this PC (a reseller, for example). If remote access works, the RJ45 cable is not the cause.',
-      answers: [
-        'Yes, remote connection OK',
-        'No, no remote connection',
-        'No remote access software',
+    i_reset_online_result: {
+      title: 'Is the Online indicator steady blue now?',
+      answers: ['Yes', 'No, still off'],
+    },
+    i_reset_modem: {
+      title: 'Reset the modem (RST button)',
+      help: 'Last try before replacing the modem: the reset erases the configuration, the APN must be set again afterwards.',
+      steps: [
+        'Note the modem APN before the reset (PC browser → 192.168.1.1 → Setup), if the interface responds',
+        'On the indicator side of the modem, find the small hole marked RST',
+        'Push a pointed tool (paper clip, thin pen) into the hole and keep it pressed until the indicators change (they go off or blink together)',
+        'Release, then wait for the modem to restart (2 to 3 minutes)',
+        'Set the APN again: run setup_config_routeur_four_faith (C:\\EPI folder), answer Yes to "routeur installé par Logimatiq" (router installed by Logimatiq) and choose the same APN',
+        'Wait 2 to 3 minutes',
       ],
+      media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
+    },
+    i_reset_result: {
+      title: 'Does the modem work now?',
+      help: 'All 6 indicators are normal and the connection no longer drops.',
+      answers: ['Yes', 'No'],
+    },
+    i_eth_led: {
+      title: 'Is the ETH indicator blinking?',
+      help: 'ETH blinks when the RJ45 cable links the PC, switched on, to the modem: the modem is exchanging data with the PC.',
+      answers: ['Yes, it blinks', 'No, it is off or steady'],
+      media: 'Modem indicators: ETH, Online, signal, SIM, SYS, PWR',
     },
     i_test_url: {
       title: 'Test access to the EPIMAT server from the PC',
@@ -587,6 +693,17 @@ export const EN = {
       help: 'If the browser can reach the EPIMAT address, the EPIMAT applications work (network prerequisites).',
       answers: ['Yes', 'No'],
     },
+    i_test_autre_site: {
+      title: 'Open another website',
+      steps: [
+        'In the same browser, go to https://www.google.fr',
+      ],
+    },
+    i_test_autre_site_result: {
+      title: 'Does the website open?',
+      help: 'Yes: the internet works, it is the Logimatiq server that does not respond. No: the PC cannot reach the internet.',
+      answers: ['Yes', 'No'],
+    },
     i_rj45_check: {
       title: 'Check the RJ45 cable (PC ↔ modem)',
       steps: [
@@ -599,6 +716,38 @@ export const EN = {
     i_rj45_result: {
       title: 'Does the Windows PC now have internet access?',
       answers: ['Yes, internet OK', 'No, still no network'],
+    },
+    i_eth_pc: {
+      title: "Is the machine's PC on?",
+      help: 'The ETH indicator does not blink if the PC is off. PC on: its LED is lit and the screen shows an image.',
+      answers: ['Yes, PC on', 'No, PC off'],
+      media: 'The PC is in the bottom compartment of the machine (circled in red)',
+    },
+    i_allumer_pc: {
+      title: 'Switch on the PC',
+      steps: [
+        'Press the Power button on the front of the PC case',
+        'If nothing happens, set the ON/OFF switch at the back to ON',
+        'Press the Power button again',
+        'Wait for Windows and DistEPI to start',
+      ],
+      media: 'The PC is in the bottom compartment of the machine (circled in red)',
+    },
+    i_pc_demarre: {
+      title: 'Has the PC started?',
+      answers: ['Yes', 'No, still off'],
+    },
+    i_rj45_autre: {
+      title: 'Try another RJ45 cable',
+      steps: [
+        "Replace the RJ45 cable between the PC and the modem's ETH port with another cable",
+        'Push each end in until it clicks',
+        'Wait 1 minute and look at the ETH indicator',
+      ],
+    },
+    i_rj45_autre_result: {
+      title: 'Is the ETH indicator blinking now?',
+      answers: ['Yes', 'No, still off or steady'],
     },
     i_clientsynch: {
       title: 'Test with ClientSynch DB EPI (Grizzly)',
@@ -1494,13 +1643,17 @@ export const EN = {
       title: 'Replace the GSM modem',
       message: 'The modem no longer connects despite the checks. Before unplugging it, note its APN (PC browser → 192.168.1.1 → Setup): the new modem must have the same APN if the same SIM card is kept. Replace it (keep the SIM, disconnect the power supply and the antennas) and contact Support.',
     },
+    sol_sav_sim: {
+      title: 'Have the SIM card line checked',
+      message: 'SIM detected and signal present, but the modem does not connect to the internet despite the reconfiguration: the line may be suspended or have no plan. Logimatiq Support checks the line; if it is active, they will have the modem replaced.',
+    },
     sol_antenne_ext: {
       title: 'Install an external antenna',
       message: 'The GSM signal is insufficient in this location. An external remote antenna is needed. Contact Support for installation.',
     },
     sol_sav_serveur: {
       title: 'Logimatiq server issue',
-      message: 'The ClientSynch DB EPI test fails: the issue is with the Logimatiq server or the SQL database. Contact Logimatiq Support.',
+      message: 'The internet works, but the Logimatiq server does not respond (EPIMAT page or ClientSynch DB EPI test failing): the issue is with the server or the database. Contact Logimatiq Support.',
     },
     sol_changer_lecteur: {
       title: 'Replace the badge reader',

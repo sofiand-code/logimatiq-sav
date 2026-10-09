@@ -478,28 +478,149 @@ export const DATA = {
        ==================================================================== */
     i_debut: {
       type: 'question',
-      title: 'Quel est le problème ?',
-      help: 'Voyants du modem Four-Faith : Online bleu fixe = internet OK ; ETH clignotant = liaison avec le PC OK.',
+      title: 'Les 6 voyants du modem sont-ils tous normaux ?',
+      help: 'Normal : PWR bleu fixe, SYS clignote, SIM allumé, au moins une barre de signal allumée, Online bleu fixe, ETH clignote (le câble RJ45 relie le PC allumé au modem).',
       media: [
         { type: 'photo', label: 'Emplacement du modem dans la machine (entouré en rouge)', file: 'arbres/modem_emplacement.jpg' },
         { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
       ],
       answers: [
-        { label: 'LED « Online » éteinte', next: 'i_pwr_led' },
-        { label: 'LED « Online » allumée mais erreur de synchro DistEPI', next: 'i_eth_led' },
-        { label: 'Déconnexions fréquentes / signal instable', next: 'i_signal_faible' },
+        { label: 'Oui, tous normaux', next: 'i_tous_ok' },
+        { label: "Non, au moins un voyant n'est pas normal", next: 'i_pwr_led' },
       ],
-      src: ['T', 'SIM p.12'],
+      src: ['SIM p.12', 'REP'],
     },
 
-    /* ---- LED « Online » éteinte ---- */
+    /* ---- Tous les voyants normaux : synchro DistEPI ou déconnexions ---- */
+    i_tous_ok: {
+      type: 'question',
+      title: 'Tous les voyants sont normaux : quel est le problème ?',
+      answers: [
+        { label: 'Erreur de synchronisation dans DistEPI', next: 'i_relancer_synchro' },
+        { label: 'Déconnexions fréquentes', next: 'i_signal_faible' },
+      ],
+      src: ['REP'],
+    },
+    i_relancer_synchro: {
+      type: 'action',
+      title: 'Relancer une synchronisation',
+      steps: [
+        'Brancher un clavier sur le PC de la machine',
+        'Maj + L ouvre le menu maintenance de DistEPI',
+        'Appuyer sur « Synchroniser »',
+        'Attendre le message « synchro effectué »',
+      ],
+      next: 'i_relancer_synchro_result',
+      src: ['REP', 'DS p.4'],
+    },
+    i_relancer_synchro_result: {
+      type: 'question',
+      title: 'La synchronisation a-t-elle réussi ?',
+      answers: [
+        { label: 'Oui, « synchro effectué »', next: 'sol_resolved' },
+        { label: 'Non, erreur de synchronisation', next: 'i_test_url' },
+      ],
+      src: ['REP'],
+    },
+
+    /* ---- Au moins un voyant anormal : contrôle voyant par voyant (PWR, SYS, SIM, signal, Online, ETH) ---- */
     i_pwr_led: {
       type: 'question',
-      title: 'La LED PWR du modem est-elle allumée (bleu fixe) ?',
+      title: 'Le voyant PWR est-il bleu fixe ?',
+      help: 'Les voyants se contrôlent dans cet ordre : PWR, SYS, SIM, signal, Online, ETH.',
       media: { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
       answers: [
-        { label: 'Oui', next: 'i_reboot_modem' },
-        { label: 'Non, modem éteint', next: 'i_alim_modem' },
+        { label: 'Oui', next: 'i_sys_led' },
+        { label: 'Non, modem éteint', next: 'i_multiprise_modem' },
+      ],
+      src: ['SIM p.12', 'REP'],
+    },
+    i_multiprise_modem: {
+      type: 'question',
+      title: 'La LED rouge de la multiprise intérieure est-elle allumée ?',
+      help: "Multiprise blanche sur la platine du tableau électrique, dans la machine (ouvrir la façade, coulisser la platine vers l'avant). Le modem y est branché : si elle est éteinte, la panne vient de l'alimentation, pas du modem.",
+      media: { type: 'photo', label: 'Platine du tableau électrique : la multiprise intérieure (blanche) est au milieu, sous la carte EPI RT', file: 'arbres/platine_tableau_electrique.jpg' },
+      answers: [
+        { label: 'Oui, LED rouge allumée', next: 'i_alim_modem' },
+        { label: 'Non, multiprise éteinte', next: 'a_debut' },
+      ],
+      src: ['REP'],
+    },
+    i_sys_led: {
+      type: 'question',
+      title: 'Le voyant SYS clignote-t-il ?',
+      help: 'SYS qui clignote = le système du modem fonctionne.',
+      media: { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
+      answers: [
+        { label: 'Oui, il clignote', next: 'i_sim_led' },
+        { label: 'Non, fixe ou éteint', next: 'i_reboot_sys' },
+      ],
+      src: ['SIM p.12', 'REP'],
+    },
+    i_reboot_sys: {
+      type: 'action',
+      title: 'Redémarrer le modem',
+      steps: [
+        "Débrancher l'alimentation du modem (jack) : il n'a pas d'interrupteur",
+        'Attendre 30 secondes',
+        "Rebrancher l'alimentation",
+        'Attendre 2 à 3 minutes',
+      ],
+      media: { type: 'photo', label: 'Connecteurs du modem : 2 antennes, alimentation (PWR) et câble RJ45 du PC sur ETH', file: 'arbres/modem_connecteurs.jpg' },
+      next: 'i_sys_result',
+      src: ['REP', 'IM p.1'],
+    },
+    i_sys_result: {
+      type: 'question',
+      title: 'Le voyant SYS clignote-t-il maintenant ?',
+      answers: [
+        { label: 'Oui', next: 'i_debut' },
+        { label: 'Non, toujours fixe ou éteint', next: 'i_reset_modem' },
+      ],
+      src: ['REP'],
+    },
+    i_signal_led: {
+      type: 'question',
+      title: 'Au moins une barre de signal est-elle allumée ?',
+      help: 'Barres au centre du modem. Aucune barre = le modem ne capte pas le réseau mobile.',
+      media: { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
+      answers: [
+        { label: 'Oui', next: 'i_online_led' },
+        { label: 'Non, aucune barre', next: 'i_signal_aucun' },
+      ],
+      src: ['SIM p.12', 'REP'],
+    },
+    i_signal_aucun: {
+      type: 'action',
+      title: 'Aider le modem à capter le réseau',
+      steps: [
+        'Vérifier que les 2 antennes sont bien vissées sur le modem',
+        'Redresser les antennes verticalement',
+        "Si possible, rapprocher le modem d'une fenêtre",
+        'Vérifier avec un téléphone mobile que le réseau passe dans la pièce',
+        'Attendre 1 à 2 minutes',
+      ],
+      media: { type: 'photo', label: 'Connecteurs du modem : 2 antennes, alimentation (PWR) et câble RJ45 du PC sur ETH', file: 'arbres/modem_connecteurs.jpg' },
+      next: 'i_signal_aucun_result',
+      src: ['T', 'IM p.1', 'REP'],
+    },
+    i_signal_aucun_result: {
+      type: 'question',
+      title: 'Au moins une barre de signal est-elle allumée maintenant ?',
+      answers: [
+        { label: 'Oui', next: 'i_debut' },
+        { label: 'Non, toujours aucune barre', next: 'sol_antenne_ext' },
+      ],
+      src: ['REP'],
+    },
+    i_online_led: {
+      type: 'question',
+      title: 'Le voyant Online est-il bleu fixe ?',
+      help: 'Online bleu fixe = le modem est connecté à internet.',
+      media: { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
+      answers: [
+        { label: 'Oui', next: 'i_eth_led' },
+        { label: 'Non, éteint', next: 'i_reboot_modem' },
       ],
       src: ['SIM p.12'],
     },
@@ -519,10 +640,31 @@ export const DATA = {
       type: 'question',
       title: "La LED PWR s'allume-t-elle ?",
       answers: [
-        { label: 'Oui', next: 'i_reboot_result' },
-        { label: 'Non', next: 'sol_changer_modem' },
+        { label: 'Oui', next: 'i_debut' },
+        { label: 'Non', next: 'i_bloc_modem' },
       ],
       src: ['SIM p.12'],
+    },
+    i_bloc_modem: {
+      type: 'action',
+      title: "Essayer un autre bloc d'alimentation",
+      steps: [
+        "Débrancher le bloc d'alimentation du modem de la multiprise intérieure",
+        'Le remplacer par un autre bloc identique (même tension, même jack)',
+        'Rebrancher le jack dans le modem et attendre 1 minute',
+      ],
+      media: { type: 'photo', label: 'Connecteurs du modem : 2 antennes, alimentation (PWR) et câble RJ45 du PC sur ETH', file: 'arbres/modem_connecteurs.jpg' },
+      next: 'i_bloc_modem_result',
+      src: ['REP'],
+    },
+    i_bloc_modem_result: {
+      type: 'question',
+      title: 'Le voyant PWR est-il maintenant bleu fixe ?',
+      answers: [
+        { label: 'Oui', next: 'i_debut' },
+        { label: 'Non, toujours éteint', next: 'sol_changer_modem' },
+      ],
+      src: ['REP'],
     },
     i_reboot_modem: {
       type: 'action',
@@ -563,18 +705,18 @@ export const DATA = {
       title: "La LED « Online » s'est-elle allumée ?",
       answers: [
         { label: 'Oui, LED allumée', next: 'sol_resolved' },
-        { label: 'Non, toujours éteinte', next: 'i_sim_led' },
+        { label: 'Non, toujours éteinte', next: 'i_lire_apn' },
       ],
       src: ['T'],
     },
     i_sim_led: {
       type: 'question',
-      title: 'La LED SIM du modem est-elle allumée ?',
-      help: 'LED SIM bleue = carte SIM détectée.',
+      title: 'Le voyant SIM est-il allumé ?',
+      help: 'SIM allumé = carte SIM détectée.',
       media: { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
       answers: [
-        { label: 'Oui, LED SIM allumée', next: 'i_lire_apn' },
-        { label: 'Non, LED SIM éteinte', next: 'i_reinsertion_sim' },
+        { label: 'Oui, SIM allumé', next: 'i_signal_led' },
+        { label: 'Non, SIM éteint', next: 'i_reinsertion_sim' },
       ],
       src: ['T', 'SIM p.12'],
     },
@@ -596,8 +738,8 @@ export const DATA = {
       type: 'question',
       title: 'La LED SIM est-elle maintenant allumée ?',
       answers: [
-        { label: 'Oui, LED SIM allumée', next: 'i_lire_apn' },
-        { label: 'Non, toujours éteinte', next: 'sol_changer_modem' },
+        { label: 'Oui, LED SIM allumée', next: 'i_debut' },
+        { label: 'Non, toujours éteinte', next: 'i_reset_modem' },
       ],
       src: ['T'],
     },
@@ -637,33 +779,71 @@ export const DATA = {
       title: 'La LED « Online » est-elle maintenant allumée ?',
       answers: [
         { label: 'Oui, LED bleue allumée', next: 'sol_resolved' },
-        { label: 'Non, toujours éteinte', next: 'sol_changer_modem' },
+        { label: 'Non, toujours éteinte', next: 'i_reset_online' },
       ],
       src: ['T'],
     },
-
-    /* ---- LED « Online » allumée mais erreur de synchro DistEPI ---- */
+    i_reset_online: {
+      type: 'action',
+      title: 'Réinitialiser le modem (bouton RST)',
+      help: "Dernier essai avant de faire changer le modem : le reset efface la configuration, il faut ensuite remettre l'APN.",
+      steps: [
+        "Relever l'APN du modem avant le reset (navigateur du PC → 192.168.1.1 → Setup), s'il n'est pas déjà noté",
+        'Sur la face des voyants du modem, repérer le petit trou marqué RST',
+        "Enfoncer une pointe (trombone, stylo fin) dans le trou et rester appuyé jusqu'à ce que les voyants changent (ils s'éteignent ou clignotent ensemble)",
+        'Relâcher, puis attendre que le modem redémarre (2 à 3 minutes)',
+        "Remettre l'APN : relancer setup_config_routeur_four_faith (dossier C:\\EPI), répondre Oui à « routeur installé par Logimatiq » et choisir le même APN",
+        'Attendre 2 à 3 minutes et regarder le voyant Online',
+      ],
+      media: { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
+      next: 'i_reset_online_result',
+      src: ['REP'],
+    },
+    i_reset_online_result: {
+      type: 'question',
+      title: 'Le voyant Online est-il maintenant bleu fixe ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non, toujours éteint', next: 'sol_sav_sim' },
+      ],
+      src: ['REP'],
+    },
+    i_reset_modem: {
+      type: 'action',
+      title: 'Réinitialiser le modem (bouton RST)',
+      help: "Dernier essai avant de changer le modem : le reset efface la configuration, il faut ensuite remettre l'APN.",
+      steps: [
+        "Relever l'APN du modem avant le reset (navigateur du PC → 192.168.1.1 → Setup), si l'interface répond",
+        'Sur la face des voyants du modem, repérer le petit trou marqué RST',
+        "Enfoncer une pointe (trombone, stylo fin) dans le trou et rester appuyé jusqu'à ce que les voyants changent (ils s'éteignent ou clignotent ensemble)",
+        'Relâcher, puis attendre que le modem redémarre (2 à 3 minutes)',
+        "Remettre l'APN : relancer setup_config_routeur_four_faith (dossier C:\\EPI), répondre Oui à « routeur installé par Logimatiq » et choisir le même APN",
+        'Attendre 2 à 3 minutes',
+      ],
+      media: { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
+      next: 'i_reset_result',
+      src: ['REP'],
+    },
+    i_reset_result: {
+      type: 'question',
+      title: 'Le modem fonctionne-t-il maintenant ?',
+      help: 'Les 6 voyants sont normaux et la connexion ne coupe plus.',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'sol_changer_modem' },
+      ],
+      src: ['REP'],
+    },
     i_eth_led: {
       type: 'question',
-      title: 'La LED ETH du modem clignote-t-elle ?',
-      help: 'ETH clignotant = le modem échange avec le PC de la machine.',
+      title: 'Le voyant ETH clignote-t-il ?',
+      help: 'ETH clignote quand le câble RJ45 relie le PC allumé au modem : le modem échange avec le PC.',
       media: { type: 'photo', label: 'Voyants du modem : ETH, Online, signal, SIM, SYS, PWR', file: 'sens_insertion_sim.png' },
       answers: [
-        { label: 'Oui, elle clignote', next: 'i_connexion_distante' },
-        { label: 'Non, éteinte ou fixe', next: 'i_rj45_check' },
+        { label: 'Oui, il clignote', next: 'i_tous_ok' },
+        { label: 'Non, éteint ou fixe', next: 'i_rj45_check' },
       ],
-      src: ['SIM p.12'],
-    },
-    i_connexion_distante: {
-      type: 'question',
-      title: 'Peut-on se connecter à distance au PC de la machine ?',
-      help: "Seulement si vous avez votre propre logiciel de connexion à distance installé sur ce PC (revendeur, par exemple). Si la connexion à distance fonctionne, le câble RJ45 n'est pas en cause.",
-      answers: [
-        { label: 'Oui, connexion distance OK', next: 'i_test_url' },
-        { label: 'Non, pas de connexion distance', next: 'i_rj45_check' },
-        { label: 'Pas de logiciel de connexion à distance', next: 'i_rj45_check' },
-      ],
-      src: ['T', 'REP'],
+      src: ['SIM p.12', 'REP'],
     },
     i_test_url: {
       type: 'action',
@@ -682,9 +862,28 @@ export const DATA = {
       help: "Si le navigateur accède à l'adresse EPIMAT, les applications EPIMAT fonctionnent (prérequis réseau).",
       answers: [
         { label: 'Oui', next: 'i_clientsynch' },
-        { label: 'Non', next: 'sol_sav' },
+        { label: 'Non', next: 'i_test_autre_site' },
       ],
       src: ['PR p.3'],
+    },
+    i_test_autre_site: {
+      type: 'action',
+      title: 'Ouvrir un autre site internet',
+      steps: [
+        'Dans le même navigateur, aller sur https://www.google.fr',
+      ],
+      next: 'i_test_autre_site_result',
+      src: ['REP'],
+    },
+    i_test_autre_site_result: {
+      type: 'question',
+      title: "Le site s'ouvre-t-il ?",
+      help: "Oui : internet marche, c'est le serveur Logimatiq qui ne répond pas. Non : le PC n'arrive pas à aller sur internet.",
+      answers: [
+        { label: 'Oui', next: 'sol_sav_serveur' },
+        { label: 'Non', next: 'sol_sav' },
+      ],
+      src: ['REP'],
     },
     i_rj45_check: {
       type: 'action',
@@ -703,9 +902,62 @@ export const DATA = {
       title: 'Le PC Windows a-t-il maintenant accès à internet ?',
       answers: [
         { label: 'Oui, internet OK', next: 'i_clientsynch' },
-        { label: 'Non, toujours sans réseau', next: 'sol_changer_modem' },
+        { label: 'Non, toujours sans réseau', next: 'i_eth_pc' },
       ],
       src: ['T'],
+    },
+    i_eth_pc: {
+      type: 'question',
+      title: 'Le PC de la machine est-il allumé ?',
+      help: "Le voyant ETH ne clignote pas si le PC est éteint. PC allumé : sa LED est allumée et l'écran affiche une image.",
+      media: { type: 'photo', label: 'Le PC est dans le compartiment du bas de la machine (entouré en rouge)', file: 'arbres/pc_emplacement.jpg' },
+      answers: [
+        { label: 'Oui, PC allumé', next: 'i_rj45_autre' },
+        { label: 'Non, PC éteint', next: 'i_allumer_pc' },
+      ],
+      src: ['REP'],
+    },
+    i_allumer_pc: {
+      type: 'action',
+      title: 'Allumer le PC',
+      steps: [
+        'Appuyer sur le bouton Power en façade du boîtier PC',
+        "Si rien ne se passe, passer le switch ON/OFF à l'arrière sur ON",
+        'Réappuyer sur le bouton Power',
+        'Attendre que Windows et DistEPI démarrent',
+      ],
+      media: { type: 'photo', label: 'Le PC est dans le compartiment du bas de la machine (entouré en rouge)', file: 'arbres/pc_emplacement.jpg' },
+      next: 'i_pc_demarre',
+      src: ['T', 'REP'],
+    },
+    i_pc_demarre: {
+      type: 'question',
+      title: 'Le PC a-t-il démarré ?',
+      answers: [
+        { label: 'Oui', next: 'i_debut' },
+        { label: 'Non, toujours éteint', next: 'b_multiprise' },
+      ],
+      src: ['T', 'REP'],
+    },
+    i_rj45_autre: {
+      type: 'action',
+      title: 'Essayer un autre câble RJ45',
+      steps: [
+        'Remplacer le câble RJ45 entre le PC et le port ETH du modem par un autre câble',
+        "Enfoncer chaque bout jusqu'au clic",
+        'Attendre 1 minute et regarder le voyant ETH',
+      ],
+      next: 'i_rj45_autre_result',
+      src: ['REP'],
+    },
+    i_rj45_autre_result: {
+      type: 'question',
+      title: 'Le voyant ETH clignote-t-il maintenant ?',
+      answers: [
+        { label: 'Oui', next: 'i_debut' },
+        { label: 'Non, toujours éteint ou fixe', next: 'i_reset_modem' },
+      ],
+      src: ['REP'],
     },
     i_clientsynch: {
       type: 'action',
@@ -769,7 +1021,7 @@ export const DATA = {
       title: 'La connexion est-elle stable maintenant ?',
       answers: [
         { label: 'Oui, connexion stable', next: 'sol_resolved' },
-        { label: 'Non, toujours instable', next: 'sol_antenne_ext' },
+        { label: 'Non, toujours instable', next: 'i_reset_modem' },
       ],
       src: ['T'],
     },
@@ -2150,6 +2402,13 @@ export const DATA = {
       sav: true,
       src: ['T', 'D24 p.4', 'REP'],
     },
+    sol_sav_sim: {
+      type: 'solution', outcome: 'sav',
+      title: 'Faire vérifier la ligne de la carte SIM',
+      message: 'SIM détectée et signal présent, mais le modem ne se connecte pas à internet malgré la reconfiguration : la ligne peut être suspendue ou sans forfait. Le SAV Logimatiq vérifie la ligne ; si elle est active, il fera changer le modem.',
+      sav: true,
+      src: ['REP'],
+    },
     sol_antenne_ext: {
       type: 'solution', outcome: 'sav',
       title: 'Installer une antenne externe',
@@ -2160,9 +2419,9 @@ export const DATA = {
     sol_sav_serveur: {
       type: 'solution', outcome: 'sav',
       title: 'Problème serveur Logimatiq',
-      message: 'Le test ClientSynch DB EPI échoue : le problème vient du serveur Logimatiq ou de la base de données SQL. Contacter le SAV Logimatiq.',
+      message: 'Internet fonctionne, mais le serveur Logimatiq ne répond pas (page EPIMAT ou test ClientSynch DB EPI en échec) : le problème vient du serveur ou de la base de données. Contacter le SAV Logimatiq.',
       sav: true,
-      src: ['T'],
+      src: ['T', 'REP'],
     },
     sol_changer_lecteur: {
       type: 'solution', outcome: 'replace',

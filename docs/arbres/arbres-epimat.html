@@ -263,92 +263,155 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-i">
-    <div class="bar"><h2>Pas de connexion internet / modem hors ligne <span class="sub mono">· 15 questions · 11 actions · 5 conclusions · 7 photos</span></h2>
+    <div class="bar"><h2>Pas de connexion internet / modem hors ligne <span class="sub mono">· 29 questions · 20 actions · 6 conclusions · 9 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
-  i_debut("Quel est le problème ?"):::ques
-  i_debut -->|"LED « Online » éteinte"| i_pwr_led
-  i_debut -->|"LED « Online » allumée mais erreur de synchro DistEPI"| i_eth_led
-  i_debut -->|"Déconnexions fréquentes / signal instable"| i_signal_faible
-  i_pwr_led("La LED PWR du modem est-elle allumée (bleu fixe) ?"):::ques
-  i_pwr_led -->|"Oui"| i_reboot_modem
-  i_pwr_led -->|"Non, modem éteint"| i_alim_modem
-  i_eth_led("La LED ETH du modem clignote-t-elle ?"):::ques
-  i_eth_led -->|"Oui, elle clignote"| i_connexion_distante
-  i_eth_led -->|"Non, éteinte ou fixe"| i_rj45_check
+  i_debut("Les 6 voyants du modem sont-ils tous normaux ?"):::ques
+  i_debut -->|"Oui, tous normaux"| i_tous_ok
+  i_debut -->|"Non, au moins un voyant n'est pas normal"| i_pwr_led
+  i_tous_ok("Tous les voyants sont normaux : quel est le problème ?"):::ques
+  i_tous_ok -->|"Erreur de synchronisation dans DistEPI"| i_relancer_synchro
+  i_tous_ok -->|"Déconnexions fréquentes"| i_signal_faible
+  i_pwr_led("Le voyant PWR est-il bleu fixe ?"):::ques
+  i_pwr_led -->|"Oui"| i_sys_led
+  i_pwr_led -->|"Non, modem éteint"| i_multiprise_modem
+  i_relancer_synchro["Relancer une synchronisation"]:::act
+  i_relancer_synchro --> i_relancer_synchro_result
   i_signal_faible["Vérifier les antennes et repositionner le modem"]:::act
   i_signal_faible --> i_signal_result
-  i_reboot_modem["Redémarrer le modem"]:::act
-  i_reboot_modem --> i_reboot_result
+  i_sys_led("Le voyant SYS clignote-t-il ?"):::ques
+  i_sys_led -->|"Oui, il clignote"| i_sim_led
+  i_sys_led -->|"Non, fixe ou éteint"| i_reboot_sys
+  i_multiprise_modem("La LED rouge de la multiprise intérieure est-elle allumée ?"):::ques
+  i_multiprise_modem -->|"Oui, LED rouge allumée"| i_alim_modem
+  a_debut__0[["→ Machine hors tension / plus de courant"]]:::link
+  i_multiprise_modem -->|"Non, multiprise éteinte"| a_debut__0
+  i_relancer_synchro_result("La synchronisation a-t-elle réussi ?"):::ques
+  sol_resolved__1(["Problème résolu"]):::resolved
+  i_relancer_synchro_result -->|"Oui, « synchro effectué »"| sol_resolved__1
+  i_relancer_synchro_result -->|"Non, erreur de synchronisation"| i_test_url
+  i_signal_result("La connexion est-elle stable maintenant ?"):::ques
+  sol_resolved__2(["Problème résolu"]):::resolved
+  i_signal_result -->|"Oui, connexion stable"| sol_resolved__2
+  i_signal_result -->|"Non, toujours instable"| i_reset_modem
+  i_sim_led("Le voyant SIM est-il allumé ?"):::ques
+  i_sim_led -->|"Oui, SIM allumé"| i_signal_led
+  i_sim_led -->|"Non, SIM éteint"| i_reinsertion_sim
+  i_reboot_sys["Redémarrer le modem"]:::act
+  i_reboot_sys --> i_sys_result
   i_alim_modem["Vérifier l'alimentation du modem"]:::act
   i_alim_modem --> i_alim_modem_result
-  i_connexion_distante("Peut-on se connecter à distance au PC de la machine ?"):::ques
-  i_connexion_distante -->|"Oui, connexion distance OK"| i_test_url
-  i_connexion_distante -->|"Non, pas de connexion distance"| i_rj45_check
-  i_connexion_distante -->|"Pas de logiciel de connexion à distance"| i_rj45_check
-  i_rj45_check["Vérifier le câble RJ45 (PC ↔ modem)"]:::act
-  i_rj45_check --> i_rj45_result
-  i_signal_result("La connexion est-elle stable maintenant ?"):::ques
-  sol_resolved__0(["Problème résolu"]):::resolved
-  i_signal_result -->|"Oui, connexion stable"| sol_resolved__0
-  sol_antenne_ext__1(["Installer une antenne externe"]):::sav
-  i_signal_result -->|"Non, toujours instable"| sol_antenne_ext__1
-  i_reboot_result("La LED « Online » est-elle maintenant allumée ?"):::ques
-  sol_resolved__2(["Problème résolu"]):::resolved
-  i_reboot_result -->|"Oui, LED bleue allumée"| sol_resolved__2
-  i_reboot_result -->|"Non, toujours éteinte"| i_antennes_check
-  i_alim_modem_result("La LED PWR s'allume-t-elle ?"):::ques
-  i_alim_modem_result -->|"Oui"| i_reboot_result
-  sol_changer_modem__3(["Changer le modem GSM"]):::replace
-  i_alim_modem_result -->|"Non"| sol_changer_modem__3
   i_test_url["Tester l'accès au serveur EPIMAT depuis le PC"]:::act
   i_test_url --> i_test_url_result
-  i_rj45_result("Le PC Windows a-t-il maintenant accès à internet ?"):::ques
-  i_rj45_result -->|"Oui, internet OK"| i_clientsynch
-  sol_changer_modem__4(["Changer le modem GSM"]):::replace
-  i_rj45_result -->|"Non, toujours sans réseau"| sol_changer_modem__4
-  i_antennes_check["Vérifier les 2 antennes du modem"]:::act
-  i_antennes_check --> i_antennes_result
+  i_reset_modem["Réinitialiser le modem (bouton RST)"]:::act
+  i_reset_modem --> i_reset_result
+  i_signal_led("Au moins une barre de signal est-elle allumée ?"):::ques
+  i_signal_led -->|"Oui"| i_online_led
+  i_signal_led -->|"Non, aucune barre"| i_signal_aucun
+  i_reinsertion_sim["Réinsérer la carte SIM"]:::act
+  i_reinsertion_sim --> i_sim_result
+  i_sys_result("Le voyant SYS clignote-t-il maintenant ?"):::ques
+  i_sys_result -->|"Oui"| i_debut
+  i_sys_result -->|"Non, toujours fixe ou éteint"| i_reset_modem
+  i_alim_modem_result("La LED PWR s'allume-t-elle ?"):::ques
+  i_alim_modem_result -->|"Oui"| i_debut
+  i_alim_modem_result -->|"Non"| i_bloc_modem
   i_test_url_result("La page s'ouvre-t-elle normalement ?"):::ques
   i_test_url_result -->|"Oui"| i_clientsynch
-  sol_sav__5(["Contacter le SAV"]):::sav
-  i_test_url_result -->|"Non"| sol_sav__5
+  i_test_url_result -->|"Non"| i_test_autre_site
+  i_reset_result("Le modem fonctionne-t-il maintenant ?"):::ques
+  sol_resolved__3(["Problème résolu"]):::resolved
+  i_reset_result -->|"Oui"| sol_resolved__3
+  sol_changer_modem__4(["Changer le modem GSM"]):::replace
+  i_reset_result -->|"Non"| sol_changer_modem__4
+  i_online_led("Le voyant Online est-il bleu fixe ?"):::ques
+  i_online_led -->|"Oui"| i_eth_led
+  i_online_led -->|"Non, éteint"| i_reboot_modem
+  i_signal_aucun["Aider le modem à capter le réseau"]:::act
+  i_signal_aucun --> i_signal_aucun_result
+  i_sim_result("La LED SIM est-elle maintenant allumée ?"):::ques
+  i_sim_result -->|"Oui, LED SIM allumée"| i_debut
+  i_sim_result -->|"Non, toujours éteinte"| i_reset_modem
+  i_bloc_modem["Essayer un autre bloc d'alimentation"]:::act
+  i_bloc_modem --> i_bloc_modem_result
   i_clientsynch["Tester avec ClientSynch DB EPI (Grizzly)"]:::act
   i_clientsynch --> i_clientsynch_result
-  i_antennes_result("La LED « Online » s'est-elle allumée ?"):::ques
-  sol_resolved__6(["Problème résolu"]):::resolved
-  i_antennes_result -->|"Oui, LED allumée"| sol_resolved__6
-  i_antennes_result -->|"Non, toujours éteinte"| i_sim_led
+  i_test_autre_site["Ouvrir un autre site internet"]:::act
+  i_test_autre_site --> i_test_autre_site_result
+  i_eth_led("Le voyant ETH clignote-t-il ?"):::ques
+  i_eth_led -->|"Oui, il clignote"| i_tous_ok
+  i_eth_led -->|"Non, éteint ou fixe"| i_rj45_check
+  i_reboot_modem["Redémarrer le modem"]:::act
+  i_reboot_modem --> i_reboot_result
+  i_signal_aucun_result("Au moins une barre de signal est-elle allumée maintenant ?"):::ques
+  i_signal_aucun_result -->|"Oui"| i_debut
+  sol_antenne_ext__5(["Installer une antenne externe"]):::sav
+  i_signal_aucun_result -->|"Non, toujours aucune barre"| sol_antenne_ext__5
+  i_bloc_modem_result("Le voyant PWR est-il maintenant bleu fixe ?"):::ques
+  i_bloc_modem_result -->|"Oui"| i_debut
+  sol_changer_modem__6(["Changer le modem GSM"]):::replace
+  i_bloc_modem_result -->|"Non, toujours éteint"| sol_changer_modem__6
   i_clientsynch_result("Le test ClientSynch a-t-il réussi ?"):::ques
   i_clientsynch_result -->|"Oui, test OK"| i_reboot_pc_distepi
   sol_sav_serveur__7(["Problème serveur Logimatiq"]):::sav
   i_clientsynch_result -->|"Non, test échoue"| sol_sav_serveur__7
-  i_sim_led("La LED SIM du modem est-elle allumée ?"):::ques
-  i_sim_led -->|"Oui, LED SIM allumée"| i_lire_apn
-  i_sim_led -->|"Non, LED SIM éteinte"| i_reinsertion_sim
+  i_test_autre_site_result("Le site s'ouvre-t-il ?"):::ques
+  sol_sav_serveur__8(["Problème serveur Logimatiq"]):::sav
+  i_test_autre_site_result -->|"Oui"| sol_sav_serveur__8
+  sol_sav__9(["Contacter le SAV"]):::sav
+  i_test_autre_site_result -->|"Non"| sol_sav__9
+  i_rj45_check["Vérifier le câble RJ45 (PC ↔ modem)"]:::act
+  i_rj45_check --> i_rj45_result
+  i_reboot_result("La LED « Online » est-elle maintenant allumée ?"):::ques
+  sol_resolved__10(["Problème résolu"]):::resolved
+  i_reboot_result -->|"Oui, LED bleue allumée"| sol_resolved__10
+  i_reboot_result -->|"Non, toujours éteinte"| i_antennes_check
   i_reboot_pc_distepi["Redémarrer le PC"]:::act
   i_reboot_pc_distepi --> i_reboot_distepi_result
+  i_rj45_result("Le PC Windows a-t-il maintenant accès à internet ?"):::ques
+  i_rj45_result -->|"Oui, internet OK"| i_clientsynch
+  i_rj45_result -->|"Non, toujours sans réseau"| i_eth_pc
+  i_antennes_check["Vérifier les 2 antennes du modem"]:::act
+  i_antennes_check --> i_antennes_result
+  i_reboot_distepi_result("DistEPI fonctionne-t-il correctement après redémarrage ?"):::ques
+  sol_resolved__11(["Problème résolu"]):::resolved
+  i_reboot_distepi_result -->|"Oui, synchro OK"| sol_resolved__11
+  sol_sav_serveur__12(["Problème serveur Logimatiq"]):::sav
+  i_reboot_distepi_result -->|"Non, erreur persiste"| sol_sav_serveur__12
+  i_eth_pc("Le PC de la machine est-il allumé ?"):::ques
+  i_eth_pc -->|"Oui, PC allumé"| i_rj45_autre
+  i_eth_pc -->|"Non, PC éteint"| i_allumer_pc
+  i_antennes_result("La LED « Online » s'est-elle allumée ?"):::ques
+  sol_resolved__13(["Problème résolu"]):::resolved
+  i_antennes_result -->|"Oui, LED allumée"| sol_resolved__13
+  i_antennes_result -->|"Non, toujours éteinte"| i_lire_apn
+  i_rj45_autre["Essayer un autre câble RJ45"]:::act
+  i_rj45_autre --> i_rj45_autre_result
+  i_allumer_pc["Allumer le PC"]:::act
+  i_allumer_pc --> i_pc_demarre
   i_lire_apn["Relever l'APN actuel du modem"]:::act
   i_lire_apn --> i_setup_grizzly
-  i_reinsertion_sim["Réinsérer la carte SIM"]:::act
-  i_reinsertion_sim --> i_sim_result
-  i_reboot_distepi_result("DistEPI fonctionne-t-il correctement après redémarrage ?"):::ques
-  sol_resolved__8(["Problème résolu"]):::resolved
-  i_reboot_distepi_result -->|"Oui, synchro OK"| sol_resolved__8
-  sol_sav_serveur__9(["Problème serveur Logimatiq"]):::sav
-  i_reboot_distepi_result -->|"Non, erreur persiste"| sol_sav_serveur__9
+  i_rj45_autre_result("Le voyant ETH clignote-t-il maintenant ?"):::ques
+  i_rj45_autre_result -->|"Oui"| i_debut
+  i_rj45_autre_result -->|"Non, toujours éteint ou fixe"| i_reset_modem
+  i_pc_demarre("Le PC a-t-il démarré ?"):::ques
+  i_pc_demarre -->|"Oui"| i_debut
+  b_multiprise__14[["→ La LED rouge de la multiprise intérieure est-elle allumée ?"]]:::link
+  i_pc_demarre -->|"Non, toujours éteint"| b_multiprise__14
   i_setup_grizzly["Relancer la configuration du routeur (programme Logimatiq)"]:::act
   i_setup_grizzly --> i_setup_result
-  i_sim_result("La LED SIM est-elle maintenant allumée ?"):::ques
-  i_sim_result -->|"Oui, LED SIM allumée"| i_lire_apn
-  sol_changer_modem__10(["Changer le modem GSM"]):::replace
-  i_sim_result -->|"Non, toujours éteinte"| sol_changer_modem__10
   i_setup_result("La LED « Online » est-elle maintenant allumée ?"):::ques
-  sol_resolved__11(["Problème résolu"]):::resolved
-  i_setup_result -->|"Oui, LED bleue allumée"| sol_resolved__11
-  sol_changer_modem__12(["Changer le modem GSM"]):::replace
-  i_setup_result -->|"Non, toujours éteinte"| sol_changer_modem__12
+  sol_resolved__15(["Problème résolu"]):::resolved
+  i_setup_result -->|"Oui, LED bleue allumée"| sol_resolved__15
+  i_setup_result -->|"Non, toujours éteinte"| i_reset_online
+  i_reset_online["Réinitialiser le modem (bouton RST)"]:::act
+  i_reset_online --> i_reset_online_result
+  i_reset_online_result("Le voyant Online est-il maintenant bleu fixe ?"):::ques
+  sol_resolved__16(["Problème résolu"]):::resolved
+  i_reset_online_result -->|"Oui"| sol_resolved__16
+  sol_sav_sim__17(["Faire vérifier la ligne de la carte SIM"]):::sav
+  i_reset_online_result -->|"Non, toujours éteint"| sol_sav_sim__17
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
@@ -731,9 +794,9 @@ flowchart TD
   ls_casiers["Vérifier la configuration des casiers dans l'extranet"]:::act
   ls_casiers --> ls_casiers_result
   ls_online("La LED « Online » du modem est-elle bleue fixe ?"):::ques
-  i_pwr_led__0[["→ La LED PWR du modem est-elle allumée (bleu fixe) ?"]]:::link
+  i_pwr_led__0[["→ Le voyant PWR est-il bleu fixe ?"]]:::link
   ls_online -->|"Non"| i_pwr_led__0
-  i_eth_led__1[["→ La LED ETH du modem clignote-t-elle ?"]]:::link
+  i_eth_led__1[["→ Le voyant ETH clignote-t-il ?"]]:::link
   ls_online -->|"Oui"| i_eth_led__1
   ls_intervalle_result("La nouveauté est-elle arrivée sur la machine ?"):::ques
   sol_resolved__2(["Problème résolu"]):::resolved

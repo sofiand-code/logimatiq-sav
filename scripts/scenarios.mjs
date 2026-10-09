@@ -45,11 +45,25 @@ export const SCENARIOS = [
 
   /* ---- Internet / modem ---- */
   { nom: 'Online éteinte, redémarrage et antennes sans effet, SIM détectée → relever l\'APN avant de reconfigurer (I4)', statut: 'validé',
-    symptome: 't.epimat.internet', reponses: ['éteinte', 'Oui', 'Non, toujours éteinte', 'Non, toujours éteinte', 'Oui, LED SIM allumée'],
+    symptome: 't.epimat.internet', reponses: ['Non, au moins un', 'Oui', 'Oui, il clignote', 'Oui, SIM allumé', 'Oui', 'Non, éteint', 'Non, toujours éteinte', 'Non, toujours éteinte'],
     attendu: 'i_lire_apn' },
-  { nom: 'Erreur de synchro, ETH clignote, pas de logiciel de connexion à distance → câble RJ45 (I5)', statut: 'validé',
-    symptome: 't.epimat.internet', reponses: ['allumée mais erreur', 'Oui, elle clignote', 'Pas de logiciel'],
-    attendu: 'i_rj45_check' },
+  { nom: 'Voyants normaux, synchro relancée en échec, page EPIMAT bloquée mais Google s\'ouvre → serveur Logimatiq (M9, M11)', statut: 'validé',
+    symptome: 't.epimat.internet', reponses: ['Oui, tous normaux', 'Erreur de synchronisation', 'Non, erreur', 'Non', 'Oui'],
+    attendu: 'sol_sav_serveur' },
+  { nom: 'Voyant PWR éteint, multiprise intérieure éteinte → arbre Alimentation (M5)', statut: 'validé',
+    symptome: 't.epimat.internet', reponses: ['Non, au moins un', 'Non, modem éteint', 'Non, multiprise éteinte'], attendu: 'a_debut' },
+  { nom: 'PWR éteint, multiprise allumée, jack et bloc d\'alimentation changés sans effet → changer le modem (M16)', statut: 'validé',
+    symptome: 't.epimat.internet', reponses: ['Non, au moins un', 'Non, modem éteint', 'Oui, LED rouge', 'Non', 'Non, toujours éteint'], attendu: 'sol_changer_modem' },
+  { nom: 'Voyants normaux, déconnexions malgré antennes, reset sans effet → changer le modem (M14)', statut: 'validé',
+    symptome: 't.epimat.internet', reponses: ['Oui, tous normaux', 'Déconnexions', 'Non, toujours instable', 'Non'], attendu: 'sol_changer_modem' },
+  { nom: 'Voyant SYS figé, toujours figé après redémarrage → changer le modem (M3)', statut: 'validé',
+    symptome: 't.epimat.internet', reponses: ['Non, au moins un', 'Oui', 'Non, fixe ou éteint', 'Non, toujours fixe', 'Non'], attendu: 'sol_changer_modem' },
+  { nom: 'Aucune barre de signal malgré antennes et position → antenne externe (M4)', statut: 'validé',
+    symptome: 't.epimat.internet', reponses: ['Non, au moins un', 'Oui', 'Oui, il clignote', 'Oui, SIM allumé', 'Non, aucune barre', 'Non, toujours aucune'], attendu: 'sol_antenne_ext' },
+  { nom: 'Online toujours éteint après redémarrage, antennes et APN → le SAV vérifie la ligne SIM (M7)', statut: 'validé',
+    symptome: 't.epimat.internet', reponses: ['Non, au moins un', 'Oui', 'Oui, il clignote', 'Oui, SIM allumé', 'Oui', 'Non, éteint', 'Non, toujours éteinte', 'Non, toujours éteinte', 'Non, toujours éteinte', 'Non, toujours éteint'], attendu: 'sol_sav_sim' },
+  { nom: 'ETH éteint, câble rebranché, PC allumé, autre câble sans effet → changer le modem (M6)', statut: 'validé',
+    symptome: 't.epimat.internet', reponses: ['Non, au moins un', 'Oui', 'Oui, il clignote', 'Oui, SIM allumé', 'Oui', 'Oui', 'Non, éteint ou fixe', 'Non, toujours sans réseau', 'Oui, PC allumé', 'Non, toujours éteint', 'Non'], attendu: 'sol_changer_modem' },
 
   /* ---- Tambour (lot 4) ---- */
   { nom: '« Disjoncteur déclenché » → réarmer le coupe-circuit 24 V (A2, A3)', statut: 'validé',
@@ -85,6 +99,8 @@ export const REGLES = [
     cible: ['sol_changer_pc'], garde: ['s_rouge_multiprise', 'b_multiprise', 's_vert_symptome', 's_vert_erreur'] },   // image ou message d'erreur visibles = PC alimenté
   { nom: 'Câble SCSI vérifié avant de changer une carte EPI 05 ou LOG 03 / LOG 04',
     cible: ['sol_changer_epi05', 'sol_changer_log03'], garde: ['t_cable_scsi', 't_pos_scsi', 't_vit_scsi', 'tr_scsi', 'tr_capteur_scsi'] },
+  { nom: 'Alimentation avant pièce : pas de « changer le modem » sans voyant PWR allumé ou multiprise intérieure vérifiée',
+    cible: ['sol_changer_modem'], garde: ['i_sys_led', 'i_alim_modem', 'i_tous_ok', 'i_eth_led'] },
   { nom: 'EPIMAT 14 : aucune étape EPI 05 sans la réponse « trappes (EPIMAT 13) »',
     cible: ['t_test_epi05', 'tr_motorisee', 'tr_verif_moteur', 'tr_verif_verrou', 'sol_changer_epi05'], viaReponse: /trappes \(EPIMAT 13\)/ },
 ];
