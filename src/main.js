@@ -22,7 +22,7 @@ function navigate(name) {
   nav(name, (screenName) => {
     if (screenName === 'home')    renderHome(openMachine, () => navigate('setup'), () => navigate('stats'), logout);
     if (screenName === 'kb')      renderKB();
-    if (screenName === 'faults')  renderFaults();
+    if (screenName === 'faults')  renderFaults(launchFromFault);
     if (screenName === 'history') renderHistory();
     if (screenName === 'setup')   renderSetup();
     if (screenName === 'stats')   renderStats();
@@ -41,7 +41,7 @@ function rerender() {
     renderSymptoms(STATE.machineId, (symptomId) => startDiagnostic(symptomId, navigate));
     navigate('symptoms');
   });
-  else if (s === 'faults')   renderFaults();
+  else if (s === 'faults')   renderFaults(launchFromFault);
   else if (s === 'history')  renderHistory();
   else if (s === 'setup')    renderSetup();
   else if (s === 'stats')    renderStats();
@@ -78,6 +78,21 @@ function openMachine(machineId) {
     STATE.currentMachine = machine;
     renderSymptoms(machineId, (symptomId) => startDiagnostic(symptomId, navigate));
     navigate('symptoms');
+  });
+}
+
+/* ---- Onglet Pannes → « Lancer le diagnostic » : choix de la machine, puis l'arbre du symptôme ---- */
+function launchFromFault(symptomId) {
+  const machineId = Object.keys(DATA.symptoms).find(mid =>
+    DATA.symptoms[mid].some(s => s.id === symptomId)
+  );
+  if (!machineId) return;
+  STATE.machineId = machineId;
+  navigate('machine-select');
+  renderMachineSelect(machineId, (machine) => {
+    STATE.currentMachine = machine;
+    renderSymptoms(machineId, (sid) => startDiagnostic(sid, navigate));
+    startDiagnostic(symptomId, navigate);
   });
 }
 

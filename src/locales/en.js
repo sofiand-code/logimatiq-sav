@@ -138,6 +138,7 @@ export const EN = {
     'Symptômes': 'Symptoms',
     'Étapes de résolution': 'Resolution steps',
     'Photo à venir': 'Photo coming soon',
+    'Lancer le diagnostic': 'Start the diagnostic',
     'Appeler le SAV Logimatiq': 'Call Logimatiq Support',
     'Aucune panne trouvée': 'No fault found',
     'Essayez un autre mot-clé': 'Try another keyword',

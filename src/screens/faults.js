@@ -7,9 +7,11 @@ import { t, getLang } from '../i18n.js';
 let activeCategory = 'all';
 let searchQuery    = '';
 let openFaultId    = null; // accordéon : une seule panne ouverte à la fois
+let onLaunchDiag   = null; // (symptomId) => lance l'arbre de diagnostic correspondant
 
 /* ---- Entrée principale ---- */
-export function renderFaults() {
+export function renderFaults(onLaunch) {
+  if (onLaunch) onLaunchDiag = onLaunch;
   _renderSearch();
   _renderCategoryBar();
   _renderList();
@@ -104,6 +106,14 @@ function _renderList() {
     });
   });
 
+  /* Bouton « Lancer le diagnostic » */
+  list.querySelectorAll('[data-launch-diag]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onLaunchDiag?.(btn.dataset.launchDiag);
+    });
+  });
+
   /* Bouton SAV */
   list.querySelectorAll('[data-call-sav]').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -173,9 +183,9 @@ function _renderFaultCard(f, lang) {
 /*  Détail déplié d'une panne                                           */
 /* ------------------------------------------------------------------ */
 function _renderFaultDetail(f, lang, cat) {
-  const symptoms = f.symptoms.map(s => `
+  const symptoms = f.symptoms.map((s, i) => `
     <li class="flex items-start gap-2 text-[11px] text-slate-600">
-      <span class="mt-0.5 shrink-0" style="color:${cat?.color}">▸</span>${s}
+      <span class="mt-0.5 shrink-0" style="color:${cat?.color}">▸</span>${(lang === 'en' && f.symptoms_en?.[i]) || s}
     </li>`).join('');
 
   const steps = f.steps.map((s, i) => `
@@ -188,7 +198,7 @@ function _renderFaultDetail(f, lang, cat) {
       </div>
       <!-- Texte + badges -->
       <div class="flex-1 min-w-0 pt-0.5">
-        <p class="text-[12px] text-slate-700 leading-relaxed font-medium">${s.text}</p>
+        <p class="text-[12px] text-slate-700 leading-relaxed font-medium">${(lang === 'en' && s.text_en) || s.text}</p>
         <div class="flex flex-wrap gap-1.5 mt-1.5">
           ${s.photo ? `
             <span class="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200">
@@ -221,6 +231,20 @@ function _renderFaultDetail(f, lang, cat) {
         </p>
         <div class="space-y-3">${steps}</div>
       </div>
+
+      <!-- Bouton « Lancer le diagnostic » quand l'arbre existe -->
+      ${f.diag && onLaunchDiag ? `
+      <div class="px-4 pb-3">
+        <span role="button" tabindex="0" data-launch-diag="${f.diag}"
+          class="w-full flex items-center justify-center gap-2 py-3 rounded-xl
+                 text-white text-sm font-black shadow-sm"
+          style="background:#0F4C81">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/>
+          </svg>
+          ${t('Lancer le diagnostic')}
+        </span>
+      </div>` : ''}
 
       <!-- Bouton SAV si nécessaire -->
       ${f.sav ? `
