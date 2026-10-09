@@ -19,7 +19,7 @@ const CATEGORY_BADGE = {
 
 export function renderSymptoms(machineId, onStart) {
   const m = DATA.machines.find(x => x.id === machineId);
-  document.getElementById('sym-machine-label').textContent = m ? m.name : machineId;
+  document.getElementById('sym-machine-label').textContent = m ? t(m.name) : machineId;
 
   const symptoms = DATA.symptoms[machineId] || [];
   const list = document.getElementById('symptoms-list');

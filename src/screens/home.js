@@ -37,7 +37,7 @@ export function renderHome(onOpenMachine, onSetup, onStats, onEditProfile) {
              style="background:${s.bg}">
           ${ICONS[m.icon] || ICONS.machine}
         </div>
-        <div class="font-black text-slate-900 text-sm leading-tight">${m.name}</div>
+        <div class="font-black text-slate-900 text-sm leading-tight">${t(m.name)}</div>
         <div class="text-[11px] font-semibold mt-0.5" style="color:${s.text}">
           ${hasContent ? `${count} diagnostic${count > 1 ? 's' : ''}` : t('Bientôt disponible')}
         </div>

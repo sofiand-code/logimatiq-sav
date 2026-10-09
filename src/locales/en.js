@@ -139,6 +139,7 @@ export const EN = {
     'Pannes': 'Faults',
     'Tambour, trappe, moteur…': 'Drum, hatch, motor…',
     'Pannes récurrentes': 'Recurring faults',
+    'Logiciel EPIMAT': 'EPIMAT software',
     'Rechercher une panne…': 'Search for a fault…',
     'Tout': 'All',
     'Symptômes': 'Symptoms',
