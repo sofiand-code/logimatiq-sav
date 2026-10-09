@@ -21,7 +21,7 @@ export const EN = {
     'Votre login': 'Your username',
     'Mot de passe': 'Password',
     'Votre mot de passe': 'Your password',
-    '⚠ Identifiant ou mot de passe incorrect.': '⚠ Incorrect username or password.',
+    'Identifiant ou mot de passe incorrect.': 'Incorrect username or password.',
     'Se connecter →': 'Sign in →',
     'Contactez Logimatiq pour obtenir vos identifiants':
       'Contact Logimatiq to get your credentials',
@@ -65,7 +65,8 @@ export const EN = {
     'Ex : Entrepôt Paris, Rayon 3…': 'E.g.: Paris Warehouse, Row 3…',
     'Client / Société': 'Customer / Company',
     'Nom du client final': 'End customer name',
-    '⚠ Le numéro de série est obligatoire.': '⚠ Serial number is required.',
+    'Le numéro de série est obligatoire.': 'Serial number is required.',
+    'Veuillez remplir tous les champs obligatoires.': 'Please fill in all required fields.',
     'Enregistrer et continuer →': 'Save and continue →',
 
     // Diag UI
@@ -89,7 +90,10 @@ export const EN = {
     'SAV': 'Support',
 
     // Rapport
-    '🔧 RAPPORT DIAGNOSTIC LOGIMATIQ': '🔧 LOGIMATIQ DIAGNOSTIC REPORT',
+    'RAPPORT DIAGNOSTIC LOGIMATIQ': 'LOGIMATIQ DIAGNOSTIC REPORT',
+    'N° série :': 'Serial no:',
+    'Site     :': 'Site     :',
+    'Conclusion :': 'Conclusion:',
     'Machine  :': 'Machine  :',
     'Problème :': 'Problem  :',
     'Date     :': 'Date     :',
@@ -212,9 +216,9 @@ export const EN = {
       help: 'The "Power Led" indicator on the back of the screen, above the adjustment buttons (see the photos).',
       answers: ['Red', 'Off (no LED)', 'Green (image visible, other problem)'],
       media: [
-        '"Power Led" indicator on the back of the screen: off',
-        '"Power Led" indicator: red',
-        '"Power Led" indicator: green',
+        'Indicator off',
+        'Indicator red',
+        'Indicator green',
       ],
     },
     s_rouge_pc_led: {

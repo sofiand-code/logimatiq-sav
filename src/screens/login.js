@@ -50,7 +50,7 @@ export function renderLogin(onDone) {
       </div>
 
       <p id="login-error" class="text-xs text-amber-300 font-semibold hidden text-center pt-1">
-        ${t('⚠ Identifiant ou mot de passe incorrect.')}
+        <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5 shrink-0 mt-px" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>${t('Identifiant ou mot de passe incorrect.')}</span>
       </p>
 
       <button id="login-submit"

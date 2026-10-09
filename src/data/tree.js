@@ -88,9 +88,9 @@ export const DATA = {
       title: "Quelle est la couleur du voyant LED de l'écran ?",
       help: "Voyant « Power Led » au dos de l'écran, au-dessus des boutons de réglage (voir les photos).",
       media: [
-        { type: 'photo', label: "Voyant « Power Led » au dos de l'écran : éteint", file: 'arbres/led_ecran_eteinte.jpg' },
-        { type: 'photo', label: 'Voyant « Power Led » : rouge', file: 'arbres/led_ecran_rouge.jpg' },
-        { type: 'photo', label: 'Voyant « Power Led » : vert', file: 'arbres/led_ecran_verte.jpg' },
+        { type: 'photo', label: 'Voyant éteint', file: 'arbres/led_ecran_eteinte.jpg' },
+        { type: 'photo', label: 'Voyant rouge', file: 'arbres/led_ecran_rouge.jpg' },
+        { type: 'photo', label: 'Voyant vert', file: 'arbres/led_ecran_verte.jpg' },
       ],
       answers: [
         { label: 'Rouge', next: 's_rouge_pc_led', color: 'red' },

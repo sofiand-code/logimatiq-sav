@@ -32,7 +32,7 @@ export function renderSymptoms(machineId, onStart) {
       <button data-symptom="${s.id}" ${disabled ? 'disabled' : ''}
         class="tap-card w-full bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex items-center gap-4 text-left ${disabled ? 'opacity-50' : ''}">
         <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-             style="background:#EFF5FB;color:#0F4C81">
+             style="background:${cat.bg};color:${cat.color}">
           ${ICONS[s.icon] || ICONS.screen}
         </div>
         <div class="flex-1 min-w-0">
