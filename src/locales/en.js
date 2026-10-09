@@ -1070,7 +1070,7 @@ export const EN = {
     },
     t_ouvrir_debes: {
       title: 'Open DEBES',
-      help: 'STATUS box: "NoDevice … - OK" = the PC communicates with the Advantech board. Otherwise, the Advantech board number is wrong in AUTOMAT.INI: the technician corrects it.',
+      help: 'STATUS box: "NoDevice … - OK" = the PC communicates with the Advantech board. Otherwise, the Advantech board number is wrong in C:\\EPI\\AUTOMAT.INI: the technician corrects it.',
       steps: [
         "Plug a keyboard into the machine's PC",
         'Close DistEPI: Shift + F keys',

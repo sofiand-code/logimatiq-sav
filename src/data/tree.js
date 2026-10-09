@@ -1497,7 +1497,7 @@ export const DATA = {
     t_ouvrir_debes: {
       type: 'action',
       title: 'Ouvrir DEBES',
-      help: 'Case STATUS : « NoDevice … - OK » = le PC dialogue avec la carte Advantech. Sinon, le numéro de la carte Advantech est mal renseigné dans AUTOMAT.INI : le technicien le corrige.',
+      help: 'Case STATUS : « NoDevice … - OK » = le PC dialogue avec la carte Advantech. Sinon, le numéro de la carte Advantech est mal renseigné dans C:\\EPI\\AUTOMAT.INI : le technicien le corrige.',
       steps: [
         'Brancher un clavier sur le PC de la machine',
         'Fermer DistEPI : touches Maj + F',
