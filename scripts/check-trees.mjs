@@ -8,7 +8,8 @@
    - un nœud ou un symptôme n'a pas sa traduction EN (ou un nombre de
      réponses / d'étapes / de légendes différent du français) ;
    - une image citée dans `media` est absente de public/ ;
-   - une fiche de l'onglet Pannes renvoie vers un symptôme absent ou n'a pas sa traduction EN.
+   - une fiche de l'onglet Pannes renvoie vers un symptôme absent ou n'a pas sa traduction EN ;
+   - une fiche d'intervention a un texte sans FR / EN ou une image absente.
    ========================================================================== */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -94,6 +95,23 @@ for (const f of FAULTS) {
   if ((f.symptoms_en || []).length !== f.symptoms.length)
     err('pannes', f.id, `symptômes EN : ${(f.symptoms_en || []).length} pour ${f.symptoms.length} en FR`);
   for (const [i, s] of f.steps.entries()) if (!s.text_en) err('pannes', f.id, `étape ${i + 1} sans texte EN`);
+}
+
+/* 7. Fiches d'intervention : chaque texte en FR et en EN, images présentes, conclusions liées existantes */
+const { FICHES, FICHE_FAMILIES } = await import(pathToFileURL(path.join(app, 'src/data/fiches-data.js')).href);
+const pair = (p) => p && typeof p.fr === 'string' && p.fr && typeof p.en === 'string' && p.en;
+for (const f of FICHES) {
+  if (!FICHE_FAMILIES[f.family]) err('fiches', f.id, `famille « ${f.family} » inconnue`);
+  if (!pair(f.title) || !pair(f.subtitle)) err('fiches', f.id, 'titre ou sous-titre sans FR / EN');
+  for (const m of f.media) {
+    if (!pair(m)) err('fiches', f.id, `légende sans FR / EN : ${m.file}`);
+    if (!fs.existsSync(path.join(app, 'public', m.file))) err('fiches', f.id, `« public/${m.file} » introuvable`);
+  }
+  for (const b of f.blocks) {
+    if (!pair(b.title)) err('fiches', f.id, `bloc « ${b.kind} » sans titre FR / EN`);
+    b.items.forEach((it, i) => { if (!pair(it)) err('fiches', f.id, `bloc « ${b.kind} », ligne ${i + 1} sans FR / EN`); });
+  }
+  for (const s of f.solutions) if (!nodes[s]) warnings.push(`fiche ${f.id} : la conclusion « ${s} » n'est pas dans les arbres codés`);
 }
 
 /* Rapport */

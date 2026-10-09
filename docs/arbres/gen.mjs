@@ -67,6 +67,6 @@ const nav = trees.map(s => `<a href="#p-${prefix(s.rootNode)}">${esc(s.category)
 const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
 const html = fs.readFileSync(here('./template.html'), 'utf8')
-  .replace('%%NAV%%', nav).replace('%%PANELS%%', panels).replace('%%DATE%%', date);
+  .replace('%%NAV%%', nav).replace('%%PANELS%%', panels).replaceAll('%%DATE%%', date);
 fs.writeFileSync(here('./arbres-epimat.html'), html);
 console.log(`arbres-epimat.html : ${trees.length} arbres`);

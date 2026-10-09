@@ -150,6 +150,9 @@ export const EN = {
 
     // KB
     'Fiches PDF': 'PDF Guides',
+    "Fiches d'intervention": 'Repair sheets',
+    "Voir la fiche d'intervention": 'See the repair sheet',
+    'Documents': 'Documents',
     'Codes erreur': 'Error codes',
     'écran noir, modem, badge…': 'black screen, modem, badge…',
     'ERR_SYNC, badge, réseau…': 'ERR_SYNC, badge, network…',

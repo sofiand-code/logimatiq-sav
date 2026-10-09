@@ -6,7 +6,8 @@ import { STATE } from '../state.js';
 import { renderMedia, bindZoom } from '../components/media.js';
 import { saveDiagnostic } from '../components/history-store.js';
 import { findSymptom } from './home.js';
-import { t, tNode, tAnswer, tStep, tMedia } from '../i18n.js';
+import { t, tNode, tAnswer, tStep, tMedia, getLang } from '../i18n.js';
+import { ficheForSolution, openFiche } from './kb.js';
 
 function estimateDepth(rootId) {
   let max = 0;
@@ -224,6 +225,8 @@ function renderSolution(n, nodeId) {
 
     ${n.media ? `<div class="mb-4">${mediaHTML(n, nodeId)}</div>` : ''}
 
+    ${ficheButton(nodeId)}
+
     ${pathLabels.length ? `
     <div class="bg-white border border-slate-200 rounded-2xl p-4 mb-4 shadow-sm">
       <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2.5">
@@ -273,6 +276,25 @@ function renderSolution(n, nodeId) {
         ${t('Terminer')}
       </button>
     </div>`;
+}
+
+/* Lien vers la fiche d'intervention de la pièce à changer (onglet Fiches) */
+function ficheButton(nodeId) {
+  const f = ficheForSolution(nodeId);
+  if (!f) return '';
+  const title = getLang() === 'en' ? f.title.en : f.title.fr;
+  return `
+    <button id="btn-fiche" data-fiche-id="${f.id}"
+      class="w-full bg-white border-2 border-brand-600 rounded-2xl py-3.5 px-4 mb-4 flex items-center gap-3 text-left shadow-sm tap-card">
+      <svg viewBox="0 0 24 24" class="w-5 h-5 text-brand-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/>
+      </svg>
+      <span class="flex-1 min-w-0">
+        <span class="block text-sm font-black text-brand-700">${t("Voir la fiche d'intervention")}</span>
+        <span class="block text-[11px] text-slate-500 truncate">${title}</span>
+      </span>
+      <svg viewBox="0 0 24 24" class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/></svg>
+    </button>`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -346,4 +368,9 @@ function wireEvents(n, navFn) {
     ?.addEventListener('click', () => startDiagnostic(STATE.symptomId, navFn));
   document.getElementById('btn-home')
     ?.addEventListener('click', () => navFn('home'));
+  document.getElementById('btn-fiche')
+    ?.addEventListener('click', (e) => {
+      openFiche(e.currentTarget.dataset.ficheId);
+      navFn('kb');
+    });
 }
