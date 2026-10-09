@@ -1040,13 +1040,13 @@ export const DATA = {
     b_debut: {
       type: 'question',
       title: 'La LED du lecteur de badge est-elle allumée ?',
-      help: 'Le lecteur est branché en USB sur le PC : si la LED est éteinte, le PC est probablement éteint.',
+      help: 'Normal : la LED du lecteur est allumée, il bipe quand on présente un badge, puis DistEPI affiche le nom. Le lecteur est branché en USB sur le PC : si la LED est éteinte, le PC est probablement éteint.',
       media: { type: 'photo', label: 'Le lecteur de badge (entouré en rouge)', file: 'arbres/badge_lecteur.jpg' },
       answers: [
         { label: 'Oui, LED allumée', next: 'b_symptome' },
         { label: 'Non, LED éteinte', next: 'b_pc_led' },
       ],
-      src: ['T'],
+      src: ['T', 'REP'],
     },
 
     /* ---- LED du lecteur éteinte ---- */
@@ -1139,16 +1139,61 @@ export const DATA = {
       title: "La LED s'est-elle allumée sur le nouveau port ?",
       answers: [
         { label: 'Oui, LED allumée', next: 'b_symptome' },
-        { label: 'Non, toujours éteinte', next: 'sol_changer_lecteur' },
+        { label: 'Non, toujours éteinte', next: 'b_usb_windows' },
       ],
       src: ['T', 'D24 p.1'],
+    },
+    b_usb_windows: {
+      type: 'action',
+      title: 'Vérifier que Windows détecte le lecteur',
+      steps: [
+        'Brancher un clavier sur le PC et fermer DistEPI (Maj + F)',
+        'Clic droit sur le bouton Démarrer → « Gestionnaire de périphériques »',
+        "Ouvrir « Claviers » et « Périphériques d'interface utilisateur »",
+        'Débrancher le câble USB du lecteur en regardant la liste, puis le rebrancher : une ligne doit disparaître puis réapparaître',
+      ],
+      next: 'b_usb_windows_result',
+      src: ['REP'],
+    },
+    b_usb_windows_result: {
+      type: 'question',
+      title: 'Le lecteur apparaît-il dans le Gestionnaire de périphériques ?',
+      help: 'Une ligne disparaît quand on débranche le lecteur et réapparaît quand on le rebranche.',
+      answers: [
+        { label: 'Oui, il apparaît', next: 'b_usb_redemarrer' },
+        { label: 'Non, rien ne change dans la liste', next: 'sol_changer_lecteur' },
+      ],
+      src: ['REP'],
+    },
+    b_usb_redemarrer: {
+      type: 'action',
+      title: 'Redémarrer la machine',
+      steps: [
+        "Ouvrir la façade et coulisser la platine du tableau électrique vers l'avant",
+        "Mettre l'interrupteur général rouge sur O",
+        'Attendre 30 secondes',
+        "Remettre l'interrupteur général sur I : le PC, l'écran et le modem redémarrent",
+        'Attendre que Windows et DistEPI redémarrent seuls (sinon lancer C:\\EPI\\DistEPI.exe)',
+      ],
+      media: { type: 'photo', label: "L'interrupteur général rouge O / I (sans voyant), à côté du porte-fusible", file: 'arbres/fusible_cache_noir.jpg' },
+      next: 'b_usb_redemarrer_result',
+      src: ['REP'],
+    },
+    b_usb_redemarrer_result: {
+      type: 'question',
+      title: 'La LED du lecteur est-elle allumée maintenant ?',
+      answers: [
+        { label: 'Oui, LED allumée', next: 'b_symptome' },
+        { label: 'Non, toujours éteinte', next: 'sol_changer_lecteur' },
+      ],
+      src: ['REP'],
     },
 
     /* ---- LED du lecteur allumée : que se passe-t-il au passage du badge ? ---- */
     b_symptome: {
       type: 'question',
       title: 'Que se passe-t-il quand on présente le badge ?',
-      help: 'Le lecteur émet un bip quand il lit un badge.',
+      help: 'Plaquer le badge à plat contre le lecteur 1 à 2 secondes. Normal : un bip, puis DistEPI affiche le nom.',
       answers: [
         { label: 'Rien : pas de bip, aucune réaction', next: 'b_autre_badge' },
         { label: "Bip, mais rien ne se passe à l'écran", next: 'b_bip_redemarrer' },
@@ -1156,7 +1201,7 @@ export const DATA = {
         { label: 'Badge lu mais refusé, mauvais nom ou mauvais numéro', next: 'b_sync' },
         { label: 'Lecture aléatoire / intermittente', next: 'b_alea_badge' },
       ],
-      src: ['T', 'D24 p.1', 'IB p.1'],
+      src: ['T', 'D24 p.1', 'IB p.1', 'REP'],
     },
 
     /* ---- Aucune réaction : autre badge, puis test Bloc-notes ---- */
@@ -1325,14 +1370,18 @@ export const DATA = {
     /* ---- Bip mais rien à l'écran ---- */
     b_bip_redemarrer: {
       type: 'action',
-      title: 'Redémarrer le distributeur',
+      title: 'Redémarrer la machine',
       steps: [
-        'Démarrer → Arrêter → Redémarrer',
-        'Attendre le démarrage complet de Windows et de DistEPI',
+        "Ouvrir la façade et coulisser la platine du tableau électrique vers l'avant",
+        "Mettre l'interrupteur général rouge sur O",
+        'Attendre 30 secondes',
+        "Remettre l'interrupteur général sur I : le PC, l'écran et le modem redémarrent",
+        'Attendre que Windows et DistEPI redémarrent seuls (sinon lancer C:\\EPI\\DistEPI.exe)',
         'Représenter le badge',
       ],
+      media: { type: 'photo', label: "L'interrupteur général rouge O / I (sans voyant), à côté du porte-fusible", file: 'arbres/fusible_cache_noir.jpg' },
       next: 'b_bip_result',
-      src: ['D24 p.1'],
+      src: ['D24 p.1', 'REP'],
     },
     b_bip_result: {
       type: 'question',
@@ -1458,13 +1507,15 @@ export const DATA = {
     b_alea_badge: {
       type: 'action',
       title: 'Tester avec un autre badge',
+      help: 'Un badge passé trop vite ou trop loin est souvent mal lu : le plaquer à plat contre le lecteur 1 à 2 secondes.',
       steps: [
-        'Prendre un autre badge disponible',
-        'Le passer devant le lecteur',
+        'Représenter le premier badge à plat contre le lecteur, 1 à 2 secondes',
+        'Si la lecture reste aléatoire, prendre un autre badge disponible',
+        'Le plaquer à plat contre le lecteur, 1 à 2 secondes',
         'Observer si la lecture est stable avec cet autre badge',
       ],
       next: 'b_alea_badge_result',
-      src: ['T'],
+      src: ['T', 'REP'],
     },
     b_alea_badge_result: {
       type: 'question',

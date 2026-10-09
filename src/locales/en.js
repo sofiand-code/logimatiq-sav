@@ -800,7 +800,7 @@ export const EN = {
     /* === ARBRE BADGE === */
     b_debut: {
       title: 'Is the badge reader LED on?',
-      help: 'The reader is connected to the PC via USB: if its LED is off, the PC is probably off.',
+      help: 'Normal: the reader LED is on, it beeps when a badge is presented, then DistEPI shows the name. The reader is connected to the PC via USB: if its LED is off, the PC is probably off.',
       answers: ['Yes, LED on', 'No, LED off'],
       media: 'The badge reader (circled in red)',
     },
@@ -858,9 +858,38 @@ export const EN = {
       title: 'Did the LED turn on on the new port?',
       answers: ['Yes, LED on', 'No, still off'],
     },
+    b_usb_windows: {
+      title: 'Check that Windows detects the reader',
+      steps: [
+        'Plug a keyboard into the PC and close DistEPI (Shift + F)',
+        'Right-click the Start button → "Device Manager"',
+        'Open "Keyboards" and "Human Interface Devices"',
+        'Unplug the reader USB cable while watching the list, then plug it back in: a line must disappear and then reappear',
+      ],
+    },
+    b_usb_windows_result: {
+      title: 'Does the reader appear in the Device Manager?',
+      help: 'A line disappears when the reader is unplugged and reappears when it is plugged back in.',
+      answers: ['Yes, it appears', 'No, nothing changes in the list'],
+    },
+    b_usb_redemarrer: {
+      title: 'Restart the machine',
+      steps: [
+        'Open the front and slide the electrical panel plate forward',
+        'Set the red main switch to O',
+        'Wait 30 seconds',
+        'Set the main switch back to I: the PC, the screen and the modem restart',
+        'Wait for Windows and DistEPI to restart by themselves (otherwise run C:\\EPI\\DistEPI.exe)',
+      ],
+      media: 'The red O / I main switch (no indicator light), next to the fuse holder',
+    },
+    b_usb_redemarrer_result: {
+      title: 'Is the reader LED on now?',
+      answers: ['Yes, LED on', 'No, still off'],
+    },
     b_symptome: {
       title: 'What happens when the badge is presented?',
-      help: 'The reader beeps when it reads a badge.',
+      help: 'Hold the badge flat against the reader for 1 to 2 seconds. Normal: a beep, then DistEPI shows the name.',
       answers: [
         'Nothing: no beep, no reaction',
         'Beep, but nothing happens on the screen',
@@ -979,12 +1008,16 @@ export const EN = {
       answers: ['Yes', 'No, still not'],
     },
     b_bip_redemarrer: {
-      title: 'Restart the dispenser',
+      title: 'Restart the machine',
       steps: [
-        'Start → Shut down → Restart',
-        'Wait for Windows and DistEPI to fully start',
+        'Open the front and slide the electrical panel plate forward',
+        'Set the red main switch to O',
+        'Wait 30 seconds',
+        'Set the main switch back to I: the PC, the screen and the modem restart',
+        'Wait for Windows and DistEPI to restart by themselves (otherwise run C:\\EPI\\DistEPI.exe)',
         'Present the badge again',
       ],
+      media: 'The red O / I main switch (no indicator light), next to the fuse holder',
     },
     b_bip_result: {
       title: 'Does the badge work after the restart?',
@@ -1061,9 +1094,11 @@ export const EN = {
     },
     b_alea_badge: {
       title: 'Test with another badge',
+      help: 'A badge presented too quickly or too far away is often misread: hold it flat against the reader for 1 to 2 seconds.',
       steps: [
-        'Take another available badge',
-        'Swipe it in front of the reader',
+        'Present the first badge again, flat against the reader, for 1 to 2 seconds',
+        'If reading is still random, take another available badge',
+        'Hold it flat against the reader for 1 to 2 seconds',
         'Observe whether the reading is stable with this other badge',
       ],
     },

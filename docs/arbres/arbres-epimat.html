@@ -424,7 +424,7 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-b">
-    <div class="bar"><h2>Badge non lu / non reconnu / mauvais numéro <span class="sub mono">· 22 questions · 18 actions · 5 conclusions · 17 photos</span></h2>
+    <div class="bar"><h2>Badge non lu / non reconnu / mauvais numéro <span class="sub mono">· 24 questions · 20 actions · 5 conclusions · 18 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -442,7 +442,7 @@ flowchart TD
   b_pc_led -->|"Oui, PC allumé"| b_usb_rebranch
   b_autre_badge["Tester avec un autre badge"]:::act
   b_autre_badge --> b_autre_badge_result
-  b_bip_redemarrer["Redémarrer le distributeur"]:::act
+  b_bip_redemarrer["Redémarrer la machine"]:::act
   b_bip_redemarrer --> b_bip_result
   b_init_badge["Initialiser le badge (première utilisation sur cette machine)"]:::act
   b_init_badge --> b_init_result
@@ -521,8 +521,7 @@ flowchart TD
   b_alea_usb_result -->|"Non, toujours aléatoire"| sol_changer_lecteur__10
   b_led_autre_port("La LED s'est-elle allumée sur le nouveau port ?"):::ques
   b_led_autre_port -->|"Oui, LED allumée"| b_symptome
-  sol_changer_lecteur__11(["Changer le lecteur de badge"]):::replace
-  b_led_autre_port -->|"Non, toujours éteinte"| sol_changer_lecteur__11
+  b_led_autre_port -->|"Non, toujours éteinte"| b_usb_windows
   b_reprog_projet["Reprogrammer le lecteur (2/2) : le programmer pour cette technologie"]:::act
   b_reprog_projet --> b_reprogrammer_result
   b_notepad_result("Que s'affiche-t-il dans le Bloc-notes ?"):::ques
@@ -530,18 +529,24 @@ flowchart TD
   b_notepad_result -->|"Rien ne s'affiche"| b_reprogrammer
   b_corriger_bdd["Corriger le numéro de badge du salarié"]:::act
   b_corriger_bdd --> b_bdd_result
+  b_usb_windows["Vérifier que Windows détecte le lecteur"]:::act
+  b_usb_windows --> b_usb_windows_result
   b_reprogrammer_result("Dans le Bloc-notes, le numéro lu est-il celui du badge ?"):::ques
   b_reprogrammer_result -->|"Oui"| b_admin_base
   b_reprogrammer_result -->|"Non : numéro différent ou à l'envers"| b_reprog_iterer
-  sol_changer_lecteur__12(["Changer le lecteur de badge"]):::replace
-  b_reprogrammer_result -->|"Rien ne s'affiche"| sol_changer_lecteur__12
+  sol_changer_lecteur__11(["Changer le lecteur de badge"]):::replace
+  b_reprogrammer_result -->|"Rien ne s'affiche"| sol_changer_lecteur__11
   b_admin_base["Corriger le nombre de chiffres du badge dans Admin Base"]:::act
   b_admin_base --> b_admin_result
   b_bdd_result("Le badge est-il maintenant correctement reconnu ?"):::ques
-  sol_resolved__13(["Problème résolu"]):::resolved
-  b_bdd_result -->|"Oui"| sol_resolved__13
+  sol_resolved__12(["Problème résolu"]):::resolved
+  b_bdd_result -->|"Oui"| sol_resolved__12
+  sol_changer_lecteur__13(["Changer le lecteur de badge"]):::replace
+  b_bdd_result -->|"Non"| sol_changer_lecteur__13
+  b_usb_windows_result("Le lecteur apparaît-il dans le Gestionnaire de périphériques ?"):::ques
+  b_usb_windows_result -->|"Oui, il apparaît"| b_usb_redemarrer
   sol_changer_lecteur__14(["Changer le lecteur de badge"]):::replace
-  b_bdd_result -->|"Non"| sol_changer_lecteur__14
+  b_usb_windows_result -->|"Non, rien ne change dans la liste"| sol_changer_lecteur__14
   b_reprog_iterer["Ajuster le format de sortie du lecteur"]:::act
   b_reprog_iterer --> b_reprog_iterer_result
   b_admin_result("Le badge est-il maintenant reconnu dans DistEPI ?"):::ques
@@ -549,10 +554,16 @@ flowchart TD
   b_admin_result -->|"Oui, badge OK"| sol_resolved__15
   sol_changer_lecteur__16(["Changer le lecteur de badge"]):::replace
   b_admin_result -->|"Non, toujours ignoré"| sol_changer_lecteur__16
+  b_usb_redemarrer["Redémarrer la machine"]:::act
+  b_usb_redemarrer --> b_usb_redemarrer_result
   b_reprog_iterer_result("Le numéro lu est-il maintenant le bon ?"):::ques
   b_reprog_iterer_result -->|"Oui"| b_admin_base
   sol_sav__17(["Contacter le SAV"]):::sav
   b_reprog_iterer_result -->|"Non, toujours pas"| sol_sav__17
+  b_usb_redemarrer_result("La LED du lecteur est-elle allumée maintenant ?"):::ques
+  b_usb_redemarrer_result -->|"Oui, LED allumée"| b_symptome
+  sol_changer_lecteur__18(["Changer le lecteur de badge"]):::replace
+  b_usb_redemarrer_result -->|"Non, toujours éteinte"| sol_changer_lecteur__18
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
