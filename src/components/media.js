@@ -66,6 +66,30 @@ export function renderMedia(m, label = m?.label) {
 }
 
 /**
+ * Plusieurs photos d'un même nœud : grille de vignettes (2 ou 3 colonnes), chacune agrandissable.
+ * @param {{ file: string, label: string }[]} items légendes déjà traduites
+ */
+export function renderMediaGrid(items) {
+  const cols = items.length === 3 || items.length > 4 ? 3 : 2;
+  return `
+    <div class="mt-4 grid gap-2" style="grid-template-columns:repeat(${cols},minmax(0,1fr))">
+      ${items.map(({ file, label }) => `
+        <figure class="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex flex-col">
+          <button type="button" data-zoom="/${esc(file)}" data-alt="${esc(label)}" class="relative block w-full">
+            <img src="/${esc(file)}" alt="${esc(label)}" loading="lazy" decoding="async"
+                 class="w-full" style="height:${cols === 3 ? 130 : 150}px;object-fit:contain;background:#f8fafc"/>
+            <span class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/90 shadow flex items-center justify-center text-slate-500">
+              <svg viewBox="0 0 24 24" class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.5-3.5M11 8v6M8 11h6"/>
+              </svg>
+            </span>
+          </button>
+          <figcaption class="text-[10px] leading-snug text-slate-500 font-medium text-center px-1.5 py-1.5">${esc(label)}</figcaption>
+        </figure>`).join('')}
+    </div>`;
+}
+
+/**
  * Affiche une image en plein écran : elle occupe tout l'écran ; la toucher
  * l'agrandit encore (on fait alors défiler) ; le bouton × ou le fond ferme.
  */

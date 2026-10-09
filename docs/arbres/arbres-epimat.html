@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Arbres de diagnostic EPIMAT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400&display=swap">
@@ -50,9 +52,9 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
   <header>
     <div>
       <h1>Arbres de diagnostic EPIMAT</h1>
-      <p class="sub">État de l'appli Logimatiq SAV au 8 octobre 2026 — généré depuis <span class="mono">sav-app/src/data/tree.js</span> par <span class="mono">docs/arbres/gen.mjs</span></p>
+      <p class="sub">État de l'appli Logimatiq SAV au 9 octobre 2026, généré depuis <span class="mono">sav-app/src/data/tree.js</span> par <span class="mono">docs/arbres/gen.mjs</span></p>
     </div>
-    <nav aria-label="Aller à un arbre"><a href="#p-a">Alimentation</a><a href="#p-s">Affichage</a><a href="#p-i">Réseau</a><a href="#p-b">Badge</a></nav>
+    <nav aria-label="Aller à un arbre"><a href="#p-a">Alimentation</a><a href="#p-s">Affichage</a><a href="#p-i">Réseau</a><a href="#p-b">Badge</a><a href="#p-t">Tambour</a><a href="#p-tr">Trappe</a><a href="#p-ld">Logiciel</a><a href="#p-ls">Logiciel</a><a href="#p-lc">Config</a></nav>
   </header>
 
   <div class="legend">
@@ -118,7 +120,7 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-s">
-    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 23 questions · 14 actions · 5 conclusions · 3 photos</span></h2>
+    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 23 questions · 14 actions · 5 conclusions · 6 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -358,7 +360,7 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-b">
-    <div class="bar"><h2>Badge non lu / non reconnu / mauvais numéro <span class="sub mono">· 21 questions · 16 actions · 6 conclusions · 5 photos</span></h2>
+    <div class="bar"><h2>Badge non lu / non reconnu / mauvais numéro <span class="sub mono">· 22 questions · 18 actions · 5 conclusions · 17 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
@@ -368,7 +370,7 @@ flowchart TD
   b_symptome("Que se passe-t-il quand on présente le badge ?"):::ques
   b_symptome -->|"Rien : pas de bip, aucune réaction"| b_autre_badge
   b_symptome -->|"Bip, mais rien ne se passe à l'écran"| b_bip_redemarrer
-  b_symptome -->|"L'écran demande « INITIALISATION BADGE — Tapez votre code ! »"| b_init_badge
+  b_symptome -->|"L'écran affiche « INITIALISATION BADGE » et « Tapez votre code ! »"| b_init_badge
   b_symptome -->|"Badge lu mais refusé, mauvais nom ou mauvais numéro"| b_sync
   b_symptome -->|"Lecture aléatoire / intermittente"| b_alea_badge
   b_pc_led("La LED du PC est-elle allumée ?"):::ques
@@ -404,7 +406,7 @@ flowchart TD
   b_sync_result -->|"Oui"| sol_resolved__2
   b_sync_result -->|"Non"| b_mauvais_notepad
   b_alea_badge_result("L'autre badge fonctionne-t-il correctement ?"):::ques
-  sol_badge_defaillant__3(["Badge défaillant — à remplacer"]):::replace
+  sol_badge_defaillant__3(["Badge défaillant à remplacer"]):::replace
   b_alea_badge_result -->|"Oui, lecture stable"| sol_badge_defaillant__3
   b_alea_badge_result -->|"Non, même problème"| b_alea_usb
   b_alea_badge_result -->|"Pas d'autre badge disponible"| b_alea_usb
@@ -415,11 +417,10 @@ flowchart TD
   b_led_apres_usb -->|"Oui, LED allumée"| b_symptome
   b_led_apres_usb -->|"Non, toujours éteinte"| b_autre_port_usb
   b_badge_deja_ok("Le premier badge a-t-il déjà fonctionné sur cette machine ?"):::ques
-  sol_badge_defaillant__4(["Badge défaillant — à remplacer"]):::replace
+  sol_badge_defaillant__4(["Badge défaillant à remplacer"]):::replace
   b_badge_deja_ok -->|"Oui, il marchait avant"| sol_badge_defaillant__4
-  sol_badge_incompatible__5(["Badge incompatible : reprogrammer le lecteur"]):::sav
-  b_badge_deja_ok -->|"Non, c'est un nouveau type de badge"| sol_badge_incompatible__5
-  b_notepad_langue["Préparer le test Notepad — passer le clavier en anglais"]:::act
+  b_badge_deja_ok -->|"Non, c'est un nouveau type de badge"| b_reprogrammer
+  b_notepad_langue["Préparer le test Bloc-notes : passer le clavier en anglais"]:::act
   b_notepad_langue --> b_notepad_test
   b_salarie_extranet["Vérifier le salarié dans l'extranet EPIMAT"]:::act
   b_salarie_extranet --> b_salarie_result
@@ -431,54 +432,63 @@ flowchart TD
   b_led_apres_pc -->|"Oui"| b_symptome
   b_led_apres_pc -->|"Non"| b_usb_rebranch
   b_multiprise("La LED rouge de la multiprise intérieure est-elle allumée ?"):::ques
-  sol_changer_pc__6(["Changer le PC intégré"]):::replace
-  b_multiprise -->|"Oui, LED rouge allumée"| sol_changer_pc__6
-  a_debut__7[["→ Machine hors tension / plus de courant"]]:::link
-  b_multiprise -->|"Non, multiprise éteinte"| a_debut__7
+  sol_changer_pc__5(["Changer le PC intégré"]):::replace
+  b_multiprise -->|"Oui, LED rouge allumée"| sol_changer_pc__5
+  a_debut__6[["→ Machine hors tension / plus de courant"]]:::link
+  b_multiprise -->|"Non, multiprise éteinte"| a_debut__6
   b_autre_port_usb["Essayer un autre port USB"]:::act
   b_autre_port_usb --> b_led_autre_port
+  b_reprogrammer["Reprogrammer le lecteur (1/2) : trouver la technologie du badge"]:::act
+  b_reprogrammer --> b_reprog_projet
   b_notepad_test["Tester la lecture du badge sur Notepad"]:::act
   b_notepad_test --> b_notepad_result
   b_salarie_result("Le badge est-il reconnu maintenant ?"):::ques
-  sol_resolved__8(["Problème résolu"]):::resolved
-  b_salarie_result -->|"Oui"| sol_resolved__8
-  sol_sav__9(["Contacter le SAV"]):::sav
-  b_salarie_result -->|"Non"| sol_sav__9
+  sol_resolved__7(["Problème résolu"]):::resolved
+  b_salarie_result -->|"Oui"| sol_resolved__7
+  sol_sav__8(["Contacter le SAV"]):::sav
+  b_salarie_result -->|"Non"| sol_sav__8
   b_mauvais_result("Le numéro lu dans le Bloc-notes correspond-il au badge ?"):::ques
-  b_mauvais_result -->|"Oui, même numéro — mal renseigné en base"| b_corriger_bdd
-  b_mauvais_result -->|"Non, numéro différent — lecteur à reprogrammer"| b_reprogrammer
+  b_mauvais_result -->|"Oui, même numéro : il est mal saisi dans la base"| b_corriger_bdd
+  b_mauvais_result -->|"Non, numéro différent : le lecteur est à reprogrammer"| b_reprogrammer
   b_alea_usb_result("La lecture est-elle stable maintenant ?"):::ques
-  sol_resolved__10(["Problème résolu"]):::resolved
-  b_alea_usb_result -->|"Oui, lecture stable"| sol_resolved__10
-  sol_changer_lecteur__11(["Changer le lecteur de badge"]):::replace
-  b_alea_usb_result -->|"Non, toujours aléatoire"| sol_changer_lecteur__11
+  sol_resolved__9(["Problème résolu"]):::resolved
+  b_alea_usb_result -->|"Oui, lecture stable"| sol_resolved__9
+  sol_changer_lecteur__10(["Changer le lecteur de badge"]):::replace
+  b_alea_usb_result -->|"Non, toujours aléatoire"| sol_changer_lecteur__10
   b_led_autre_port("La LED s'est-elle allumée sur le nouveau port ?"):::ques
   b_led_autre_port -->|"Oui, LED allumée"| b_symptome
-  sol_changer_lecteur__12(["Changer le lecteur de badge"]):::replace
-  b_led_autre_port -->|"Non, toujours éteinte"| sol_changer_lecteur__12
+  sol_changer_lecteur__11(["Changer le lecteur de badge"]):::replace
+  b_led_autre_port -->|"Non, toujours éteinte"| sol_changer_lecteur__11
+  b_reprog_projet["Reprogrammer le lecteur (2/2) : le programmer pour cette technologie"]:::act
+  b_reprog_projet --> b_reprogrammer_result
   b_notepad_result("Que s'affiche-t-il dans le Bloc-notes ?"):::ques
   b_notepad_result -->|"Des caractères apparaissent (ex : 3A8F12B4)"| b_admin_base
   b_notepad_result -->|"Rien ne s'affiche"| b_reprogrammer
   b_corriger_bdd["Corriger le numéro de badge du salarié"]:::act
   b_corriger_bdd --> b_bdd_result
-  b_reprogrammer["Reprogrammer le lecteur de badge"]:::act
-  b_reprogrammer --> b_reprogrammer_result
-  b_admin_base["Corriger le nombre de caractères dans Admin Base"]:::act
+  b_reprogrammer_result("Dans le Bloc-notes, le numéro lu est-il celui du badge ?"):::ques
+  b_reprogrammer_result -->|"Oui"| b_admin_base
+  b_reprogrammer_result -->|"Non : numéro différent ou à l'envers"| b_reprog_iterer
+  sol_changer_lecteur__12(["Changer le lecteur de badge"]):::replace
+  b_reprogrammer_result -->|"Rien ne s'affiche"| sol_changer_lecteur__12
+  b_admin_base["Corriger le nombre de chiffres du badge dans Admin Base"]:::act
   b_admin_base --> b_admin_result
   b_bdd_result("Le badge est-il maintenant correctement reconnu ?"):::ques
   sol_resolved__13(["Problème résolu"]):::resolved
   b_bdd_result -->|"Oui"| sol_resolved__13
   sol_changer_lecteur__14(["Changer le lecteur de badge"]):::replace
   b_bdd_result -->|"Non"| sol_changer_lecteur__14
-  b_reprogrammer_result("Le lecteur lit-il correctement sur le Bloc-notes ?"):::ques
-  b_reprogrammer_result -->|"Oui, caractères visibles"| b_admin_base
-  sol_changer_lecteur__15(["Changer le lecteur de badge"]):::replace
-  b_reprogrammer_result -->|"Non, toujours rien"| sol_changer_lecteur__15
+  b_reprog_iterer["Ajuster le format de sortie du lecteur"]:::act
+  b_reprog_iterer --> b_reprog_iterer_result
   b_admin_result("Le badge est-il maintenant reconnu dans DistEPI ?"):::ques
-  sol_resolved__16(["Problème résolu"]):::resolved
-  b_admin_result -->|"Oui, badge OK"| sol_resolved__16
-  sol_changer_lecteur__17(["Changer le lecteur de badge"]):::replace
-  b_admin_result -->|"Non, toujours ignoré"| sol_changer_lecteur__17
+  sol_resolved__15(["Problème résolu"]):::resolved
+  b_admin_result -->|"Oui, badge OK"| sol_resolved__15
+  sol_changer_lecteur__16(["Changer le lecteur de badge"]):::replace
+  b_admin_result -->|"Non, toujours ignoré"| sol_changer_lecteur__16
+  b_reprog_iterer_result("Le numéro lu est-il maintenant le bon ?"):::ques
+  b_reprog_iterer_result -->|"Oui"| b_admin_base
+  sol_sav__17(["Contacter le SAV"]):::sav
+  b_reprog_iterer_result -->|"Non, toujours pas"| sol_sav__17
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
@@ -489,20 +499,299 @@ flowchart TD
     </pre></div>
   </section>
 
-  <h2 class="sec">Corrigé en octobre 2026 (lots 1 et 2)</h2>
-  <div class="notes">
-    <div class="note"><h3>Badge — question du port COM</h3><p>Les lecteurs du parc sont en USB : la question dont Oui et Non menaient au même endroit est retirée. Si aucun badge n'est lu, on passe directement au test Bloc-notes.</p></div>
-    <div class="note"><h3>Écran — « Redémarrer le PC »</h3><p>C'est maintenant une procédure, suivie de la question « DistEPI s'affiche-t-il correctement ? » ; sinon, appel SAV.</p></div>
-    <div class="note"><h3>Écran éteint</h3><p>Avant de changer l'alimentation de l'écran, on vérifie que le reste de la machine est sous tension, puis le bouton marche de l'écran et son câble.</p></div>
-    <div class="note"><h3>3 conclusions jamais atteintes</h3><p>« Changer le bloc d'alimentation de l'écran », « Changer PC ou écran » et « Badge incompatible » sont maintenant atteintes.</p></div>
-  </div>
+  <section class="panel" id="p-t">
+    <div class="bar"><h2>« EN PANNE » / tambour bloqué ou mal positionné <span class="sub mono">· 17 questions · 12 actions · 6 conclusions · 9 photos</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+flowchart TD
+  t_debut("Quel est le problème du tambour ?"):::ques
+  t_debut -->|"L'écran indique « EN PANNE » / le tambour ne tourne plus"| t_rotation_manuelle
+  t_debut -->|"L'écran affiche « Disjoncteur déclenché »"| t_coupe_circuit_24v
+  t_debut -->|"Le tambour s'arrête sur la mauvaise colonne"| t_position
+  t_debut -->|"Le tambour dépasse la colonne ou s'arrête décalé"| t_vitesse
+  t_debut -->|"Un article ou un objet bloque le tambour"| t_bloque
+  t_rotation_manuelle("Le tambour tourne-t-il avec le bouton « Drum rotation » (rotation manuelle) ?"):::ques
+  t_rotation_manuelle -->|"Non, il ne tourne pas"| t_coupe_circuit_24v
+  t_rotation_manuelle -->|"Oui, il tourne"| t_trappes_fermees
+  t_coupe_circuit_24v["Réarmer le coupe-circuit 24 V de l'alimentation générale"]:::act
+  t_coupe_circuit_24v --> t_coupe_result
+  t_position["Lire la position du tambour dans DEBES"]:::act
+  t_position --> t_position_result
+  t_vitesse["Régler la vitesse lente du tambour (carte GR76)"]:::act
+  t_vitesse --> t_vitesse_result
+  t_bloque["Dégager le tambour"]:::act
+  t_bloque --> t_test_distrib
+  t_trappes_fermees("Toutes les trappes sont-elles bien fermées ?"):::ques
+  t_trappes_fermees -->|"Non, une trappe est ouverte ou mal fermée"| t_fermer_trappe
+  t_trappes_fermees -->|"Oui, toutes fermées"| t_cable_scsi
+  t_coupe_result("Le tambour tourne-t-il maintenant avec le bouton « Drum rotation » ?"):::ques
+  t_coupe_result -->|"Oui"| t_recaler
+  sol_sav_tambour__0(["Tambour : intervention SAV"]):::sav
+  t_coupe_result -->|"Non"| sol_sav_tambour__0
+  t_position_result("La position affichée correspond-elle à la colonne réelle ?"):::ques
+  t_position_result -->|"Oui"| t_arret_cp1
+  t_position_result -->|"Non"| t_pos_scsi
+  t_vitesse_result("Le tambour s'arrête-t-il correctement sur chaque colonne ?"):::ques
+  sol_resolved__1(["Problème résolu"]):::resolved
+  t_vitesse_result -->|"Oui"| sol_resolved__1
+  t_vitesse_result -->|"Non"| t_vit_scsi
+  t_test_distrib("La distribution test fonctionne-t-elle ?"):::ques
+  sol_resolved__2(["Problème résolu"]):::resolved
+  t_test_distrib -->|"Oui"| sol_resolved__2
+  sol_sav__3(["Contacter le SAV"]):::sav
+  t_test_distrib -->|"Non"| sol_sav__3
+  t_fermer_trappe["Fermer la trappe"]:::act
+  t_fermer_trappe --> t_fermer_result
+  t_cable_scsi["Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)"]:::act
+  t_cable_scsi --> t_cable_scsi_result
+  t_recaler["Recaler les EPI"]:::act
+  t_recaler --> t_test_distrib
+  t_arret_cp1("Le tambour s'arrête-t-il bien en face de la colonne ?"):::ques
+  sol_sav__4(["Contacter le SAV"]):::sav
+  t_arret_cp1 -->|"Oui"| sol_sav__4
+  t_arret_cp1 -->|"Non, il s'arrête décalé"| t_vitesse
+  t_pos_scsi["Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)"]:::act
+  t_pos_scsi --> t_pos_scsi_result
+  t_vit_scsi["Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)"]:::act
+  t_vit_scsi --> t_vit_scsi_result
+  t_fermer_result("La machine fonctionne-t-elle à nouveau ?"):::ques
+  sol_resolved__5(["Problème résolu"]):::resolved
+  t_fermer_result -->|"Oui"| sol_resolved__5
+  t_fermer_result -->|"Non"| t_cable_scsi
+  t_cable_scsi_result("La machine fonctionne-t-elle à nouveau ?"):::ques
+  sol_resolved__6(["Problème résolu"]):::resolved
+  t_cable_scsi_result -->|"Oui"| sol_resolved__6
+  t_cable_scsi_result -->|"Non"| t_ouvrir_debes
+  t_pos_scsi_result("La position affichée dans DEBES est-elle juste maintenant ?"):::ques
+  sol_resolved__7(["Problème résolu"]):::resolved
+  t_pos_scsi_result -->|"Oui"| sol_resolved__7
+  t_pos_scsi_result -->|"Non"| t_aligner_log03
+  t_vit_scsi_result("Le tambour s'arrête-t-il correctement maintenant ?"):::ques
+  sol_resolved__8(["Problème résolu"]):::resolved
+  t_vit_scsi_result -->|"Oui"| sol_resolved__8
+  t_vit_scsi_result -->|"Non"| t_aligner_log03
+  t_ouvrir_debes["Ouvrir DEBES"]:::act
+  t_ouvrir_debes --> t_debes_fcpf
+  t_aligner_log03["Nettoyer le disque, puis vérifier l'alignement des capteurs LOG 03 et LOG 04"]:::act
+  t_aligner_log03 --> t_aligner_result
+  t_debes_fcpf("Dans DEBES, les voyants FCPF (trappes fermées) sont-ils tous verts ?"):::ques
+  tr_capteur__9[["→ Dans DEBES, le voyant FCPF de cette trappe s'allume-t-il quand on la ferme à la main ?"]]:::link
+  t_debes_fcpf -->|"Non, un voyant FCPF est éteint"| tr_capteur__9
+  t_debes_fcpf -->|"Oui, tous verts"| t_secu_tambour
+  t_aligner_result("La position est-elle juste maintenant ?"):::ques
+  sol_resolved__10(["Problème résolu"]):::resolved
+  t_aligner_result -->|"Oui"| sol_resolved__10
+  sol_changer_log03__11(["Changer le capteur disque tambour (LOG 03 / LOG 04)"]):::replace
+  t_aligner_result -->|"Non"| sol_changer_log03__11
+  t_secu_tambour("Dans DEBES, le voyant « Sécu tambour OK » est-il vert ?"):::ques
+  t_secu_tambour -->|"Non, il est éteint"| t_modele_secu
+  sol_sav_tambour__12(["Tambour : intervention SAV"]):::sav
+  t_secu_tambour -->|"Oui, il est vert"| sol_sav_tambour__12
+  t_modele_secu("La machine a-t-elle des trappes (EPIMAT 13) ou des portes à gâche (EPIMAT 14) ?"):::ques
+  t_modele_secu -->|"Des trappes (EPIMAT 13)"| t_test_epi05
+  sol_sav_epi02__13(["EPIMAT 14 : à faire vérifier par le SAV"]):::sav
+  t_modele_secu -->|"Des portes à gâche (EPIMAT 14)"| sol_sav_epi02__13
+  t_test_epi05["Trouver la carte EPI 05 qui bloque le tambour"]:::act
+  t_test_epi05 --> t_test_epi05_result
+  t_test_epi05_result("Avez-vous trouvé la carte EPI 05 qui empêche la rotation ?"):::ques
+  sol_changer_epi05__14(["Changer la carte trappe EPI 05"]):::replace
+  t_test_epi05_result -->|"Oui"| sol_changer_epi05__14
+  sol_sav_tambour__15(["Tambour : intervention SAV"]):::sav
+  t_test_epi05_result -->|"Non"| sol_sav_tambour__15
+  classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
+  classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
+  classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
+  classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
+  classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
+  classDef info fill:#ECEBE6,stroke:#86847C,color:#3A3934
+    </pre></div>
+  </section>
 
-  <h2 class="sec">Reste à construire</h2>
+  <section class="panel" id="p-tr">
+    <div class="bar"><h2>Trappe bloquée / « Problème de distribution » / casier vide <span class="sub mono">· 12 questions · 7 actions · 4 conclusions · 5 photos</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+flowchart TD
+  tr_debut("Quel est le problème de trappe ?"):::ques
+  tr_debut -->|"L'écran affiche « Problème de distribution » après validation d'un EPI"| tr_debes_test
+  tr_debut -->|"La LED de la trappe s'allume mais la trappe reste bloquée"| tr_debes_test
+  tr_debut -->|"La trappe s'ouvre mais le casier est vide"| tr_casier_vide
+  tr_debut -->|"Une trappe ne se referme pas, ou l'écran affiche « Fermer la trappe »"| tr_capteur
+  tr_debes_test["Tester la trappe (ou la porte) dans DEBES"]:::act
+  tr_debes_test --> tr_debes_result
+  tr_casier_vide["Vérifier le stock de cet emplacement"]:::act
+  tr_casier_vide --> tr_casier_result
+  tr_capteur("Dans DEBES, le voyant FCPF de cette trappe s'allume-t-il quand on la ferme à la main ?"):::ques
+  tr_capteur -->|"Non, il reste éteint"| tr_capteur_scsi
+  tr_capteur -->|"Oui"| tr_debes_test
+  tr_debes_result("La trappe s'ouvre-t-elle et se referme-t-elle avec DEBES ?"):::ques
+  tr_debes_result -->|"Oui"| tr_obstacle
+  tr_debes_result -->|"Non"| tr_scsi
+  tr_casier_result("Le problème se reproduit-il sur cet emplacement ?"):::ques
+  sol_resolved__0(["Problème résolu"]):::resolved
+  tr_casier_result -->|"Non"| sol_resolved__0
+  t_position__1[["→ Lire la position du tambour dans DEBES"]]:::link
+  tr_casier_result -->|"Oui"| t_position__1
+  tr_capteur_scsi["Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)"]:::act
+  tr_capteur_scsi --> tr_capteur_scsi_result
+  tr_obstacle["Vérifier la trappe, puis refaire une distribution"]:::act
+  tr_obstacle --> tr_obstacle_result
+  tr_scsi["Vérifier le câble SCSI blanc (PC ↔ carte EPI 01)"]:::act
+  tr_scsi --> tr_scsi_result
+  tr_capteur_scsi_result("Le voyant FCPF s'allume-t-il maintenant quand la trappe est fermée ?"):::ques
+  tr_capteur_scsi_result -->|"Oui"| tr_debes_test
+  tr_capteur_scsi_result -->|"Non, il reste éteint"| tr_modele_capteur
+  tr_obstacle_result("La distribution fonctionne-t-elle ?"):::ques
+  sol_resolved__2(["Problème résolu"]):::resolved
+  tr_obstacle_result -->|"Oui"| sol_resolved__2
+  sol_condamner_trappe__3(["Trappe défectueuse : la condamner, puis SAV"]):::sav
+  tr_obstacle_result -->|"Non"| sol_condamner_trappe__3
+  tr_scsi_result("La trappe s'ouvre-t-elle et se referme-t-elle maintenant avec DEBES ?"):::ques
+  tr_scsi_result -->|"Oui"| tr_obstacle
+  tr_scsi_result -->|"Non"| tr_modele
+  tr_modele_capteur("La machine a-t-elle des trappes (EPIMAT 13) ou des portes à gâche (EPIMAT 14) ?"):::ques
+  sol_changer_epi05__4(["Changer la carte trappe EPI 05"]):::replace
+  tr_modele_capteur -->|"Des trappes (EPIMAT 13)"| sol_changer_epi05__4
+  sol_sav_epi02__5(["EPIMAT 14 : à faire vérifier par le SAV"]):::sav
+  tr_modele_capteur -->|"Des portes à gâche (EPIMAT 14)"| sol_sav_epi02__5
+  tr_modele("La machine a-t-elle des trappes (EPIMAT 13) ou des portes à gâche (EPIMAT 14) ?"):::ques
+  tr_modele -->|"Des trappes (EPIMAT 13)"| tr_motorisee
+  sol_sav_epi02__6(["EPIMAT 14 : à faire vérifier par le SAV"]):::sav
+  tr_modele -->|"Des portes à gâche (EPIMAT 14)"| sol_sav_epi02__6
+  tr_motorisee("La trappe s'ouvre-t-elle seule (trappe motorisée) ?"):::ques
+  tr_motorisee -->|"Oui, motorisée"| tr_verif_moteur
+  tr_motorisee -->|"Non, l'utilisateur l'ouvre après déverrouillage"| tr_verif_verrou
+  tr_verif_moteur["Vérifier le moteur de la trappe"]:::act
+  tr_verif_moteur --> tr_moteur_result
+  tr_verif_verrou["Vérifier le verrou électrique de la trappe"]:::act
+  tr_verif_verrou --> tr_verrou_result
+  tr_moteur_result("La trappe fonctionne-t-elle ?"):::ques
+  sol_resolved__7(["Problème résolu"]):::resolved
+  tr_moteur_result -->|"Oui"| sol_resolved__7
+  sol_condamner_trappe__8(["Trappe défectueuse : la condamner, puis SAV"]):::sav
+  tr_moteur_result -->|"Non"| sol_condamner_trappe__8
+  tr_verrou_result("La trappe fonctionne-t-elle ?"):::ques
+  sol_resolved__9(["Problème résolu"]):::resolved
+  tr_verrou_result -->|"Oui"| sol_resolved__9
+  sol_condamner_trappe__10(["Trappe défectueuse : la condamner, puis SAV"]):::sav
+  tr_verrou_result -->|"Non"| sol_condamner_trappe__10
+  classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
+  classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
+  classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
+  classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
+  classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
+  classDef info fill:#ECEBE6,stroke:#86847C,color:#3A3934
+    </pre></div>
+  </section>
+
+  <section class="panel" id="p-ld">
+    <div class="bar"><h2>Le logiciel ne démarre pas / plante <span class="sub mono">· 2 questions · 1 actions · 1 conclusions · 0 photos</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+flowchart TD
+  ld_debut("Que se passe-t-il ?"):::ques
+  s_vert_distepi__0[["→ Lancer le logiciel DistEPI"]]:::link
+  ld_debut -->|"DistEPI ne se lance pas (bureau Windows visible)"| s_vert_distepi__0
+  ld_debut -->|"DistEPI se ferme tout seul ou se bloque"| ld_redemarrer_distepi
+  t_rotation_manuelle__1[["→ Le tambour tourne-t-il avec le bouton « Drum rotation » (rotation manuelle) ?"]]:::link
+  ld_debut -->|"L'écran indique « EN PANNE »"| t_rotation_manuelle__1
+  s_vert_erreur__2[["→ Noter le message, puis redémarrer le distributeur"]]:::link
+  ld_debut -->|"Message d'erreur Windows ou BIOS"| s_vert_erreur__2
+  ld_redemarrer_distepi["Redémarrer DistEPI"]:::act
+  ld_redemarrer_distepi --> ld_redemarrer_result
+  ld_redemarrer_result("DistEPI fonctionne-t-il normalement ?"):::ques
+  sol_resolved__3(["Problème résolu"]):::resolved
+  ld_redemarrer_result -->|"Oui"| sol_resolved__3
+  s_redemarrer_distrib__4[["→ Redémarrer le distributeur"]]:::link
+  ld_redemarrer_result -->|"Non"| s_redemarrer_distrib__4
+  classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
+  classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
+  classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
+  classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
+  classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
+  classDef info fill:#ECEBE6,stroke:#86847C,color:#3A3934
+    </pre></div>
+  </section>
+
+  <section class="panel" id="p-ls">
+    <div class="bar"><h2>Erreur de synchronisation logicielle <span class="sub mono">· 4 questions · 2 actions · 1 conclusions · 0 photos</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+flowchart TD
+  ls_debut("Quel est le symptôme ?"):::ques
+  ls_debut -->|"Un salarié, un article ou un profil créé dans l'extranet n'arrive pas sur la machine"| ls_intervalle
+  ls_debut -->|"Les articles n'apparaissent pas dans le choix"| ls_casiers
+  ls_debut -->|"Les distributions n'arrivent pas dans l'extranet"| ls_online
+  ls_debut -->|"Message d'erreur de synchronisation"| ls_online
+  ls_intervalle["Lancer une synchronisation"]:::act
+  ls_intervalle --> ls_intervalle_result
+  ls_casiers["Vérifier la configuration des casiers dans l'extranet"]:::act
+  ls_casiers --> ls_casiers_result
+  ls_online("La LED « Online » du modem est-elle bleue fixe ?"):::ques
+  i_pwr_led__0[["→ La LED PWR du modem est-elle allumée (bleu fixe) ?"]]:::link
+  ls_online -->|"Non"| i_pwr_led__0
+  i_eth_led__1[["→ La LED ETH du modem clignote-t-elle ?"]]:::link
+  ls_online -->|"Oui"| i_eth_led__1
+  ls_intervalle_result("La nouveauté est-elle arrivée sur la machine ?"):::ques
+  sol_resolved__2(["Problème résolu"]):::resolved
+  ls_intervalle_result -->|"Oui"| sol_resolved__2
+  ls_intervalle_result -->|"Non"| ls_online
+  ls_casiers_result("Les articles apparaissent-ils maintenant ?"):::ques
+  sol_resolved__3(["Problème résolu"]):::resolved
+  ls_casiers_result -->|"Oui"| sol_resolved__3
+  ls_casiers_result -->|"Non"| ls_online
+  classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
+  classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
+  classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
+  classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
+  classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
+  classDef info fill:#ECEBE6,stroke:#86847C,color:#3A3934
+    </pre></div>
+  </section>
+
+  <section class="panel" id="p-lc">
+    <div class="bar"><h2>Configuration / paramétrage initial <span class="sub mono">· 2 questions · 4 actions · 2 conclusions · 0 photos</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+flowchart TD
+  lc_debut("Que faut-il vérifier dans les paramètres DistEPI ?"):::ques
+  lc_debut -->|"L'écran tactile ne réagit pas dans DistEPI"| lc_tactile
+  lc_debut -->|"Le lecteur de badge n'est pas pris en compte"| lc_badge
+  lc_debut -->|"La machine ne se synchronise pas avec le cloud"| lc_cloud
+  lc_debut -->|"Le nombre de casiers ne correspond pas à la machine"| lc_type
+  lc_tactile["Vérifier le paramètre « EcranTactile »"]:::act
+  lc_tactile --> lc_result
+  lc_badge["Vérifier le type de lecteur de badge"]:::act
+  lc_badge --> lc_result
+  lc_cloud["Vérifier les paramètres cloud"]:::act
+  lc_cloud --> lc_result
+  lc_type["Vérifier le type de machine"]:::act
+  lc_type --> lc_result
+  lc_result("Le problème est-il réglé ?"):::ques
+  sol_resolved__0(["Problème résolu"]):::resolved
+  lc_result -->|"Oui"| sol_resolved__0
+  sol_sav__1(["Contacter le SAV"]):::sav
+  lc_result -->|"Non"| sol_sav__1
+  classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
+  classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
+  classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
+  classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
+  classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
+  classDef info fill:#ECEBE6,stroke:#86847C,color:#3A3934
+    </pre></div>
+  </section>
+
+  <h2 class="sec">État au 9 octobre 2026</h2>
   <div class="notes">
-    <div class="note"><h3>Lot 3 — Alimentation</h3><p>Prise et disjoncteur du local, câble secteur, coupe-circuits 24 V / 5 V, fusible 4 A min / 5 A max. L'arbre Écran y renverra ensuite (« tout semble éteint »).</p></div>
-    <div class="note"><h3>Lot 4 — Tambour et trappe</h3><p>Rotation manuelle, codage 6 bits et DEBES, vitesse lente, sécurité tambour, cartes EPI 05, moteur de trappe.</p></div>
-    <div class="note"><h3>Lot 5 — Logiciel EPIMAT</h3><p>Démarrage, synchronisation, configuration. Le symptôme « Problème d'impression » sera retiré : il n'y a pas d'imprimante sur EPIMAT.</p></div>
-    <div class="note"><h3>VETIMAT, TOOLMAT, SmartBox, ELIMAT</h3><p>Plus tard : il faut d'abord une documentation technique et des pannes terrain pour chaque machine.</p></div>
+    <div class="note"><h3>En ligne</h3><p>Alimentation, Écran, Internet / modem, Badge : sur logimatiq-sav.vercel.app, avec les réponses de Sofian des 8 et 9 octobre (multiprise intérieure, PC avant l'écran, APN, Admin Base, reprogrammation du lecteur TWN4).</p></div>
+    <div class="note w"><h3>Lots 4 et 5 à valider : Tambour, Trappe, Logiciel</h3><p>Codés sur la branche « lot4 » (aperçu Vercel), pas encore en production. Le Logiciel (démarrage, synchronisation, configuration de DistEPI) renvoie vers le Tambour pour « EN PANNE ». « Trappes ou portes ? » est demandé avant toute étape propre aux cartes EPI 05 ; l'EPIMAT 14 (portes, cartes EPI 02) va au SAV en attendant sa documentation.</p></div>
+    <div class="note"><h3>Règles appliquées partout</h3><p>Alimentation avant pièce (multiprise intérieure, interrupteur général) ; câble SCSI vérifié avant de changer une carte ; consigne « mains hors du tambour » à chaque rotation.</p></div>
+    <div class="note"><h3>Reste à construire</h3><p>Plus tard : VETIMAT, TOOLMAT, SmartBox, ELIMAT (documentation et pannes terrain à réunir). EPIMAT 14 : la suite après le test DEBES, quand les photos des cartes EPI 02 seront là.</p></div>
   </div>
 </div>
 

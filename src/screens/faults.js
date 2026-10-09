@@ -88,7 +88,7 @@ function _renderList() {
   if (!filtered.length) {
     list.innerHTML = `
       <div class="text-center py-12">
-        <div class="text-4xl mb-3">🔍</div>
+        <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 mx-auto mb-3 flex items-center justify-center"><svg viewBox="0 0 24 24" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
         <p class="text-sm font-bold text-slate-500">${t('Aucune panne trouvée')}</p>
         <p class="text-xs text-slate-400 mt-1">${t('Essayez un autre mot-clé')}</p>
       </div>`;
@@ -202,11 +202,11 @@ function _renderFaultDetail(f, lang, cat) {
         <div class="flex flex-wrap gap-1.5 mt-1.5">
           ${s.photo ? `
             <span class="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 border border-amber-200">
-              📷 ${t('Photo à venir')}
+              <svg viewBox="0 0 24 24" class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg> ${t('Photo à venir')}
             </span>` : ''}
           ${s.debes ? `
             <span class="inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-600 border border-purple-200">
-              🖥 DEBES
+              <svg viewBox="0 0 24 24" class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> DEBES
             </span>` : ''}
         </div>
       </div>

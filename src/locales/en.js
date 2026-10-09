@@ -21,7 +21,7 @@ export const EN = {
     'Votre login': 'Your username',
     'Mot de passe': 'Password',
     'Votre mot de passe': 'Your password',
-    '⚠ Identifiant ou mot de passe incorrect.': '⚠ Incorrect username or password.',
+    'Identifiant ou mot de passe incorrect.': 'Incorrect username or password.',
     'Se connecter →': 'Sign in →',
     'Contactez Logimatiq pour obtenir vos identifiants':
       'Contact Logimatiq to get your credentials',
@@ -44,6 +44,8 @@ export const EN = {
     'Historique': 'History',
 
     // Symptoms
+    'Trappe': 'Hatch',
+    'Tambour': 'Drum',
     'Alimentation': 'Power',
     'Quel est le problème ?': 'What is the problem?',
     'Affichage': 'Display',
@@ -63,7 +65,8 @@ export const EN = {
     'Ex : Entrepôt Paris, Rayon 3…': 'E.g.: Paris Warehouse, Row 3…',
     'Client / Société': 'Customer / Company',
     'Nom du client final': 'End customer name',
-    '⚠ Le numéro de série est obligatoire.': '⚠ Serial number is required.',
+    'Le numéro de série est obligatoire.': 'Serial number is required.',
+    'Veuillez remplir tous les champs obligatoires.': 'Please fill in all required fields.',
     'Enregistrer et continuer →': 'Save and continue →',
 
     // Diag UI
@@ -87,7 +90,10 @@ export const EN = {
     'SAV': 'Support',
 
     // Rapport
-    '🔧 RAPPORT DIAGNOSTIC LOGIMATIQ': '🔧 LOGIMATIQ DIAGNOSTIC REPORT',
+    'RAPPORT DIAGNOSTIC LOGIMATIQ': 'LOGIMATIQ DIAGNOSTIC REPORT',
+    'N° série :': 'Serial no:',
+    'Site     :': 'Site     :',
+    'Conclusion :': 'Conclusion:',
     'Machine  :': 'Machine  :',
     'Problème :': 'Problem  :',
     'Date     :': 'Date     :',
@@ -148,6 +154,14 @@ export const EN = {
 
     // KB
     'Fiches PDF': 'PDF Guides',
+    "Fiches d'intervention": 'Repair sheets',
+    "Voir la fiche d'intervention": 'See the repair sheet',
+    'Documents': 'Documents',
+    'Non renseigné': 'Not specified',
+    'Toutes les fiches': 'All sheets',
+    'Avant de commencer': 'Before you start',
+    'Contrôle final': 'Final check',
+    'À valider avec Logimatiq': 'To confirm with Logimatiq',
     'Codes erreur': 'Error codes',
     'écran noir, modem, badge…': 'black screen, modem, badge…',
     'ERR_SYNC, badge, réseau…': 'ERR_SYNC, badge, network…',
@@ -168,6 +182,8 @@ export const EN = {
 
   /* ---- Titres des symptômes (tree.js symptoms[]) ---- */
   symptoms: {
+    't.epimat.trappe': 'Hatch stuck / "Problème de distribution" (dispensing problem) / empty compartment',
+    't.epimat.tambour': '"EN PANNE" (out of order) / drum stuck or wrongly positioned',
     't.epimat.alim': 'Machine powered off / no power',
     't.epimat.screen':   'Black screen / no image / frozen screen',
     't.epimat.internet': 'No internet connection / modem offline',
@@ -201,9 +217,9 @@ export const EN = {
       help: 'The "Power Led" indicator on the back of the screen, above the adjustment buttons (see the photos).',
       answers: ['Red', 'Off (no LED)', 'Green (image visible, other problem)'],
       media: [
-        '"Power Led" indicator on the back of the screen: off',
-        '"Power Led" indicator: red',
-        '"Power Led" indicator: green',
+        'Indicator off',
+        'Indicator red',
+        'Indicator green',
       ],
     },
     s_rouge_pc_led: {
@@ -590,7 +606,7 @@ export const EN = {
         'Run the data receive and send test',
         'Observe whether the test passes or fails',
       ],
-      media: 'ClientSynch DB EPI — procedure (photos coming soon)',
+      media: 'ClientSynch DB EPI: procedure (photos coming soon)',
     },
     i_clientsynch_result: {
       title: 'Did the ClientSynch test succeed?',
@@ -691,7 +707,7 @@ export const EN = {
       answers: [
         'Nothing: no beep, no reaction',
         'Beep, but nothing happens on the screen',
-        'The screen asks "INITIALISATION BADGE — Tapez votre code !" (enter your code)',
+        'The screen shows "INITIALISATION BADGE" and "Tapez votre code !" (enter your code)',
         'Badge read but refused, wrong name or wrong number',
         'Random / intermittent reading',
       ],
@@ -713,7 +729,7 @@ export const EN = {
       answers: ['Yes, it used to work', 'No, it is a new type of badge'],
     },
     b_notepad_langue: {
-      title: 'Prepare Notepad test — switch keyboard to English',
+      title: 'Prepare the Notepad test: switch the keyboard to English',
       help: 'The USB reader works like a keyboard: it "types" the badge number.',
       steps: [
         'Click on the language at the bottom right of the Windows taskbar',
@@ -754,7 +770,7 @@ export const EN = {
       answers: ['Yes, badge OK', 'No, still ignored'],
     },
     b_reprogrammer: {
-      title: 'Reprogram the reader — 1. find the badge technology',
+      title: 'Reprogram the reader (1/2): find the badge technology',
       help: 'Elatec TWN4 reader, programmed with AppBlaster on the machine\'s PC. First load the "Tracer" firmware, which types the badge technology.',
       steps: [
         'Open the C:\\EPI\\TWN4DevPack480 Nouveau folder and run AppBlaster.exe',
@@ -771,7 +787,7 @@ export const EN = {
       ],
     },
     b_reprog_projet: {
-      title: 'Reprogram the reader — 2. program it for this technology',
+      title: 'Reprogram the reader (2/2): program it for this technology',
       steps: [
         'In AppBlaster: "New Project (Configurable)" → double-click the "Multi Keyboard V4.80, App Standard V2.04" template',
         '"Transponder Types" → choose the category (e.g. MIFARE) then the type (e.g. MIFARE Classic) → double-click to add it to "Active Transponder Types"',
@@ -869,8 +885,8 @@ export const EN = {
     b_mauvais_result: {
       title: 'Does the number read in Notepad match the badge?',
       answers: [
-        'Yes, same number — incorrectly entered in the database',
-        'No, different number — reader to reprogram',
+        'Yes, same number: it is entered wrongly in the database',
+        'No, different number: the reader must be reprogrammed',
       ],
     },
     b_corriger_bdd: {
@@ -991,6 +1007,453 @@ export const EN = {
       answers: ['Yes', 'No'],
     },
 
+    /* === ARBRE TAMBOUR === */
+    t_debut: {
+      title: 'What is the drum problem?',
+      answers: [
+        'The screen shows "EN PANNE" (out of order) / the drum no longer turns',
+        'The screen shows "Disjoncteur déclenché" (circuit breaker tripped)',
+        'The drum stops at the wrong column',
+        'The drum overshoots the column or stops off-position',
+        'An item or an object is jamming the drum',
+      ],
+    },
+    t_rotation_manuelle: {
+      title: 'Does the drum turn with the "Drum rotation" button (manual rotation)?',
+      help: 'Button at the top of the frame, front right. Safety: never put your hands inside the machine while the drum is turning.',
+      answers: ['No, it does not turn', 'Yes, it turns'],
+    },
+    t_coupe_circuit_24v: {
+      title: 'Reset the 24 V circuit breaker of the main power supply',
+      help: 'It is the "drum circuit breaker" of the manuals.',
+      steps: [
+        'Slide the electrical panel plate forward',
+        'If the 24 V (3 A) circuit breaker button has popped out, press it to reset it',
+        'If it trips again immediately, do not insist',
+      ],
+      media: 'Main power supply, at the top of the plate: resettable fuses 24 V (3 A) and 5 V (1 A)',
+    },
+    t_coupe_result: {
+      title: 'Does the drum now turn with the "Drum rotation" button?',
+      help: 'Safety: never put your hands inside the machine while the drum is turning.',
+      answers: ['Yes', 'No'],
+    },
+    t_recaler: {
+      title: 'Realign the items',
+      help: 'No drum recalibration is needed: when DistEPI starts, the drum initializes by itself (it goes to the nearest column to validate the CP1 sensor and find its column number). Safety: never put your hands inside the machine while the drum is turning.',
+      steps: [
+        'With the "Drum rotation" button, turn the drum one full revolution',
+      ],
+    },
+    t_test_distrib: {
+      title: 'Does a test dispensing work?',
+      help: 'Present a badge, choose a family then an item, OK, then "Terminer" (Finish).',
+      answers: ['Yes', 'No'],
+    },
+    t_trappes_fermees: {
+      title: 'Are all hatches properly closed?',
+      help: 'The drum does not turn as long as a hatch is not detected as closed.',
+      answers: ['No, a hatch is open or not fully closed', 'Yes, all closed'],
+    },
+    t_fermer_trappe: {
+      title: 'Close the hatch',
+      steps: [
+        'Remove the item or obstacle preventing it from closing',
+        'Close the hatch again',
+      ],
+    },
+    t_fermer_result: {
+      title: 'Is the machine working again?',
+      answers: ['Yes', 'No'],
+    },
+    t_cable_scsi: {
+      title: 'Check the white SCSI cable (PC ↔ EPI 01 board)',
+      help: 'It is the link between the PC and the machine. If it is not fully seated, it causes strange faults: some sensors light up and others do not, the drum does not turn although everything looks fine. It is almost the first check to do. No need to switch the machine off.',
+      steps: [
+        'Find the white SCSI cable between the PC (Advantech board) and the EPI 01 board of the electrical panel',
+        'Check that it is fully seated at both ends',
+        'If needed, unplug it completely, then plug it back in firmly',
+      ],
+      media: 'Electrical panel plate pulled forward: the EPI 01 board is on the right, with its ribbon cables',
+    },
+    t_cable_scsi_result: {
+      title: 'Is the machine working again?',
+      answers: ['Yes', 'No'],
+    },
+    t_ouvrir_debes: {
+      title: 'Open DEBES',
+      help: 'STATUS box: "NoDevice … - OK" = the PC communicates with the Advantech board. Otherwise, the Advantech board number is wrong in C:\\EPI\\AUTOMAT.INI: the technician corrects it.',
+      steps: [
+        "Plug a keyboard into the machine's PC",
+        'Close DistEPI: Shift + F keys',
+        'Run C:\\EPI\\DebesEPI.exe',
+        'At the end of the tests: close DEBES ("Fermeture" (Close) button) and restart DistEPI',
+      ],
+      media: 'DEBES: drum and hatch control buttons; FCPF (hatch closed), CPT1 to CPT6 (position) and "Sécu tambour OK" (drum safety OK) indicators',
+    },
+    t_debes_fcpf: {
+      title: 'In DEBES, are all the FCPF indicators (hatches closed) green?',
+      help: 'FCPF1 to FCPF13: "hatch closed" sensor of each hatch or door.',
+      answers: ['No, an FCPF indicator is off', 'Yes, all green'],
+      media: 'DEBES: drum and hatch control buttons; FCPF (hatch closed), CPT1 to CPT6 (position) and "Sécu tambour OK" (drum safety OK) indicators',
+    },
+    t_secu_tambour: {
+      title: 'In DEBES, is the "Sécu tambour OK" (drum safety OK) indicator green?',
+      help: 'If it is off while all hatches are closed, a hatch board is blocking the drum safety.',
+      answers: ['No, it is off', 'Yes, it is green'],
+      media: 'DEBES: drum and hatch control buttons; FCPF (hatch closed), CPT1 to CPT6 (position) and "Sécu tambour OK" (drum safety OK) indicators',
+    },
+    t_modele_secu: {
+      title: 'Does the machine have hatches (EPIMAT 13) or latch doors (EPIMAT 14)?',
+      help: 'You can see it on the front: the EPIMAT 14 has manual latch doors, driven by EPI 02 boards.',
+      answers: ['Hatches (EPIMAT 13)', 'Latch doors (EPIMAT 14)'],
+      media: 'EPIMAT 13: front with hatches and hatch motors (2012 manual)',
+    },
+    t_test_epi05: {
+      title: 'Find the EPI 05 board that is blocking the drum',
+      help: 'Safety: never put your hands inside the machine while the drum is turning.',
+      steps: [
+        'Door open, remove the cover of the EPI 05 boards',
+        'Disconnect all the EPI 05 boards',
+        'On the board to test, set the test configuration (DIP switches)',
+        'Connect this board alone',
+        'In DEBES, start "Rotation TAMBOUR" (drum rotation): if the drum turns, the board is good',
+        'Restore its original configuration and repeat with the next board',
+      ],
+      media: [
+        'The EPI 05 boards, one per hatch, behind the front (EPIMAT 13)',
+        'EPI 05 board: configuration DIP switches',
+      ],
+    },
+    t_test_epi05_result: {
+      title: 'Did you find the EPI 05 board that prevents rotation?',
+      answers: ['Yes', 'No'],
+    },
+    t_position: {
+      title: 'Read the drum position in DEBES',
+      steps: [
+        'Close DistEPI (Shift + F, keyboard plugged in) and run DEBES (C:\\EPI\\DebesEPI.exe)',
+        'Look at the "Position Colonne" box ("Column Position" on older versions)',
+        'It is computed from sensors CPT1 to CPT6 (LOG 03 circuit): indicator off = hole in the disc = bit set to 1',
+        'Weights: CPT1 = 1, CPT2 = 2, CPT3 = 4, CPT4 = 8, CPT5 = 16, CPT6 = 32 (e.g. CPT3 and CPT6 off = 36)',
+        'Compare with the column actually facing the hatch',
+      ],
+      media: 'DEBES: drum and hatch control buttons; FCPF (hatch closed), CPT1 to CPT6 (position) and "Sécu tambour OK" (drum safety OK) indicators',
+    },
+    t_position_result: {
+      title: 'Does the displayed position match the actual column?',
+      answers: ['Yes', 'No'],
+    },
+    t_pos_scsi: {
+      title: 'Check the white SCSI cable (PC ↔ EPI 01 board)',
+      help: 'If this cable is not fully seated, it causes strange faults: some sensors light up and others do not. No need to switch the machine off.',
+      steps: [
+        'Find the white SCSI cable between the PC (Advantech board) and the EPI 01 board of the electrical panel',
+        'Check that it is fully seated at both ends',
+        'If needed, unplug it completely, then plug it back in firmly',
+      ],
+      media: 'Electrical panel plate pulled forward: the EPI 01 board is on the right, with its ribbon cables',
+    },
+    t_pos_scsi_result: {
+      title: 'Is the position displayed in DEBES correct now?',
+      answers: ['Yes', 'No'],
+    },
+    t_arret_cp1: {
+      title: 'Does the drum stop exactly in front of the column?',
+      help: 'Stopping on position is triggered by the CP1 sensor (LOG 04 circuit) when the slot of the disc passes through the fork.',
+      answers: ['Yes', 'No, it stops off-position'],
+    },
+    t_aligner_log03: {
+      title: 'Clean the disc, then check the alignment of the LOG 03 and LOG 04 sensors',
+      steps: [
+        'Clean the drum disc with a brush to remove the dust',
+        'The 2 circuits are above the drum, in the center, on a bracket fixed to the omega rail',
+        'LOG 03: the 6 sensors must be aligned with the holes of the disc',
+        'LOG 04: the fork must be aligned with the slot of the disc, without rubbing against the disc',
+        'If needed, loosen the circuit and shift it slightly',
+      ],
+      media: 'The LOG 03 / LOG 04 circuits above the drum, on their bracket',
+    },
+    t_aligner_result: {
+      title: 'Is the position correct now?',
+      answers: ['Yes', 'No'],
+    },
+    t_vitesse: {
+      title: 'Adjust the drum low speed (GR76 board)',
+      help: 'The drum overshoots the column or stops off-position: adjust its low speed. Safety: never put your hands inside the machine while the drum is turning.',
+      steps: [
+        'On the electrical panel, find the GR76 board (black heat sink; "GR 74" on the photos of the old manuals, it is the same board)',
+        'Blue single-turn potentiometer: clockwise = slower, counterclockwise = faster',
+        'Turn it a quarter turn between each test',
+        'Test in DEBES (DistEPI closed with Shift + F) with "Vitesse Lente TAMBOUR" (drum low speed) and "Rotation TAMBOUR" (drum rotation)',
+      ],
+      media: 'GR76 board: blue low-speed potentiometer',
+    },
+    t_vitesse_result: {
+      title: 'Does the drum stop correctly at each column?',
+      answers: ['Yes', 'No'],
+    },
+    t_vit_scsi: {
+      title: 'Check the white SCSI cable (PC ↔ EPI 01 board)',
+      help: 'If this cable is not fully seated, it causes strange faults: some sensors light up and others do not. No need to switch the machine off.',
+      steps: [
+        'Find the white SCSI cable between the PC (Advantech board) and the EPI 01 board of the electrical panel',
+        'Check that it is fully seated at both ends',
+        'If needed, unplug it completely, then plug it back in firmly',
+      ],
+      media: 'Electrical panel plate pulled forward: the EPI 01 board is on the right, with its ribbon cables',
+    },
+    t_vit_scsi_result: {
+      title: 'Does the drum stop correctly now?',
+      answers: ['Yes', 'No'],
+    },
+    t_bloque: {
+      title: 'Free the drum',
+      help: 'Safety: never put your hands inside the machine while the drum is turning.',
+      steps: [
+        'Remove the jammed item or object',
+        'If the 24 V circuit breaker of the main power supply has tripped, reset it',
+        'Turn the drum one full revolution with the "Drum rotation" button to realign the items',
+      ],
+    },
+
+    /* === ARBRE TRAPPE === */
+    tr_debut: {
+      title: 'What is the hatch problem?',
+      answers: [
+        'The screen shows "Problème de distribution" (dispensing problem) after an item is confirmed',
+        'The hatch LED lights up but the hatch stays locked',
+        'The hatch opens but the compartment is empty',
+        'A hatch does not close, or the screen shows "Fermer la trappe" (close the hatch)',
+      ],
+    },
+    tr_debes_test: {
+      title: 'Test the hatch (or the door) in DEBES',
+      help: 'Same test on the EPIMAT 13 (hatches) and the EPIMAT 14 (doors).',
+      steps: [
+        'Note the hatch number (hatch 1 = bottom)',
+        'Close DistEPI (Shift + F, keyboard plugged in) and run DEBES (C:\\EPI\\DebesEPI.exe)',
+        'Click "Trappe N Ouvrir" (open hatch N) then "N Fermer" (close N)',
+        'Watch the FCPF N (hatch closed) and FCPO (hatch open) indicators',
+        'At the end: close DEBES ("Fermeture" (Close)) and restart DistEPI',
+      ],
+      media: 'DEBES: drum and hatch control buttons; FCPF (hatch closed), CPT1 to CPT6 (position) and "Sécu tambour OK" (drum safety OK) indicators',
+    },
+    tr_debes_result: {
+      title: 'Does the hatch open and close with DEBES?',
+      answers: ['Yes', 'No'],
+    },
+    tr_scsi: {
+      title: 'Check the white SCSI cable (PC ↔ EPI 01 board)',
+      help: 'If this cable is not fully seated, it causes strange faults: some sensors light up and others do not. No need to switch the machine off.',
+      steps: [
+        'Find the white SCSI cable between the PC (Advantech board) and the EPI 01 board of the electrical panel',
+        'Check that it is fully seated at both ends',
+        'If needed, unplug it completely, then plug it back in firmly',
+      ],
+      media: 'Electrical panel plate pulled forward: the EPI 01 board is on the right, with its ribbon cables',
+    },
+    tr_scsi_result: {
+      title: 'Does the hatch now open and close with DEBES?',
+      answers: ['Yes', 'No'],
+    },
+    tr_modele: {
+      title: 'Does the machine have hatches (EPIMAT 13) or latch doors (EPIMAT 14)?',
+      help: 'You can see it on the front: the EPIMAT 14 has manual latch doors, driven by EPI 02 boards.',
+      answers: ['Hatches (EPIMAT 13)', 'Latch doors (EPIMAT 14)'],
+      media: 'EPIMAT 13: front with hatches and hatch motors (2012 manual)',
+    },
+    tr_obstacle: {
+      title: 'Check the hatch, then try a dispensing again',
+      steps: [
+        'Check that no item is preventing it from opening or closing',
+        'Run a test dispensing again',
+      ],
+    },
+    tr_obstacle_result: {
+      title: 'Does the dispensing work?',
+      answers: ['Yes', 'No'],
+    },
+    tr_motorisee: {
+      title: 'Does the hatch open by itself (motorized hatch)?',
+      help: 'On the EPIMAT 13, hatches are motorized or manual depending on the machine (MANUEL parameter of DistEPI).',
+      answers: ['Yes, motorized', 'No, the user opens it after it is unlocked'],
+    },
+    tr_verif_moteur: {
+      title: 'Check the hatch motor',
+      steps: [
+        'Remove the protective cover (3 M4 screws, 7 mm wrench)',
+        "Check the MOTOR connector on the hatch's EPI 05 board",
+        "Check that there is no play between the motor pinion and the hatch's white rack",
+        'Test again in DEBES',
+      ],
+      media: 'Hatch motor and its EPI 05 board (EPIMAT 13)',
+    },
+    tr_moteur_result: {
+      title: 'Does the hatch work?',
+      answers: ['Yes', 'No'],
+    },
+    tr_verif_verrou: {
+      title: 'Check the electric lock of the hatch',
+      steps: [
+        'Remove the protective cover (3 M4 screws, 7 mm wrench)',
+        "Check the LOCK connector (electromagnet) on the hatch's EPI 05 board",
+        'Test the opening again in DEBES',
+      ],
+      media: 'EPI 05 board: MOTOR and LOCK connectors at the bottom',
+    },
+    tr_verrou_result: {
+      title: 'Does the hatch work?',
+      answers: ['Yes', 'No'],
+    },
+    tr_casier_vide: {
+      title: 'Check the stock of this location',
+      steps: [
+        'Note the column and level concerned',
+        'Correct the stock from the refill menu (maintenance badge → "Vider / Remplir" (Empty / Fill))',
+        'Check the content of the location in the extranet ("Machines")',
+      ],
+    },
+    tr_casier_result: {
+      title: 'Does the problem happen again at this location?',
+      answers: ['No', 'Yes'],
+    },
+    tr_capteur: {
+      title: 'In DEBES, does the FCPF indicator of this hatch light up when you close it by hand?',
+      help: 'FCPF = "hatch closed" sensor. If DEBES is not open: close DistEPI (Shift + F), then run C:\\EPI\\DebesEPI.exe.',
+      answers: ['No, it stays off', 'Yes'],
+      media: 'DEBES: drum and hatch control buttons; FCPF (hatch closed), CPT1 to CPT6 (position) and "Sécu tambour OK" (drum safety OK) indicators',
+    },
+    tr_capteur_scsi: {
+      title: 'Check the white SCSI cable (PC ↔ EPI 01 board)',
+      help: 'If this cable is not fully seated, it causes strange faults: some sensors light up and others do not. No need to switch the machine off.',
+      steps: [
+        'Find the white SCSI cable between the PC (Advantech board) and the EPI 01 board of the electrical panel',
+        'Check that it is fully seated at both ends',
+        'If needed, unplug it completely, then plug it back in firmly',
+      ],
+      media: 'Electrical panel plate pulled forward: the EPI 01 board is on the right, with its ribbon cables',
+    },
+    tr_capteur_scsi_result: {
+      title: 'Does the FCPF indicator now light up when the hatch is closed?',
+      answers: ['Yes', 'No, it stays off'],
+    },
+    tr_modele_capteur: {
+      title: 'Does the machine have hatches (EPIMAT 13) or latch doors (EPIMAT 14)?',
+      help: 'You can see it on the front: the EPIMAT 14 has manual latch doors, driven by EPI 02 boards.',
+      answers: ['Hatches (EPIMAT 13)', 'Latch doors (EPIMAT 14)'],
+      media: 'EPIMAT 13: front with hatches and hatch motors (2012 manual)',
+    },
+
+    /* === ARBRE LOGICIEL DÉMARRAGE === */
+    ld_debut: {
+      title: 'What is happening?',
+      answers: [
+        'DistEPI does not start (Windows desktop visible)',
+        'DistEPI closes by itself or freezes',
+        'The screen shows "EN PANNE" (out of order)',
+        'Windows or BIOS error message',
+      ],
+    },
+    ld_redemarrer_distepi: {
+      title: 'Restart DistEPI',
+      steps: [
+        'Close DistEPI (Shift + F, keyboard plugged in)',
+        'Start it again (desktop icon or C:\\EPI\\DistEPI.exe)',
+      ],
+    },
+    ld_redemarrer_result: {
+      title: 'Is DistEPI working normally?',
+      answers: ['Yes', 'No'],
+    },
+
+    /* === ARBRE LOGICIEL SYNCHRO === */
+    ls_debut: {
+      title: 'What is the symptom?',
+      answers: [
+        'An employee, an item or a profile created in the extranet does not reach the machine',
+        'The items do not appear in the selection',
+        'The dispensings do not reach the extranet',
+        'Synchronization error message',
+      ],
+    },
+    ls_intervalle: {
+      title: 'Run a synchronization',
+      steps: [
+        'The machine fetches the extranet updates at regular intervals (IntervalGSMServer parameter)',
+        'To avoid waiting: keyboard plugged into the PC, Shift + L (maintenance menu), then the "Synchroniser" (Synchronize) button',
+        'Wait for the "synchro effectué" (synchronization done) message',
+      ],
+    },
+    ls_intervalle_result: {
+      title: 'Has the update reached the machine?',
+      answers: ['Yes', 'No'],
+    },
+    ls_casiers: {
+      title: 'Check the compartment configuration in the extranet',
+      steps: [
+        'Extranet → "Machines" → click on the machine',
+        'Check that the item is assigned to a compartment, a column or a level',
+        'Check the filling of the location',
+      ],
+    },
+    ls_casiers_result: {
+      title: 'Do the items appear now?',
+      answers: ['Yes', 'No'],
+    },
+    ls_online: {
+      title: 'Is the modem\'s "Online" LED steady blue?',
+      answers: ['No', 'Yes'],
+    },
+
+    /* === ARBRE LOGICIEL CONFIGURATION === */
+    lc_debut: {
+      title: 'What should be checked in the DistEPI settings?',
+      help: 'To open the settings, with a keyboard plugged into the PC: Shift + L opens the maintenance menu, then click in the top right corner of the screen, in the empty white area, to show the hidden menu.',
+      answers: [
+        'The touchscreen does not react in DistEPI',
+        'The badge reader is not taken into account',
+        'The machine does not synchronize with the cloud',
+        'The number of compartments does not match the machine',
+      ],
+    },
+    lc_tactile: {
+      title: 'Check the "EcranTactile" (touchscreen) setting',
+      steps: [
+        'DistEPI settings → Machine tab',
+        '"EcranTactile" must be enabled',
+        'Save and restart DistEPI',
+      ],
+    },
+    lc_badge: {
+      title: 'Check the badge reader type',
+      steps: [
+        'DistEPI settings → Badge tab → "TypeLecteurBadge" must be 10 (USB reader in keyboard emulation)',
+        'Save and restart DistEPI',
+      ],
+    },
+    lc_cloud: {
+      title: 'Check the cloud settings',
+      steps: [
+        '"MachineServeur": always ticked for cloud machines',
+        '"VersionGSM": enabled for the cloud',
+        '"VersionHTML5": required for the cloud',
+        'Save and restart DistEPI',
+      ],
+    },
+    lc_type: {
+      title: 'Check the machine type',
+      steps: [
+        'DistEPI settings → Type tab → "Machine1"',
+        'TYPE 1 = 32 compartments, 2 = 90, 3 = 180, 4 = 126, 5 = 252, 6 = Mix or 468, 8 = 432, 10 = 806 or Mix 806, 12 = Slim/Baby',
+        'Save and restart DistEPI',
+      ],
+    },
+    lc_result: {
+      title: 'Is the problem solved?',
+      answers: ['Yes', 'No'],
+    },
+
     /* === SOLUTIONS === */
     sol_resolved: {
       title: 'Problem resolved',
@@ -1044,8 +1507,29 @@ export const EN = {
       media: 'The badge reader seen from inside the door (circled in orange)',
     },
     sol_badge_defaillant: {
-      title: 'Defective badge — to replace',
+      title: 'Faulty badge to replace',
       message: 'This specific badge is defective (other badges work). Replace the badge through Support.',
+    },
+    sol_sav_tambour: {
+      title: 'Drum: Support intervention',
+      message: 'To be checked by Support: 24 V circuit breaker (drum circuit breaker), M1 motor, drum rotation board (EPI RT), low-speed board (GR76).',
+    },
+    sol_changer_epi05: {
+      title: 'Replace the EPI 05 hatch board',
+      message: 'Faulty EPI 05 board. Replace it (repair kit) by copying exactly the jumpers and switches of the old board ("do not forget to change the jumpers"). Contact Support.',
+      media: 'EPI 05 board: MOTOR and LOCK connectors at the bottom',
+    },
+    sol_changer_log03: {
+      title: 'Replace the drum disc sensor (LOG 03 / LOG 04)',
+      message: 'Replace the faulty circuit (LOG 03: sensors CPT1-CPT6; LOG 04: CP1, 14-wire ribbon cable to the main board). Contact Support.',
+    },
+    sol_sav_epi02: {
+      title: 'EPIMAT 14: to be checked by Support',
+      message: 'On the EPIMAT 14 (latch doors, EPI 02 boards), the rest of the diagnostic is not yet described in the app. Contact Support and send them the diagnostic report.',
+    },
+    sol_condamner_trappe: {
+      title: 'Faulty hatch: disable it, then Support',
+      message: 'Disable this hatch in DistEPI to keep using the machine, then contact Support for the repair.',
     },
     tbd: {
       title: 'Tree to complete',

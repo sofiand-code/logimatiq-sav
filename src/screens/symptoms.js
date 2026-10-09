@@ -10,6 +10,8 @@ const CATEGORY_BADGE = {
   'Affichage': { bg: '#EFF5FB', color: '#0F4C81' },
   'Réseau':    { bg: '#ECFDF5', color: '#059669' },
   'Badge':     { bg: '#FFFBEB', color: '#D97706' },
+  'Tambour':   { bg: '#EFF5FB', color: '#0F4C81' },
+  'Trappe':    { bg: '#FFF7ED', color: '#C2410C' },
   'Logiciel':  { bg: '#EFF5FB', color: '#1E6CB8' },
   'Config':    { bg: '#F5F3FF', color: '#7C3AED' },
   '—':         { bg: '#F1F5F9', color: '#94A3B8' },
@@ -30,7 +32,7 @@ export function renderSymptoms(machineId, onStart) {
       <button data-symptom="${s.id}" ${disabled ? 'disabled' : ''}
         class="tap-card w-full bg-white rounded-3xl p-4 border border-slate-200 shadow-sm flex items-center gap-4 text-left ${disabled ? 'opacity-50' : ''}">
         <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-             style="background:#EFF5FB;color:#0F4C81">
+             style="background:${cat.bg};color:${cat.color}">
           ${ICONS[s.icon] || ICONS.screen}
         </div>
         <div class="flex-1 min-w-0">

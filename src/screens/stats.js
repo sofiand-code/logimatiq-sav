@@ -40,8 +40,8 @@ export function renderStats() {
   /* Par machine (numéro de série) */
   const bySerial = {};
   history.forEach(h => {
-    const key = h.machineSerial || '—';
-    if (!bySerial[key]) bySerial[key] = { serial: key, clientName: h.clientName || '—', total: 0, sav: 0, model: h.machineModelLabel || h.machineId || '—' };
+    const key = h.machineSerial || t('Non renseigné');
+    if (!bySerial[key]) bySerial[key] = { serial: key, clientName: h.clientName || t('Non renseigné'), total: 0, sav: 0, model: h.machineModelLabel || h.machineId || t('Non renseigné') };
     bySerial[key].total++;
     if (h.outcome === 'sav') bySerial[key].sav++;
   });
@@ -51,7 +51,7 @@ export function renderStats() {
   /* Par société */
   const byCompany = {};
   history.forEach(h => {
-    const key = h.companyName || '—';
+    const key = h.companyName || t('Non renseigné');
     if (!byCompany[key]) byCompany[key] = { name: key, total: 0, sav: 0 };
     byCompany[key].total++;
     if (h.outcome === 'sav') byCompany[key].sav++;

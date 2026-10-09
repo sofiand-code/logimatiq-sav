@@ -50,8 +50,8 @@ const PHASES = [
         title_en: 'Connect the mains power',
         detail: 'Brancher le câble secteur fourni (livré dans la partie inférieure de la machine) sur une prise 220V (100/240V AC, 150W max, fusible 15A). Passer le câble par le passage prévu dans le châssis.',
         detail_en: 'Connect the provided power cable (located in the lower part of the machine) to a 220V outlet (100/240V AC, 150W max, 15A fuse). Route the cable through the designated opening in the chassis.',
-        warn: '⚠ Ne pas encore allumer la machine — laisser le switch arrière du PC sur OFF.',
-        warn_en: '⚠ Do not turn on the machine yet — leave the rear PC switch set to OFF.',
+        warn: 'Ne pas encore allumer la machine : laisser le switch arrière du PC sur OFF.',
+        warn_en: 'Do not turn on the machine yet: leave the rear PC switch set to OFF.',
       },
     ],
   },
@@ -122,8 +122,8 @@ const PHASES = [
         title_en: 'Insert the SIM card (if not already in place)',
         detail: 'Mettre hors tension le modem avant d\'insérer la SIM. Insérer la carte SIM (format nano-SIM) dans le slot prévu, en respectant l\'orientation (encoche). Remettre sous tension.',
         detail_en: 'Power off the modem before inserting the SIM. Insert the SIM card (nano-SIM format) into the designated slot, respecting the orientation (notch). Power back on.',
-        warn: '⚠ Toujours couper l\'alimentation du modem avant de manipuler la SIM.',
-        warn_en: '⚠ Always cut modem power before handling the SIM card.',
+        warn: 'Toujours couper l\'alimentation du modem avant de manipuler la SIM.',
+        warn_en: 'Always cut modem power before handling the SIM card.',
       },
       {
         id: 'p3_3',
@@ -168,8 +168,8 @@ const PHASES = [
         id: 'p4_2',
         title: 'Vérifier que la machine est bien présente',
         title_en: 'Verify the machine is listed',
-        detail: 'Aller dans le menu "Machines". La machine doit déjà être présente dans le système — Logimatiq l\'a pré-créée avant livraison. Vérifier le numéro de série affiché et le modèle (EPIMAT 36 ou 62 colonnes).',
-        detail_en: 'Go to the "Machines" menu. The machine should already be in the system — Logimatiq pre-created it before delivery. Verify the displayed serial number and model (EPIMAT 36 or 62 columns).',
+        detail: 'Aller dans le menu "Machines". La machine doit déjà être présente dans le système. Logimatiq l\'a pré-créée avant livraison. Vérifier le numéro de série affiché et le modèle (EPIMAT 36 ou 62 colonnes).',
+        detail_en: 'Go to the "Machines" menu. The machine should already be in the system. Logimatiq pre-created it before delivery. Verify the displayed serial number and model (EPIMAT 36 or 62 columns).',
         warn: 'Si la machine n\'apparaît pas dans l\'extranet → contacter Logimatiq au 07 45 28 44 83.',
         warn_en: 'If the machine does not appear in the extranet → contact Logimatiq at 07 45 28 44 83.',
       },
@@ -221,8 +221,8 @@ const PHASES = [
         id: 'p5_1',
         title: 'Présenter le badge devant le lecteur',
         title_en: 'Present the badge to the reader',
-        detail: 'Si l\'écran affiche "INITIALISATION BADGE — Tapez votre code !", le badge n\'est pas encore initialisé sur cette machine. Passer à l\'étape suivante.',
-        detail_en: 'If the screen shows "INITIALISATION BADGE — Tapez votre code!", the badge has not yet been initialized on this machine. Proceed to the next step.',
+        detail: 'Si l\'écran affiche "INITIALISATION BADGE" et "Tapez votre code !", le badge n\'est pas encore initialisé sur cette machine. Passer à l\'étape suivante.',
+        detail_en: 'If the screen shows "INITIALISATION BADGE" and "Tapez votre code!", the badge has not yet been initialized on this machine. Proceed to the next step.',
         warn: null,
       },
       {
@@ -231,8 +231,8 @@ const PHASES = [
         title_en: 'Enter the 7-digit badge code',
         detail: 'Saisir le numéro imprimé sur le badge, COMPLÉTÉ PAR DES ZÉROS À GAUCHE pour obtenir exactement 7 chiffres.\nExemples :\n• Badge "529545" → taper 0529545\n• Badge "1234" → taper 0001234\n• Badge "14" → taper 0000014',
         detail_en: 'Enter the number printed on the badge, PADDED WITH LEADING ZEROS to get exactly 7 digits.\nExamples:\n• Badge "529545" → enter 0529545\n• Badge "1234" → enter 0001234\n• Badge "14" → enter 0000014',
-        warn: '⚠ Toujours 7 chiffres. Un code incomplet ou erroné refusera l\'initialisation.',
-        warn_en: '⚠ Always 7 digits. An incomplete or incorrect code will reject initialization.',
+        warn: 'Toujours 7 chiffres. Un code incomplet ou erroné refusera l\'initialisation.',
+        warn_en: 'Always 7 digits. An incomplete or incorrect code will reject initialization.',
       },
       {
         id: 'p5_3',
@@ -518,6 +518,7 @@ function renderStep(step, checked, color) {
         ${stepWarn ? `
         <div class="mt-2 flex items-start gap-1.5 bg-amber-50 border border-amber-200
                     rounded-xl px-2.5 py-2">
+          <span class="text-amber-600"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5 shrink-0 mt-px" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span>
           <p class="text-[10px] text-amber-700 font-semibold leading-relaxed">${stepWarn}</p>
         </div>` : ''}` : ''}
       </div>

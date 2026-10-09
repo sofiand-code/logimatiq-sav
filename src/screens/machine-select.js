@@ -10,10 +10,12 @@ const MODEL_LABELS = {
   vetimat:  'VETIMAT',
   logiciel: 'EPIMAT Logiciel',
 };
+/* Le diagnostic « Logiciel EPIMAT » porte sur le PC d'une EPIMAT : on choisit parmi les machines EPIMAT. */
+const MACHINE_OF = { logiciel: 'epimat' };
 
 export function renderMachineSelect(modelId, onSelect) {
   const label    = MODEL_LABELS[modelId] || modelId.toUpperCase();
-  const machines = getMachinesByModel(modelId);
+  const machines = getMachinesByModel(MACHINE_OF[modelId] || modelId);
   const user     = getUser();
   const container = document.getElementById('machine-select-body');
   if (!container) return;
@@ -23,7 +25,7 @@ export function renderMachineSelect(modelId, onSelect) {
   if (modelLabelEl) modelLabelEl.textContent = label;
 
   if (machines.length === 0) {
-    renderAddForm(container, modelId, label, user, onSelect, false);
+    renderAddForm(container, MACHINE_OF[modelId] || modelId, MODEL_LABELS[MACHINE_OF[modelId]] || label, user, onSelect, false);
     return;
   }
 
@@ -75,7 +77,7 @@ export function renderMachineSelect(modelId, onSelect) {
   );
 
   document.getElementById('btn-add-new-machine')?.addEventListener('click', () => {
-    renderAddForm(container, modelId, label, user, onSelect, true);
+    renderAddForm(container, MACHINE_OF[modelId] || modelId, MODEL_LABELS[MACHINE_OF[modelId]] || label, user, onSelect, true);
   });
 }
 
@@ -126,7 +128,7 @@ function renderAddForm(container, modelId, label, user, onSelect, showBack) {
       </div>` : ''}
 
       <p id="ms-error" class="text-xs text-rose-500 font-semibold hidden">
-        ${t('⚠ Le numéro de série est obligatoire.')}
+        <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" class="w-3.5 h-3.5 shrink-0 mt-px" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>${t('Le numéro de série est obligatoire.')}</span>
       </p>
 
       <button id="btn-save-machine"
