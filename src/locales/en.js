@@ -802,7 +802,7 @@ export const EN = {
         "Check that the modem's Online LED is steady blue (otherwise: Internet / modem tree)",
         "Plug a keyboard into the machine's PC",
         'Shift + L to open the maintenance menu, then click the "Synchroniser" (Synchronize) button',
-        'Wait for the synchronization to finish, then present the badge again',
+        'Wait for the "synchro effectué" (synchronization done) message, then present the badge again',
       ],
     },
     b_sync_result: {

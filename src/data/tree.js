@@ -1070,7 +1070,7 @@ export const DATA = {
         'Vérifier que la LED Online du modem est bleue fixe (sinon : arbre Internet / modem)',
         'Brancher un clavier sur le PC de la machine',
         'Maj + L pour ouvrir le menu maintenance, puis cliquer sur le bouton « Synchroniser »',
-        'Attendre la fin de la synchronisation, puis représenter le badge',
+        'Attendre le message « synchro effectué », puis représenter le badge',
       ],
       next: 'b_sync_result',
       src: ['D24 p.1', 'REP'],
