@@ -12,13 +12,6 @@ export const ERROR_CODES = [
     tags: ['modem', 'réseau', 'sync', 'led'],
   },
   {
-    code: 'ERR_SYNC_02',
-    label: 'Modem non détecté',
-    desc: 'Le logiciel EPIMAT ne détecte pas le modem USB/GSM. Vérifier le câble USB et relancer le service Windows.',
-    diag: 'epimat.internet',
-    tags: ['modem', 'usb', 'détection'],
-  },
-  {
     code: 'ERR_NET_01',
     label: 'Serveur inaccessible',
     desc: 'Impossible de joindre le serveur Logimatiq. Vérifier la connexion Internet et les paramètres APN de la carte SIM.',
@@ -79,21 +72,6 @@ export const ERROR_CODES = [
     tags: ['écran', 'voyant', 'rouge', 'vga', 'pc'],
   },
 
-  /* ---- Imprimante ---- */
-  {
-    code: 'ERR_PRINT_01',
-    label: 'Imprimante non détectée',
-    desc: 'L\'imprimante thermique n\'est pas reconnue par Windows. Vérifier l\'alimentation, le câble USB et les pilotes.',
-    diag: null,
-    tags: ['imprimante', 'usb', 'thermique'],
-  },
-  {
-    code: 'ERR_PRINT_02',
-    label: 'Bourrage papier / pas d\'impression',
-    desc: 'Le papier est coincé ou le rouleau est mal inséré. Ouvrir le capot de l\'imprimante, retirer le rouleau et le réinsérer côté thermique vers le bas.',
-    diag: null,
-    tags: ['imprimante', 'papier', 'bourrage', 'rouleau'],
-  },
 
   /* ---- Logiciel ---- */
   {

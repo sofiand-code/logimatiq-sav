@@ -1336,6 +1336,115 @@ export const EN = {
       media: 'EPIMAT 13: front with hatches and hatch motors (2012 manual)',
     },
 
+    /* === ARBRE LOGICIEL DÉMARRAGE === */
+    ld_debut: {
+      title: 'What is happening?',
+      answers: [
+        'DistEPI does not start (Windows desktop visible)',
+        'DistEPI closes by itself or freezes',
+        'The screen shows "EN PANNE" (out of order)',
+        'Windows or BIOS error message',
+      ],
+    },
+    ld_redemarrer_distepi: {
+      title: 'Restart DistEPI',
+      steps: [
+        'Close DistEPI (Shift + F, keyboard plugged in)',
+        'Start it again (desktop icon or C:\\EPI\\DistEPI.exe)',
+      ],
+    },
+    ld_redemarrer_result: {
+      title: 'Is DistEPI working normally?',
+      answers: ['Yes', 'No'],
+    },
+
+    /* === ARBRE LOGICIEL SYNCHRO === */
+    ls_debut: {
+      title: 'What is the symptom?',
+      answers: [
+        'An employee, an item or a profile created in the extranet does not reach the machine',
+        'The items do not appear in the selection',
+        'The dispensings do not reach the extranet',
+        'Synchronization error message',
+      ],
+    },
+    ls_intervalle: {
+      title: 'Run a synchronization',
+      steps: [
+        'The machine fetches the extranet updates at regular intervals (IntervalGSMServer parameter)',
+        'To avoid waiting: keyboard plugged into the PC, Shift + L (maintenance menu), then the "Synchroniser" (Synchronize) button',
+        'Wait for the "synchro effectué" (synchronization done) message',
+      ],
+    },
+    ls_intervalle_result: {
+      title: 'Has the update reached the machine?',
+      answers: ['Yes', 'No'],
+    },
+    ls_casiers: {
+      title: 'Check the compartment configuration in the extranet',
+      steps: [
+        'Extranet → "Machines" → click on the machine',
+        'Check that the item is assigned to a compartment, a column or a level',
+        'Check the filling of the location',
+      ],
+    },
+    ls_casiers_result: {
+      title: 'Do the items appear now?',
+      answers: ['Yes', 'No'],
+    },
+    ls_online: {
+      title: 'Is the modem\'s "Online" LED steady blue?',
+      answers: ['No', 'Yes'],
+    },
+
+    /* === ARBRE LOGICIEL CONFIGURATION === */
+    lc_debut: {
+      title: 'What should be checked in the DistEPI settings?',
+      help: 'To open the settings, with a keyboard plugged into the PC: Shift + L opens the maintenance menu, then click in the top right corner of the screen, in the empty white area, to show the hidden menu.',
+      answers: [
+        'The touchscreen does not react in DistEPI',
+        'The badge reader is not taken into account',
+        'The machine does not synchronize with the cloud',
+        'The number of compartments does not match the machine',
+      ],
+    },
+    lc_tactile: {
+      title: 'Check the "EcranTactile" (touchscreen) setting',
+      steps: [
+        'DistEPI settings → Machine tab',
+        '"EcranTactile" must be enabled',
+        'Save and restart DistEPI',
+      ],
+    },
+    lc_badge: {
+      title: 'Check the badge reader type',
+      steps: [
+        'DistEPI settings → Badge tab → "TypeLecteurBadge" must be 10 (USB reader in keyboard emulation)',
+        'Save and restart DistEPI',
+      ],
+    },
+    lc_cloud: {
+      title: 'Check the cloud settings',
+      steps: [
+        '"MachineServeur": always ticked for cloud machines',
+        '"VersionGSM": enabled for the cloud',
+        '"VersionHTML5": required for the cloud',
+        'Save and restart DistEPI',
+      ],
+    },
+    lc_type: {
+      title: 'Check the machine type',
+      steps: [
+        'DistEPI settings → Type tab → "Machine1"',
+        'TYPE 1 = 32 compartments, 2 = 90, 3 = 180, 4 = 126, 5 = 252, 6 = Mix or 468, 8 = 432, 10 = 806 or Mix 806, 12 = Slim/Baby',
+        'Save and restart DistEPI',
+      ],
+    },
+    lc_result: {
+      title: 'Is the problem solved?',
+      answers: ['Yes', 'No'],
+    },
+
     /* === SOLUTIONS === */
     sol_resolved: {
       title: 'Problem resolved',

@@ -68,13 +68,21 @@ export const SCENARIOS = [
   { nom: 'Trappe motorisée EPIMAT 13 qui ne s\'ouvre toujours pas → la condamner dans DistEPI, puis SAV (R4)', statut: 'à valider',
     symptome: 't.epimat.trappe', reponses: ['Problème de distribution', 'Non', 'Non', 'trappes (EPIMAT 13)', 'Oui, motorisée', 'Non'],
     attendu: 'sol_condamner_trappe' },
+
+  /* ---- Logiciel (lot 5) ---- */
+  { nom: 'Logiciel : écran « EN PANNE » → arbre Tambour (rotation manuelle)', statut: 'à valider',
+    symptome: 't.log.demarrage', reponses: ['EN PANNE'], attendu: 't_rotation_manuelle' },
+  { nom: "Logiciel : salarié créé dans l'extranet absent de la machine → lancer une synchronisation (Maj + L)", statut: 'à valider',
+    symptome: 't.log.synchro', reponses: ["créé dans l'extranet"], attendu: 'ls_intervalle' },
+  { nom: 'Logiciel : lecteur de badge non pris en compte → TypeLecteurBadge = 10', statut: 'à valider',
+    symptome: 't.log.config', reponses: ['lecteur de badge'], attendu: 'lc_badge' },
 ];
 
 /* Règles vérifiées sur TOUS les chemins possibles : depuis les points d'entrée, on ne peut
    pas atteindre `cible` sans passer par l'un des nœuds `garde` (ou la réponse `viaReponse`). */
 export const REGLES = [
   { nom: 'Alimentation avant pièce : pas de « changer le PC » sans contrôle de la multiprise (ou image visible)',
-    cible: ['sol_changer_pc'], garde: ['s_rouge_multiprise', 'b_multiprise', 's_vert_symptome'] },
+    cible: ['sol_changer_pc'], garde: ['s_rouge_multiprise', 'b_multiprise', 's_vert_symptome', 's_vert_erreur'] },   // image ou message d'erreur visibles = PC alimenté
   { nom: 'Câble SCSI vérifié avant de changer une carte EPI 05 ou LOG 03 / LOG 04',
     cible: ['sol_changer_epi05', 'sol_changer_log03'], garde: ['t_cable_scsi', 't_pos_scsi', 't_vit_scsi', 'tr_scsi', 'tr_capteur_scsi'] },
   { nom: 'EPIMAT 14 : aucune étape EPI 05 sans la réponse « trappes (EPIMAT 13) »',

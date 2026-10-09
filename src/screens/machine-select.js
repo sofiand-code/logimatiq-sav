@@ -10,10 +10,12 @@ const MODEL_LABELS = {
   vetimat:  'VETIMAT',
   logiciel: 'EPIMAT Logiciel',
 };
+/* Le diagnostic « Logiciel EPIMAT » porte sur le PC d'une EPIMAT : on choisit parmi les machines EPIMAT. */
+const MACHINE_OF = { logiciel: 'epimat' };
 
 export function renderMachineSelect(modelId, onSelect) {
   const label    = MODEL_LABELS[modelId] || modelId.toUpperCase();
-  const machines = getMachinesByModel(modelId);
+  const machines = getMachinesByModel(MACHINE_OF[modelId] || modelId);
   const user     = getUser();
   const container = document.getElementById('machine-select-body');
   if (!container) return;
@@ -23,7 +25,7 @@ export function renderMachineSelect(modelId, onSelect) {
   if (modelLabelEl) modelLabelEl.textContent = label;
 
   if (machines.length === 0) {
-    renderAddForm(container, modelId, label, user, onSelect, false);
+    renderAddForm(container, MACHINE_OF[modelId] || modelId, MODEL_LABELS[MACHINE_OF[modelId]] || label, user, onSelect, false);
     return;
   }
 
@@ -75,7 +77,7 @@ export function renderMachineSelect(modelId, onSelect) {
   );
 
   document.getElementById('btn-add-new-machine')?.addEventListener('click', () => {
-    renderAddForm(container, modelId, label, user, onSelect, true);
+    renderAddForm(container, MACHINE_OF[modelId] || modelId, MODEL_LABELS[MACHINE_OF[modelId]] || label, user, onSelect, true);
   });
 }
 

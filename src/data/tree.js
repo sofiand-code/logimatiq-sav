@@ -1,10 +1,10 @@
 /* ============================================================================
    DATA — Logimatiq SAV
-   6 arbres EPIMAT : Écran, Internet / modem, Badge, Alimentation, Tambour, Trappe
-   Préfixes de nœuds : s_ (écran) · i_ (internet / modem) · b_ (badge) · a_ (alimentation) · t_ (tambour) · tr_ (trappe)
+   9 arbres EPIMAT : Écran, Internet / modem, Badge, Alimentation, Tambour, Trappe, Logiciel — démarrage, Logiciel — synchronisation, Logiciel — configuration
+   Préfixes de nœuds : s_ (écran) · i_ (internet / modem) · b_ (badge) · a_ (alimentation) · t_ (tambour) · tr_ (trappe) · ld_ (logiciel — démarrage) · ls_ (logiciel — synchronisation) · lc_ (logiciel — configuration)
    Types : question (answers → next) · action (steps → next) · solution (outcome)
 
-   Refonte d'octobre 2026 (lots 1, 2, 3, 4). Chaque nœud porte un champ `src`,
+   Refonte d'octobre 2026 (lots 1, 2, 3, 4, 5). Chaque nœud porte un champ `src`,
    non affiché dans l'app, qui cite ses sources :
      T     arbres validés sur le terrain (mai 2026)
      R     repères de l'équipe Logimatiq
@@ -47,10 +47,9 @@ export const DATA = {
       { id: 't.epimat.trappe', title: 'Trappe bloquée / « Problème de distribution » / casier vide', category: 'Trappe', rootNode: 'tr_debut', icon: 'hatch' },
     ],
     logiciel: [
-      { id: 't.log.demarrage', title: 'Le logiciel ne démarre pas / plante', category: 'Logiciel', rootNode: 'tbd', icon: 'pc' },
-      { id: 't.log.synchro', title: 'Erreur de synchronisation logicielle', category: 'Logiciel', rootNode: 'tbd', icon: 'antenna' },
-      { id: 't.log.impression', title: "Problème d'impression", category: 'Logiciel', rootNode: 'tbd', icon: 'screen' },
-      { id: 't.log.config', title: 'Configuration / paramétrage initial', category: 'Config', rootNode: 'tbd', icon: 'badge' },
+      { id: 't.log.demarrage', title: 'Le logiciel ne démarre pas / plante', category: 'Logiciel', rootNode: 'ld_debut', icon: 'pc' },
+      { id: 't.log.synchro', title: 'Erreur de synchronisation logicielle', category: 'Logiciel', rootNode: 'ls_debut', icon: 'antenna' },
+      { id: 't.log.config', title: 'Configuration / paramétrage initial', category: 'Config', rootNode: 'lc_debut', icon: 'badge' },
     ],
     vetimat: [
       { id: 't.vet.ph', title: 'À compléter', category: '—', rootNode: 'tbd', icon: 'pillar' },
@@ -1912,6 +1911,176 @@ export const DATA = {
         { label: 'Des portes à gâche (EPIMAT 14)', next: 'sol_sav_epi02' },
       ],
       src: ['REP'],
+    },
+
+    /* ====================================================================
+       ARBRE 7 — LOGICIEL : DÉMARRAGE  (préfixe ld_)
+       Point d'entrée : ld_debut
+       ==================================================================== */
+    ld_debut: {
+      type: 'question',
+      title: 'Que se passe-t-il ?',
+      answers: [
+        { label: 'DistEPI ne se lance pas (bureau Windows visible)', next: 's_vert_distepi' },
+        { label: 'DistEPI se ferme tout seul ou se bloque', next: 'ld_redemarrer_distepi' },
+        { label: "L'écran indique « EN PANNE »", next: 't_rotation_manuelle' },
+        { label: "Message d'erreur Windows ou BIOS", next: 's_vert_erreur' },
+      ],
+      src: ['D24 p.1'],
+    },
+    ld_redemarrer_distepi: {
+      type: 'action',
+      title: 'Redémarrer DistEPI',
+      steps: [
+        'Fermer DistEPI (Maj + F, clavier branché)',
+        'Le relancer (icône du bureau ou C:\\EPI\\DistEPI.exe)',
+      ],
+      next: 'ld_redemarrer_result',
+      src: ['D24 p.1', 'ME15 p.18', 'REP'],
+    },
+    ld_redemarrer_result: {
+      type: 'question',
+      title: 'DistEPI fonctionne-t-il normalement ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 's_redemarrer_distrib' },
+      ],
+      src: ['D24 p.1'],
+    },
+
+    /* ====================================================================
+       ARBRE 8 — LOGICIEL : SYNCHRONISATION  (préfixe ls_)
+       Point d'entrée : ls_debut
+       ==================================================================== */
+    ls_debut: {
+      type: 'question',
+      title: 'Quel est le symptôme ?',
+      answers: [
+        { label: "Un salarié, un article ou un profil créé dans l'extranet n'arrive pas sur la machine", next: 'ls_intervalle' },
+        { label: "Les articles n'apparaissent pas dans le choix", next: 'ls_casiers' },
+        { label: "Les distributions n'arrivent pas dans l'extranet", next: 'ls_online' },
+        { label: "Message d'erreur de synchronisation", next: 'ls_online' },
+      ],
+      src: ['D24 p.1', 'DS p.4'],
+    },
+    ls_intervalle: {
+      type: 'action',
+      title: 'Lancer une synchronisation',
+      steps: [
+        "La machine récupère les nouveautés de l'extranet à intervalle régulier (paramètre IntervalGSMServer)",
+        'Pour ne pas attendre : clavier branché sur le PC, Maj + L (menu maintenance), puis bouton « Synchroniser »',
+        'Attendre le message « synchro effectué »',
+      ],
+      next: 'ls_intervalle_result',
+      src: ['DS p.4', 'REP'],
+    },
+    ls_intervalle_result: {
+      type: 'question',
+      title: 'La nouveauté est-elle arrivée sur la machine ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'ls_online' },
+      ],
+      src: ['LOG'],
+    },
+    ls_casiers: {
+      type: 'action',
+      title: "Vérifier la configuration des casiers dans l'extranet",
+      steps: [
+        'Extranet → Machines → cliquer sur la machine',
+        "Vérifier que l'article est bien affecté à un casier, une colonne ou un étage",
+        "Vérifier le remplissage de l'emplacement",
+      ],
+      next: 'ls_casiers_result',
+      src: ['D24 p.1', 'MU18 p.28-40'],
+    },
+    ls_casiers_result: {
+      type: 'question',
+      title: 'Les articles apparaissent-ils maintenant ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'ls_online' },
+      ],
+      src: ['LOG'],
+    },
+    ls_online: {
+      type: 'question',
+      title: 'La LED « Online » du modem est-elle bleue fixe ?',
+      answers: [
+        { label: 'Non', next: 'i_pwr_led' },
+        { label: 'Oui', next: 'i_eth_led' },
+      ],
+      src: ['D24 p.1', 'SIM p.12'],
+    },
+
+    /* ====================================================================
+       ARBRE 9 — LOGICIEL : CONFIGURATION DE DISTEPI  (préfixe lc_)
+       Point d'entrée : lc_debut
+       ==================================================================== */
+    lc_debut: {
+      type: 'question',
+      title: 'Que faut-il vérifier dans les paramètres DistEPI ?',
+      help: "Pour ouvrir les paramètres, avec un clavier branché sur le PC : Maj + L ouvre le menu maintenance, puis cliquer dans le coin en haut à droite de l'écran, dans la zone blanche vide, pour faire apparaître le menu caché.",
+      answers: [
+        { label: "L'écran tactile ne réagit pas dans DistEPI", next: 'lc_tactile' },
+        { label: "Le lecteur de badge n'est pas pris en compte", next: 'lc_badge' },
+        { label: 'La machine ne se synchronise pas avec le cloud', next: 'lc_cloud' },
+        { label: 'Le nombre de casiers ne correspond pas à la machine', next: 'lc_type' },
+      ],
+      src: ['DS', 'REP'],
+    },
+    lc_tactile: {
+      type: 'action',
+      title: 'Vérifier le paramètre « EcranTactile »',
+      steps: [
+        'Paramètres DistEPI → onglet Machine',
+        '« EcranTactile » doit être activé',
+        'Enregistrer et redémarrer DistEPI',
+      ],
+      next: 'lc_result',
+      src: ['DS p.2'],
+    },
+    lc_badge: {
+      type: 'action',
+      title: 'Vérifier le type de lecteur de badge',
+      steps: [
+        'Paramètres DistEPI → onglet Badge → « TypeLecteurBadge » doit être à 10 (lecteur USB en émulation clavier)',
+        'Enregistrer et redémarrer DistEPI',
+      ],
+      next: 'lc_result',
+      src: ['DS p.10', 'REP'],
+    },
+    lc_cloud: {
+      type: 'action',
+      title: 'Vérifier les paramètres cloud',
+      steps: [
+        '« MachineServeur » : toujours coché pour les machines en cloud',
+        '« VersionGSM » : activé pour le cloud',
+        '« VersionHTML5 » : obligatoire pour le cloud',
+        'Enregistrer et redémarrer DistEPI',
+      ],
+      next: 'lc_result',
+      src: ['DS p.4-5'],
+    },
+    lc_type: {
+      type: 'action',
+      title: 'Vérifier le type de machine',
+      steps: [
+        'Paramètres DistEPI → onglet Type → « Machine1 »',
+        'TYPE 1 = 32 casiers, 2 = 90, 3 = 180, 4 = 126, 5 = 252, 6 = Mix ou 468, 8 = 432, 10 = 806 ou Mix 806, 12 = Slim/Baby',
+        'Enregistrer et redémarrer DistEPI',
+      ],
+      next: 'lc_result',
+      src: ['DS p.9'],
+    },
+    lc_result: {
+      type: 'question',
+      title: 'Le problème est-il réglé ?',
+      answers: [
+        { label: 'Oui', next: 'sol_resolved' },
+        { label: 'Non', next: 'sol_sav' },
+      ],
+      src: ['LOG'],
     },
 
     /* ====================================================================

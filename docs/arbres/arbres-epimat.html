@@ -54,7 +54,7 @@ h2.sec{font-family:var(--font-display);font-weight:500;font-size:19px;margin:8px
       <h1>Arbres de diagnostic EPIMAT</h1>
       <p class="sub">État de l'appli Logimatiq SAV au 9 octobre 2026 — généré depuis <span class="mono">sav-app/src/data/tree.js</span> par <span class="mono">docs/arbres/gen.mjs</span></p>
     </div>
-    <nav aria-label="Aller à un arbre"><a href="#p-a">Alimentation</a><a href="#p-s">Affichage</a><a href="#p-i">Réseau</a><a href="#p-b">Badge</a><a href="#p-t">Tambour</a><a href="#p-tr">Trappe</a></nav>
+    <nav aria-label="Aller à un arbre"><a href="#p-a">Alimentation</a><a href="#p-s">Affichage</a><a href="#p-i">Réseau</a><a href="#p-b">Badge</a><a href="#p-t">Tambour</a><a href="#p-tr">Trappe</a><a href="#p-ld">Logiciel</a><a href="#p-ls">Logiciel</a><a href="#p-lc">Config</a></nav>
   </header>
 
   <div class="legend">
@@ -676,6 +676,106 @@ flowchart TD
   tr_verrou_result -->|"Oui"| sol_resolved__9
   sol_condamner_trappe__10(["Trappe défectueuse : la condamner, puis SAV"]):::sav
   tr_verrou_result -->|"Non"| sol_condamner_trappe__10
+  classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
+  classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
+  classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
+  classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
+  classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
+  classDef info fill:#ECEBE6,stroke:#86847C,color:#3A3934
+    </pre></div>
+  </section>
+
+  <section class="panel" id="p-ld">
+    <div class="bar"><h2>Le logiciel ne démarre pas / plante <span class="sub mono">· 2 questions · 1 actions · 1 conclusions · 0 photos</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+flowchart TD
+  ld_debut("Que se passe-t-il ?"):::ques
+  s_vert_distepi__0[["→ Lancer le logiciel DistEPI"]]:::link
+  ld_debut -->|"DistEPI ne se lance pas (bureau Windows visible)"| s_vert_distepi__0
+  ld_debut -->|"DistEPI se ferme tout seul ou se bloque"| ld_redemarrer_distepi
+  t_rotation_manuelle__1[["→ Le tambour tourne-t-il avec le bouton « Drum rotation » (rotation manuelle) ?"]]:::link
+  ld_debut -->|"L'écran indique « EN PANNE »"| t_rotation_manuelle__1
+  s_vert_erreur__2[["→ Noter le message, puis redémarrer le distributeur"]]:::link
+  ld_debut -->|"Message d'erreur Windows ou BIOS"| s_vert_erreur__2
+  ld_redemarrer_distepi["Redémarrer DistEPI"]:::act
+  ld_redemarrer_distepi --> ld_redemarrer_result
+  ld_redemarrer_result("DistEPI fonctionne-t-il normalement ?"):::ques
+  sol_resolved__3(["Problème résolu"]):::resolved
+  ld_redemarrer_result -->|"Oui"| sol_resolved__3
+  s_redemarrer_distrib__4[["→ Redémarrer le distributeur"]]:::link
+  ld_redemarrer_result -->|"Non"| s_redemarrer_distrib__4
+  classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
+  classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
+  classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
+  classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
+  classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
+  classDef info fill:#ECEBE6,stroke:#86847C,color:#3A3934
+    </pre></div>
+  </section>
+
+  <section class="panel" id="p-ls">
+    <div class="bar"><h2>Erreur de synchronisation logicielle <span class="sub mono">· 4 questions · 2 actions · 1 conclusions · 0 photos</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+flowchart TD
+  ls_debut("Quel est le symptôme ?"):::ques
+  ls_debut -->|"Un salarié, un article ou un profil créé dans l'extranet n'arrive pas sur la machine"| ls_intervalle
+  ls_debut -->|"Les articles n'apparaissent pas dans le choix"| ls_casiers
+  ls_debut -->|"Les distributions n'arrivent pas dans l'extranet"| ls_online
+  ls_debut -->|"Message d'erreur de synchronisation"| ls_online
+  ls_intervalle["Lancer une synchronisation"]:::act
+  ls_intervalle --> ls_intervalle_result
+  ls_casiers["Vérifier la configuration des casiers dans l'extranet"]:::act
+  ls_casiers --> ls_casiers_result
+  ls_online("La LED « Online » du modem est-elle bleue fixe ?"):::ques
+  i_pwr_led__0[["→ La LED PWR du modem est-elle allumée (bleu fixe) ?"]]:::link
+  ls_online -->|"Non"| i_pwr_led__0
+  i_eth_led__1[["→ La LED ETH du modem clignote-t-elle ?"]]:::link
+  ls_online -->|"Oui"| i_eth_led__1
+  ls_intervalle_result("La nouveauté est-elle arrivée sur la machine ?"):::ques
+  sol_resolved__2(["Problème résolu"]):::resolved
+  ls_intervalle_result -->|"Oui"| sol_resolved__2
+  ls_intervalle_result -->|"Non"| ls_online
+  ls_casiers_result("Les articles apparaissent-ils maintenant ?"):::ques
+  sol_resolved__3(["Problème résolu"]):::resolved
+  ls_casiers_result -->|"Oui"| sol_resolved__3
+  ls_casiers_result -->|"Non"| ls_online
+  classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
+  classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
+  classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
+  classDef resolved fill:#DDF2D8,stroke:#3E8A2E,color:#1D4A13,stroke-width:1.5px
+  classDef replace fill:#FBE0D8,stroke:#B5482A,color:#5E1F0E,stroke-width:1.5px
+  classDef sav fill:#FCEBC8,stroke:#B37A12,color:#563A05,stroke-width:1.5px
+  classDef info fill:#ECEBE6,stroke:#86847C,color:#3A3934
+    </pre></div>
+  </section>
+
+  <section class="panel" id="p-lc">
+    <div class="bar"><h2>Configuration / paramétrage initial <span class="sub mono">· 2 questions · 4 actions · 2 conclusions · 0 photos</span></h2>
+      <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
+    <div class="scroll"><pre class="mermaid">
+flowchart TD
+  lc_debut("Que faut-il vérifier dans les paramètres DistEPI ?"):::ques
+  lc_debut -->|"L'écran tactile ne réagit pas dans DistEPI"| lc_tactile
+  lc_debut -->|"Le lecteur de badge n'est pas pris en compte"| lc_badge
+  lc_debut -->|"La machine ne se synchronise pas avec le cloud"| lc_cloud
+  lc_debut -->|"Le nombre de casiers ne correspond pas à la machine"| lc_type
+  lc_tactile["Vérifier le paramètre « EcranTactile »"]:::act
+  lc_tactile --> lc_result
+  lc_badge["Vérifier le type de lecteur de badge"]:::act
+  lc_badge --> lc_result
+  lc_cloud["Vérifier les paramètres cloud"]:::act
+  lc_cloud --> lc_result
+  lc_type["Vérifier le type de machine"]:::act
+  lc_type --> lc_result
+  lc_result("Le problème est-il réglé ?"):::ques
+  sol_resolved__0(["Problème résolu"]):::resolved
+  lc_result -->|"Oui"| sol_resolved__0
+  sol_sav__1(["Contacter le SAV"]):::sav
+  lc_result -->|"Non"| sol_sav__1
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
