@@ -1,7 +1,7 @@
 /* ============================================================================
    DATA — Logimatiq SAV
-   9 arbres EPIMAT : Écran, Internet / modem, Badge, Alimentation, Tambour, Trappe, Logiciel — démarrage, Logiciel — synchronisation, Logiciel — configuration
-   Préfixes de nœuds : s_ (écran) · i_ (internet / modem) · b_ (badge) · a_ (alimentation) · t_ (tambour) · tr_ (trappe) · ld_ (logiciel — démarrage) · ls_ (logiciel — synchronisation) · lc_ (logiciel — configuration)
+   9 arbres EPIMAT : Écran, Internet / modem, Badge, Alimentation, Tambour, Trappe, Logiciel : démarrage, Logiciel : synchronisation, Logiciel : configuration
+   Préfixes de nœuds : s_ (écran) · i_ (internet / modem) · b_ (badge) · a_ (alimentation) · t_ (tambour) · tr_ (trappe) · ld_ (logiciel : démarrage) · ls_ (logiciel : synchronisation) · lc_ (logiciel : configuration)
    Types : question (answers → next) · action (steps → next) · solution (outcome)
 
    Refonte d'octobre 2026 (lots 1, 2, 3, 4, 5). Chaque nœud porte un champ `src`,
@@ -100,7 +100,7 @@ export const DATA = {
       src: ['T', 'REP'],
     },
 
-    /* ---- Branche rouge — LED écran rouge ---- */
+    /* ---- Branche rouge : LED écran rouge ---- */
     s_rouge_pc_led: {
       type: 'question',
       title: 'La LED du PC est-elle allumée ?',
@@ -227,7 +227,7 @@ export const DATA = {
       src: ['REP', 'LOG'],
     },
 
-    /* ---- Branche éteinte — LED écran éteinte : machine (→ arbre Alimentation), câble, puis alimentation de l'écran
+    /* ---- Branche éteinte, LED écran éteinte : machine (→ arbre Alimentation), câble, puis alimentation de l'écran
        (l'écran 17 pouces s'allume seul : pas d'étape bouton marche) ---- */
     s_eteint_machine: {
       type: 'question',
@@ -303,7 +303,7 @@ export const DATA = {
       src: ['T'],
     },
 
-    /* ---- Branche verte — image visible, autre problème ---- */
+    /* ---- Branche verte : image visible, autre problème ---- */
     s_vert_symptome: {
       type: 'question',
       title: 'Quel est le problème ?',
@@ -715,7 +715,7 @@ export const DATA = {
         "Lancer le test de réception et d'envoi de données",
         'Observer si le test passe ou échoue',
       ],
-      media: { type: 'photo', label: 'ClientSynch DB EPI — procédure (photos à venir)' },
+      media: { type: 'photo', label: 'ClientSynch DB EPI : procédure (photos à venir)' },
       next: 'i_clientsynch_result',
       src: ['T', 'REP'],
     },
@@ -885,7 +885,7 @@ export const DATA = {
       src: ['T', 'D24 p.1'],
     },
 
-    /* ---- LED du lecteur allumée — que se passe-t-il au passage du badge ? ---- */
+    /* ---- LED du lecteur allumée : que se passe-t-il au passage du badge ? ---- */
     b_symptome: {
       type: 'question',
       title: 'Que se passe-t-il quand on présente le badge ?',
@@ -893,7 +893,7 @@ export const DATA = {
       answers: [
         { label: 'Rien : pas de bip, aucune réaction', next: 'b_autre_badge' },
         { label: "Bip, mais rien ne se passe à l'écran", next: 'b_bip_redemarrer' },
-        { label: "L'écran demande « INITIALISATION BADGE — Tapez votre code ! »", next: 'b_init_badge' },
+        { label: "L'écran affiche « INITIALISATION BADGE » et « Tapez votre code ! »", next: 'b_init_badge' },
         { label: 'Badge lu mais refusé, mauvais nom ou mauvais numéro', next: 'b_sync' },
         { label: 'Lecture aléatoire / intermittente', next: 'b_alea_badge' },
       ],
@@ -932,7 +932,7 @@ export const DATA = {
     },
     b_notepad_langue: {
       type: 'action',
-      title: 'Préparer le test Notepad — passer le clavier en anglais',
+      title: 'Préparer le test Bloc-notes : passer le clavier en anglais',
       help: 'Le lecteur USB fonctionne comme un clavier : il « tape » le numéro du badge.',
       steps: [
         'Cliquer sur la langue en bas à droite de la barre des tâches Windows',
@@ -992,7 +992,7 @@ export const DATA = {
     },
     b_reprogrammer: {
       type: 'action',
-      title: 'Reprogrammer le lecteur — 1. trouver la technologie du badge',
+      title: 'Reprogrammer le lecteur (1/2) : trouver la technologie du badge',
       help: "Lecteur Elatec TWN4, programmé avec AppBlaster sur le PC de la machine. On charge d'abord le firmware « Tracer », qui écrit la technologie du badge.",
       steps: [
         'Ouvrir le dossier C:\\EPI\\TWN4DevPack480 Nouveau et lancer AppBlaster.exe',
@@ -1012,7 +1012,7 @@ export const DATA = {
     },
     b_reprog_projet: {
       type: 'action',
-      title: 'Reprogrammer le lecteur — 2. le programmer pour cette technologie',
+      title: 'Reprogrammer le lecteur (2/2) : le programmer pour cette technologie',
       steps: [
         'Dans AppBlaster : « New Project (Configurable) » → double-cliquer sur le modèle « Multi Keyboard V4.80, App Standard V2.04 »',
         "« Transponder Types » → choisir la catégorie (ex. MIFARE) puis le type (ex. MIFARE Classic) → double-cliquer pour l'ajouter dans « Active Transponder Types »",
@@ -1168,8 +1168,8 @@ export const DATA = {
       type: 'question',
       title: 'Le numéro lu dans le Bloc-notes correspond-il au badge ?',
       answers: [
-        { label: 'Oui, même numéro — mal renseigné en base', next: 'b_corriger_bdd' },
-        { label: 'Non, numéro différent — lecteur à reprogrammer', next: 'b_reprogrammer' },
+        { label: 'Oui, même numéro : il est mal saisi dans la base', next: 'b_corriger_bdd' },
+        { label: 'Non, numéro différent : le lecteur est à reprogrammer', next: 'b_reprogrammer' },
       ],
       src: ['T'],
     },
@@ -2174,7 +2174,7 @@ export const DATA = {
     },
     sol_badge_defaillant: {
       type: 'solution', outcome: 'replace',
-      title: 'Badge défaillant — à remplacer',
+      title: 'Badge défaillant à remplacer',
       message: 'Ce badge spécifique est défaillant (les autres badges fonctionnent). Remplacer le badge auprès du SAV.',
       sav: true,
       src: ['T'],

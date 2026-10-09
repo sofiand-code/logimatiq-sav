@@ -28,8 +28,8 @@ const KB_ENTRIES = [
 
   {
     id: 'v1',
-    title: 'Présentation EPIMAT — mise en service',
-    title_en: 'EPIMAT presentation — installation',
+    title: 'Présentation EPIMAT : mise en service',
+    title_en: 'EPIMAT presentation: installation',
     tags: ['epimat', 'installation', 'vidéo'],
     type: 'video',
     url: 'https://www.youtube.com/watch?v=XXXXXXXX',

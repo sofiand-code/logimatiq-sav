@@ -79,8 +79,8 @@ export const FAULTS = [
   {
     id: 'f_no_power',
     category: 'alimentation',
-    title: 'Plus de courant — machine complètement éteinte',
-    title_en: 'No power — machine completely off',
+    title: 'Plus de courant, machine complètement éteinte',
+    title_en: 'No power, machine completely off',
     severity: 'critical',
     diag: 't.epimat.alim',
     symptoms: [
@@ -119,7 +119,7 @@ export const FAULTS = [
       { text: "Ouvrir la façade et coulisser la platine du tableau électrique vers l'avant", text_en: 'Open the front and slide the electrical panel plate forward' },
       { text: "Sur l'alimentation générale, réarmer le coupe-circuit 24 V (3 A) : c'est le « disjoncteur tambour » des manuels", text_en: 'On the main power supply, reset the 24 V (3 A) circuit breaker: it is the "drum circuit breaker" of the manuals' },
       { text: "S'il redéclenche aussitôt : court-circuit ou blocage probable, ne pas insister, appeler le SAV", text_en: 'If it trips again immediately: probable short circuit or jam, do not insist, call Support' },
-      { text: 'Faire faire un tour complet au tambour avec le bouton « Drum rotation » pour recaler les EPI — mains hors de la machine pendant la rotation', text_en: 'Turn the drum one full revolution with the "Drum rotation" button to realign the items — hands out of the machine during rotation' },
+      { text: 'Faire faire un tour complet au tambour avec le bouton « Drum rotation » pour recaler les EPI. Mains hors de la machine pendant la rotation.', text_en: 'Turn the drum one full revolution with the "Drum rotation" button to realign the items. Hands out of the machine during rotation.' },
     ],
     sav: true,
   },
@@ -164,7 +164,7 @@ export const FAULTS = [
       'The drum no longer turns during a dispensing',
     ],
     steps: [
-      { text: 'Tester le bouton « Drum rotation » (en haut du châssis, à l\'avant droit) — mains hors de la machine pendant la rotation', text_en: 'Test the "Drum rotation" button (top of the frame, front right) — hands out of the machine during rotation' },
+      { text: 'Tester le bouton « Drum rotation » (en haut du châssis, à l\'avant droit). Mains hors de la machine pendant la rotation.', text_en: 'Test the "Drum rotation" button (top of the frame, front right). Hands out of the machine during rotation.' },
       { text: 'Il ne tourne pas : réarmer le coupe-circuit 24 V de l\'alimentation générale (le « disjoncteur tambour »), puis faire un tour complet ; s\'il redéclenche aussitôt → SAV', text_en: 'It does not turn: reset the 24 V circuit breaker of the main power supply (the "drum circuit breaker"), then do a full revolution; if it trips again immediately → Support' },
       { text: 'Il tourne : vérifier que toutes les trappes sont bien fermées', text_en: 'It turns: check that all hatches are properly closed' },
       { text: 'Vérifier le câble SCSI blanc (PC ↔ carte EPI 01), à chaud : bien enfoncé des deux côtés, au besoin le débrancher complètement et le remettre', text_en: 'Check the white SCSI cable (PC ↔ EPI 01 board), with the machine on: fully seated at both ends, unplug it completely and plug it back in if needed' },
@@ -214,7 +214,7 @@ export const FAULTS = [
     steps: [
       { text: 'Retirer l\'article ou l\'objet coincé', text_en: 'Remove the jammed item or object' },
       { text: 'Réarmer le coupe-circuit 24 V de l\'alimentation générale s\'il a déclenché', text_en: 'Reset the 24 V circuit breaker of the main power supply if it has tripped' },
-      { text: 'Faire un tour complet avec le bouton « Drum rotation » pour recaler les EPI — mains hors de la machine', text_en: 'Do a full revolution with the "Drum rotation" button to realign the items — hands out of the machine' },
+      { text: 'Faire un tour complet avec le bouton « Drum rotation » pour recaler les EPI. Mains hors de la machine.', text_en: 'Do a full revolution with the "Drum rotation" button to realign the items. Hands out of the machine.' },
       { text: 'Faire une distribution test', text_en: 'Run a test dispensing' },
     ],
     sav: true,
@@ -311,7 +311,7 @@ export const FAULTS = [
     steps: [
       { text: 'Sur le tableau électrique, carte GR76 (dissipateur noir ; « GR 74 » sur les anciennes photos, même carte)', text_en: 'On the electrical panel, GR76 board (black heat sink; "GR 74" on old photos, same board)' },
       { text: 'Potentiomètre bleu : sens horaire = plus lent, antihoraire = plus rapide ; un quart de tour entre chaque test', text_en: 'Blue potentiometer: clockwise = slower, counterclockwise = faster; a quarter turn between each test' },
-      { text: 'Tester dans DEBES avec « Vitesse Lente TAMBOUR » et « Rotation TAMBOUR » — mains hors de la machine', text_en: 'Test in DEBES with "Vitesse Lente TAMBOUR" (drum low speed) and "Rotation TAMBOUR" (drum rotation) — hands out of the machine', debes: true },
+      { text: 'Tester dans DEBES avec « Vitesse Lente TAMBOUR » et « Rotation TAMBOUR ». Mains hors de la machine.', text_en: 'Test in DEBES with "Vitesse Lente TAMBOUR" (drum low speed) and "Rotation TAMBOUR" (drum rotation). Hands out of the machine.', debes: true },
       { text: 'Toujours décalé : nettoyer le disque au pinceau et vérifier l\'alignement LOG 03 / LOG 04', text_en: 'Still off-position: clean the disc with a brush and check the LOG 03 / LOG 04 alignment' },
     ],
     sav: false,
@@ -403,7 +403,7 @@ export const FAULTS = [
     steps: [
       { text: 'C\'est presque le premier contrôle à faire quand le PC communique mal avec la machine', text_en: 'It is almost the first check to do when the PC communicates poorly with the machine' },
       { text: 'Repérer le câble SCSI blanc entre le PC (carte Advantech) et la carte EPI 01 du tableau électrique', text_en: 'Find the white SCSI cable between the PC (Advantech board) and the EPI 01 board of the electrical panel' },
-      { text: 'Vérifier qu\'il est bien enfoncé des deux côtés ; au besoin, le débrancher complètement et le remettre — pas besoin d\'éteindre', text_en: 'Check that it is fully seated at both ends; if needed, unplug it completely and plug it back in — no need to switch off' },
+      { text: 'Vérifier qu\'il est bien enfoncé des deux côtés ; au besoin, le débrancher complètement et le remettre. Pas besoin d\'éteindre.', text_en: 'Check that it is fully seated at both ends; if needed, unplug it completely and plug it back in. No need to switch off.' },
       { text: 'DEBES, case STATUS : « NoDevice … - OK » ; sinon, corriger le numéro de la carte Advantech dans C:\\EPI\\AUTOMAT.INI', text_en: 'DEBES, STATUS box: "NoDevice … - OK"; otherwise, correct the Advantech board number in C:\\EPI\\AUTOMAT.INI', debes: true },
     ],
     sav: false,

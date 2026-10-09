@@ -249,7 +249,7 @@ export const FICHES = [
   {
     id: 'epi05', family: 'trappe', src: ['FI', 'D24 p.5', 'MF12 p.5-6'], solutions: ['sol_changer_epi05'],
     title: L("Remplacement d'une carte de trappe EPI 05", 'Replacing an EPI 05 hatch board'),
-    subtitle: L('EPIMAT 13 — une carte par trappe, derrière la façade', 'EPIMAT 13 — one board per hatch, behind the front'),
+    subtitle: L('EPIMAT 13 : une carte par trappe, derrière la façade', 'EPIMAT 13: one board per hatch, behind the front'),
     intro: L("Sur l'EPIMAT 13, chaque trappe a sa carte EPI 05 (moteur ou électro-aimant, capteur « trappe fermée »). Les cartes sont reliées par une nappe 40 fils. Point clé : la nouvelle carte doit avoir exactement les mêmes réglages (cavaliers, switches) que l'ancienne.",
              'On the EPIMAT 13, each hatch has its own EPI 05 board (motor or electromagnet, "hatch closed" sensor). The boards are linked by a 40-wire ribbon cable. Key point: the new board must have exactly the same settings (jumpers, switches) as the old one.'),
     avant: [
@@ -290,7 +290,7 @@ export const FICHES = [
   {
     id: 'moteur', family: 'trappe', src: ['FI', 'MF12 p.5-7'], solutions: [],
     title: L("Remplacement d'un moteur de trappe", 'Replacing a hatch motor'),
-    subtitle: L('EPIMAT 13 — motoréducteur 24 V DC + pignon M1 + équerre', 'EPIMAT 13 — 24 V DC gear motor + M1 pinion + bracket'),
+    subtitle: L('EPIMAT 13 : motoréducteur 24 V DC, pignon M1 et équerre', 'EPIMAT 13: 24 V DC gear motor, M1 pinion and bracket'),
     intro: L("Sur les trappes motorisées de l'EPIMAT 13, un motoréducteur fait coulisser la trappe grâce à un pignon (M1) qui entraîne une crémaillère blanche. Le réglage important : aucun jeu entre le pignon et la crémaillère.",
              'On the motorized hatches of the EPIMAT 13, a gear motor slides the hatch with a pinion (M1) driving a white rack. The important adjustment: no play between the pinion and the rack.'),
     avant: [

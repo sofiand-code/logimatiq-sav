@@ -157,6 +157,7 @@ export const EN = {
     "Fiches d'intervention": 'Repair sheets',
     "Voir la fiche d'intervention": 'See the repair sheet',
     'Documents': 'Documents',
+    'Non renseigné': 'Not specified',
     'Toutes les fiches': 'All sheets',
     'Avant de commencer': 'Before you start',
     'Contrôle final': 'Final check',
@@ -605,7 +606,7 @@ export const EN = {
         'Run the data receive and send test',
         'Observe whether the test passes or fails',
       ],
-      media: 'ClientSynch DB EPI — procedure (photos coming soon)',
+      media: 'ClientSynch DB EPI: procedure (photos coming soon)',
     },
     i_clientsynch_result: {
       title: 'Did the ClientSynch test succeed?',
@@ -706,7 +707,7 @@ export const EN = {
       answers: [
         'Nothing: no beep, no reaction',
         'Beep, but nothing happens on the screen',
-        'The screen asks "INITIALISATION BADGE — Tapez votre code !" (enter your code)',
+        'The screen shows "INITIALISATION BADGE" and "Tapez votre code !" (enter your code)',
         'Badge read but refused, wrong name or wrong number',
         'Random / intermittent reading',
       ],
@@ -728,7 +729,7 @@ export const EN = {
       answers: ['Yes, it used to work', 'No, it is a new type of badge'],
     },
     b_notepad_langue: {
-      title: 'Prepare Notepad test — switch keyboard to English',
+      title: 'Prepare the Notepad test: switch the keyboard to English',
       help: 'The USB reader works like a keyboard: it "types" the badge number.',
       steps: [
         'Click on the language at the bottom right of the Windows taskbar',
@@ -769,7 +770,7 @@ export const EN = {
       answers: ['Yes, badge OK', 'No, still ignored'],
     },
     b_reprogrammer: {
-      title: 'Reprogram the reader — 1. find the badge technology',
+      title: 'Reprogram the reader (1/2): find the badge technology',
       help: 'Elatec TWN4 reader, programmed with AppBlaster on the machine\'s PC. First load the "Tracer" firmware, which types the badge technology.',
       steps: [
         'Open the C:\\EPI\\TWN4DevPack480 Nouveau folder and run AppBlaster.exe',
@@ -786,7 +787,7 @@ export const EN = {
       ],
     },
     b_reprog_projet: {
-      title: 'Reprogram the reader — 2. program it for this technology',
+      title: 'Reprogram the reader (2/2): program it for this technology',
       steps: [
         'In AppBlaster: "New Project (Configurable)" → double-click the "Multi Keyboard V4.80, App Standard V2.04" template',
         '"Transponder Types" → choose the category (e.g. MIFARE) then the type (e.g. MIFARE Classic) → double-click to add it to "Active Transponder Types"',
@@ -884,8 +885,8 @@ export const EN = {
     b_mauvais_result: {
       title: 'Does the number read in Notepad match the badge?',
       answers: [
-        'Yes, same number — incorrectly entered in the database',
-        'No, different number — reader to reprogram',
+        'Yes, same number: it is entered wrongly in the database',
+        'No, different number: the reader must be reprogrammed',
       ],
     },
     b_corriger_bdd: {
@@ -1506,7 +1507,7 @@ export const EN = {
       media: 'The badge reader seen from inside the door (circled in orange)',
     },
     sol_badge_defaillant: {
-      title: 'Defective badge — to replace',
+      title: 'Faulty badge to replace',
       message: 'This specific badge is defective (other badges work). Replace the badge through Support.',
     },
     sol_sav_tambour: {
