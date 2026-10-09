@@ -99,10 +99,11 @@ function renderTabBar() {
 
 /* ---- Onglet Fiches : fiches d'intervention + documents ---- */
 function renderFiches() {
+  const list = document.getElementById('kb-list');
+  if (openFicheId && FICHES.some(f => f.id === openFicheId)) { renderFichePage(list, FICHES.find(f => f.id === openFicheId)); return; }
+
   const q = (document.getElementById('kb-search')?.value || '').toLowerCase().trim();
   const lang = getLang();
-  const list = document.getElementById('kb-list');
-
   const fiches = FICHES.filter(f => !q
     || [f.title, f.subtitle, FICHE_FAMILIES[f.family].label].some(p => tr(p).toLowerCase().includes(q)));
   const docs = KB_ENTRIES.filter(e => !q
@@ -122,14 +123,9 @@ function renderFiches() {
     ${docs.length ? `<p class="text-[10px] font-black uppercase tracking-widest text-slate-400 px-1 pt-3">${t('Documents')}</p>` : ''}
     ${docs.map(renderDocCard).join('')}`;
 
-  list.querySelectorAll('[data-fiche-toggle]').forEach(btn =>
-    btn.addEventListener('click', () => {
-      const id = btn.dataset.ficheToggle;
-      openFicheId = openFicheId === id ? null : id;
-      renderFiches();
-    })
+  list.querySelectorAll('[data-fiche-open]').forEach(btn =>
+    btn.addEventListener('click', () => { openFicheId = btn.dataset.ficheOpen; renderFiches(); list.scrollTop = 0; })
   );
-  bindZoom(list);
   list.querySelectorAll('[data-kb-id]').forEach(btn =>
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -142,87 +138,104 @@ function renderFiches() {
       document.body.appendChild(a); a.click(); document.body.removeChild(a);
     })
   );
-
-  if (openFicheId) list.querySelector(`[data-fiche="${openFicheId}"]`)?.scrollIntoView({ block: 'start' });
 }
 
 function renderFicheCard(f) {
   const fam = FICHE_FAMILIES[f.family];
-  const isOpen = openFicheId === f.id;
+  const thumb = f.etapes.find(s => s.img)?.img;
   return `
-    <div data-fiche="${f.id}" class="rounded-2xl overflow-hidden shadow-sm border ${isOpen ? 'border-slate-300' : 'border-slate-200'} bg-white">
-      <button data-fiche-toggle="${f.id}" class="w-full text-left tap-card flex items-center gap-3 p-4"
-              style="${isOpen ? `background:${fam.bg}` : ''}">
-        <div class="w-1.5 self-stretch rounded-full shrink-0" style="background:${fam.color}"></div>
-        <div class="flex-1 min-w-0">
-          <div class="font-black text-slate-900 text-sm leading-snug">${esc(tr(f.title))}</div>
-          <div class="text-[11px] text-slate-500 mt-1">${esc(tr(f.subtitle))}</div>
-          <span class="inline-block mt-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full"
-                style="background:${fam.bg};color:${fam.color}">${esc(tr(fam.label))}</span>
+    <button data-fiche-open="${f.id}"
+      class="tap-card w-full bg-white border border-slate-200 rounded-2xl p-3 flex items-center gap-3 text-left shadow-sm">
+      <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0 flex items-center justify-center" style="background:${fam.bg}">
+        ${thumb ? `<img src="/${esc(thumb.file)}" alt="" loading="lazy" class="w-full h-full object-cover"/>` : ''}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="font-black text-slate-900 text-sm leading-snug">${esc(tr(f.title))}</div>
+        <div class="text-[11px] text-slate-500 mt-0.5">${esc(tr(f.subtitle))}</div>
+        <div class="flex items-center gap-1.5 mt-1.5">
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-full" style="background:${fam.bg};color:${fam.color}">${esc(tr(fam.label))}</span>
+          <span class="text-[10px] font-bold text-slate-400">${f.etapes.length} ${t('étapes')}</span>
         </div>
-        <svg viewBox="0 0 24 24" class="w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200"
-             style="transform:rotate(${isOpen ? '90' : '0'}deg)" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/>
-        </svg>
-      </button>
-      ${isOpen ? renderFicheDetail(f, fam) : ''}
-    </div>`;
+      </div>
+      <svg viewBox="0 0 24 24" class="w-4 h-4 text-slate-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="m9 6 6 6-6 6"/>
+      </svg>
+    </button>`;
 }
 
-function renderFicheDetail(f, fam) {
-  const media = f.media.map(m => `
-    <figure class="rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
-      <button type="button" data-zoom="/${esc(m.file)}" data-alt="${esc(tr(m))}" class="block w-full">
+/* Fiche ouverte en pleine page : intro, avant de commencer, étapes avec grandes photos, contrôle final */
+function renderFichePage(list, f) {
+  const fam = FICHE_FAMILIES[f.family];
+  const bigImg = (m) => `
+    <figure class="mt-3 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50">
+      <button type="button" data-zoom="/${esc(m.file)}" data-alt="${esc(tr(m))}" class="relative block w-full">
         <img src="/${esc(m.file)}" alt="${esc(tr(m))}" loading="lazy" decoding="async"
-             class="w-full" style="height:150px;object-fit:contain;background:#f8fafc"/>
+             class="w-full" style="max-height:62vh;object-fit:contain;background:#f8fafc"/>
+        <span class="absolute top-2 right-2 w-9 h-9 rounded-full bg-white/90 shadow flex items-center justify-center text-slate-500">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.5-3.5M11 8v6M8 11h6"/>
+          </svg>
+        </span>
       </button>
-      <figcaption class="text-[10px] text-slate-500 font-medium text-center py-1.5 px-2">${esc(tr(m))}</figcaption>
-    </figure>`).join('');
-
-  const block = (b) => {
-    const items = b.items.map(tr);
-    if (b.kind === 'steps') return `
-      <div>
-        <p class="text-[10px] font-black uppercase tracking-widest mb-2" style="color:${fam.color}">${esc(tr(b.title))}</p>
-        <ol class="space-y-2">${items.map((s, i) => `
-          <li class="flex items-start gap-2.5">
-            <span class="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-black text-white shrink-0 mt-0.5" style="background:${fam.color}">${i + 1}</span>
-            <span class="text-[12px] text-slate-700 leading-relaxed">${esc(s)}</span>
-          </li>`).join('')}
-        </ol>
-      </div>`;
-    if (b.kind === 'warn') return `
-      <div class="rounded-xl border border-amber-200 bg-amber-50 p-3">
-        <p class="text-[10px] font-black uppercase tracking-widest text-amber-700 mb-1">${esc(tr(b.title))}</p>
-        ${items.map(s => `<p class="text-[12px] text-amber-900 leading-relaxed">${esc(s)}</p>`).join('')}
-      </div>`;
-    if (b.kind === 'check') return `
-      <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
-        <p class="text-[10px] font-black uppercase tracking-widest text-emerald-700 mb-1.5">${esc(tr(b.title))}</p>
-        <ul class="space-y-1">${items.map(s => `
-          <li class="flex items-start gap-2 text-[12px] text-emerald-900">
-            <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg>
-            <span>${esc(s)}</span>
-          </li>`).join('')}
-        </ul>
-      </div>`;
-    return `
-      <div>
-        <p class="text-[10px] font-black uppercase tracking-widest mb-1.5" style="color:${fam.color}">${esc(tr(b.title))}</p>
-        <ul class="space-y-1">${items.map(s => `
-          <li class="flex items-start gap-2 text-[12px] text-slate-700 leading-relaxed">
-            <span class="mt-0.5 shrink-0" style="color:${fam.color}">▸</span><span>${esc(s)}</span>
-          </li>`).join('')}
-        </ul>
-      </div>`;
-  };
-
-  return `
-    <div class="border-t border-slate-100 px-4 pt-3 pb-4 space-y-4">
-      <p class="text-[11px] text-slate-500 leading-relaxed">${esc(tr(HOTLINE))}</p>
-      ${media ? `<div class="grid grid-cols-2 gap-2">${media}</div>` : ''}
-      ${f.blocks.map(block).join('')}
+      <figcaption class="text-[11px] text-slate-500 font-medium text-center py-2 px-3">${esc(tr(m))}</figcaption>
+    </figure>`;
+  const box = (title, items, cls, icon) => !items.length ? '' : `
+    <div class="rounded-2xl border p-4 ${cls}">
+      <p class="text-[11px] font-black uppercase tracking-widest mb-2">${esc(title)}</p>
+      <ul class="space-y-1.5">${items.map(s => `
+        <li class="flex items-start gap-2 text-[13px] leading-relaxed">${icon}<span>${esc(tr(s))}</span></li>`).join('')}
+      </ul>
     </div>`;
+  const check = '<svg viewBox="0 0 24 24" class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4.5 4.5L19 7"/></svg>';
+  const dot = `<span class="mt-0.5 shrink-0" style="color:${fam.color}">▸</span>`;
+
+  list.innerHTML = `
+    <button data-fiche-back class="inline-flex items-center gap-1.5 text-sm font-bold text-brand-700 py-1">
+      <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6"/></svg>
+      ${t('Toutes les fiches')}
+    </button>
+
+    <div class="rounded-3xl p-5 text-white shadow-md" style="background:${fam.color}">
+      <span class="text-[10px] font-black uppercase tracking-widest" style="color:rgba(255,255,255,.75)">${esc(tr(fam.label))} · ${f.etapes.length} ${t('étapes')}</span>
+      <h3 class="text-lg font-black leading-snug mt-1">${esc(tr(f.title))}</h3>
+      <p class="text-[13px] mt-1" style="color:rgba(255,255,255,.85)">${esc(tr(f.subtitle))}</p>
+    </div>
+
+    <p class="text-[13px] text-slate-700 leading-relaxed px-1">${esc(tr(f.intro))}</p>
+    <p class="text-[12px] text-slate-500 leading-relaxed px-1">${esc(tr(HOTLINE))}</p>
+
+    ${box(t('Avant de commencer'), f.avant, 'border-slate-200 bg-white text-slate-700', dot)}
+
+    ${f.etapes.map((s, i) => `
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div class="flex items-center gap-3">
+          <span class="w-9 h-9 rounded-xl flex items-center justify-center text-base font-black text-white shrink-0" style="background:${fam.color}">${i + 1}</span>
+          <div class="min-w-0">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">${t('Étape')} ${i + 1} / ${f.etapes.length}</p>
+            <h4 class="text-[15px] font-black text-slate-900 leading-snug">${esc(tr(s.titre))}</h4>
+          </div>
+        </div>
+        <p class="text-[14px] text-slate-700 leading-relaxed mt-3">${esc(tr(s.texte))}</p>
+        ${s.attention ? `
+        <div class="mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3 flex items-start gap-2">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 mt-0.5 shrink-0 text-amber-600" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+          <p class="text-[13px] text-amber-900 leading-relaxed">${esc(tr(s.attention))}</p>
+        </div>` : ''}
+        ${s.img ? bigImg(s.img) : ''}
+      </section>`).join('')}
+
+    ${box(t('Contrôle final'), f.verifier, 'border-sky-200 bg-sky-50 text-sky-900', check)}
+    ${box(t('À valider avec Logimatiq'), f.valider, 'border-emerald-200 bg-emerald-50 text-emerald-900', check)}
+
+    <button data-fiche-back class="w-full bg-white border-2 border-slate-200 rounded-2xl py-3.5 text-sm font-bold text-slate-600">
+      ${t('Toutes les fiches')}
+    </button>`;
+
+  list.querySelectorAll('[data-fiche-back]').forEach(btn =>
+    btn.addEventListener('click', () => { openFicheId = null; renderFiches(); list.scrollTop = 0; })
+  );
+  bindZoom(list);
+  list.scrollTop = 0;
 }
 
 function renderDocCard(e) {

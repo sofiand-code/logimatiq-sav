@@ -1,16 +1,21 @@
 /* ============================================================================
    FICHES D'INTERVENTION — remplacement de pièces EPIMAT (onglet Fiches)
+   Format pédagogique : introduction, « avant de commencer », étapes une par une
+   (chacune avec sa photo en grand et ses points d'attention), contrôle final.
    Chaque texte est une paire { fr, en } ; npm run check-trees vérifie qu'aucune
    traduction ne manque et que chaque image existe dans public/.
    `solutions` : conclusions des arbres qui ouvrent cette fiche (« Voir la fiche »).
-   Sources (non affichées) : FI = fiches d'intervention Logimatiq (juillet 2026),
+   Sources (champ src, non affiché) : FI = fiches d'intervention Logimatiq (juillet 2026),
    D24 = doc maintenance 2024, MF12 = manuel maintenance 2012, E17 = kit écran 17",
-   REP = réponses de l'équipe Logimatiq (octobre 2026).
+   SIM = procédure SIM / APN 2026, KIT = mallette de dépannage, REP = réponses de
+   l'équipe Logimatiq (octobre 2026).
    Jamais d'identifiant (mot de passe du modem…) ni de prix ici : dépôt public.
    ========================================================================== */
 
 const L = (fr, en) => ({ fr, en });
 const IMG = (file, fr, en) => ({ file, fr, en });
+/* une étape : titre, explication, photo (facultative), point d'attention (facultatif) */
+const STEP = (titre, texte, img, attention) => ({ titre, texte, ...(img ? { img } : {}), ...(attention ? { attention } : {}) });
 
 export const FICHE_FAMILIES = {
   pc:     { label: L('PC', 'PC'),                       color: '#7C3AED', bg: '#F5F3FF' },
@@ -23,287 +28,408 @@ export const FICHE_FAMILIES = {
   annexe: { label: L('Références', 'References'),       color: '#475569', bg: '#F1F5F9' },
 };
 
-const VALIDER = L('À valider avec Logimatiq', 'To confirm with Logimatiq');
-const HOTLINE = L(
-  "L'intervention se fait en liaison téléphonique avec le SAV Logimatiq, qui désigne la pièce et valide chaque geste.",
-  'The work is done on the phone with Logimatiq Support, who identifies the part and approves each step.');
+export const HOTLINE = L(
+  "Toute intervention se fait au téléphone avec le SAV Logimatiq : il désigne la pièce à changer et valide chaque geste, souvent en suivant la machine à distance.",
+  'All work is done on the phone with Logimatiq Support: they identify the part to replace and approve each step, often while watching the machine remotely.');
+
+/* images partagées */
+const I = {
+  pc:        IMG('arbres/pc_emplacement.jpg', 'Le PC est dans le compartiment du bas de la machine (entouré en rouge)', 'The PC is in the bottom compartment of the machine (circled in red)'),
+  interG:    IMG('arbres/fusible_cache_noir.jpg', "L'interrupteur général rouge O / I (sans voyant), à côté du porte-fusible", 'The red O / I main switch (no indicator), next to the fuse holder'),
+  epi01:     IMG('arbres/platine_epi01.jpg', "Platine du tableau électrique tirée vers l'avant : la carte EPI 01 à droite, avec ses nappes", 'Electrical panel plate pulled forward: the EPI 01 board on the right, with its ribbon cables'),
+  platine:   IMG('arbres/platine_tableau_electrique.jpg', "Platine du tableau électrique : alimentation générale en haut, GR 74 / GR76 et EPI RT au milieu, EPI 01 en bas", 'Electrical panel plate: main power supply at the top, GR 74 / GR76 and EPI RT in the middle, EPI 01 at the bottom'),
+  debes:     IMG('arbres/debes_ecran.jpg', 'DEBES : boutons « Trappe N Ouvrir / N Fermer », rotation du tambour, voyants FCPF et CPT', 'DEBES: "Trappe N Ouvrir / N Fermer" (open / close hatch N) buttons, drum rotation, FCPF and CPT indicators'),
+  cables:    IMG('arbres/ecran_cables.jpg', "Derrière l'écran : arrivée des câbles USB, alimentation et VGA", 'Behind the screen: USB, power and VGA cable connections'),
+  ledVerte:  IMG('arbres/led_ecran_verte.jpg', "Voyant « Power Led » au dos de l'écran : vert = l'écran reçoit l'image", '"Power Led" indicator at the back of the screen: green = the screen receives the image'),
+  lecteur:   IMG('arbres/badge_lecteur.jpg', 'Le lecteur de badge sur la façade (entouré en rouge)', 'The badge reader on the front (circled in red)'),
+  lecteurInt: IMG('arbres/lecteur_remplacement.jpg', "Le lecteur vu de l'intérieur de la porte (entouré en orange)", 'The reader seen from inside the door (circled in orange)'),
+  clavier:   IMG('arbres/clavier_anglais.png', 'Barre des tâches Windows : choisir ENG, Anglais (États-Unis)', 'Windows taskbar: choose ENG, English (United States)'),
+  modemPlace: IMG('arbres/modem_emplacement.jpg', 'Emplacement du modem dans la machine (entouré en rouge)', 'Location of the modem in the machine (circled in red)'),
+  modemConn: IMG('arbres/modem_connecteurs.jpg', 'Connecteurs du modem : antenne, alimentation (PWR), RJ45 du PC sur ETH, antenne', 'Modem connectors: antenna, power (PWR), RJ45 from the PC on ETH, antenna'),
+  modemCabl: IMG('fiches/modem_cablage.jpg', 'Modem câblé : antennes, alimentation et câble RJ45 du PC sur ETH', 'Modem wired: antennas, power and RJ45 cable from the PC on ETH'),
+  voyants:   IMG('sens_insertion_sim.png', 'Voyants du modem (ETH, Online, signal, SIM, SYS, PWR) et logement de la SIM', 'Modem indicators (ETH, Online, signal, SIM, SYS, PWR) and SIM slot'),
+  simOut:    IMG('sortir_la_sim_du_modem.png', "Faire sortir la SIM avec une pointe dans le trou d'éjection", 'Push the SIM out with a pointed tool in the ejection hole'),
+  apnWeb:    IMG('interface_web_setup_apn_modem.png', 'Interface du modem (192.168.1.1) : menu Setup, champ APN', 'Modem interface (192.168.1.1): Setup menu, APN field'),
+  routeurOui: IMG('arbres/routeur_acces_internet.jpg', '« La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ? » : Oui', '"La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ?": "Oui" (Yes)'),
+  routeurApn: IMG('arbres/routeur_apn.jpg', "Choisir l'APN de la carte SIM dans la liste", 'Choose the SIM card APN from the list'),
+  epi05s:    IMG('arbres/epi05_cartes.jpg', 'Les cartes EPI 05, une par trappe, derrière la façade (EPIMAT 13)', 'The EPI 05 boards, one per hatch, behind the front (EPIMAT 13)'),
+  epi05:     IMG('arbres/epi05_carte.jpg', 'Carte EPI 05 : interrupteurs de configuration, connecteurs MOTOR et LOCK en bas', 'EPI 05 board: configuration switches, MOTOR and LOCK connectors at the bottom'),
+  moteur:    IMG('arbres/moteur_trappe.jpg', 'Moteur de trappe monté sur son équerre, à côté de la carte EPI 05', 'Hatch motor on its bracket, next to the EPI 05 board'),
+  alimFus:   IMG('arbres/alim_generale_fusibles.jpg', 'Alimentation générale : coupe-circuits 24 V (3 A) et 5 V (1 A)', 'Main power supply: 24 V (3 A) and 5 V (1 A) circuit breakers'),
+  fusSorti:  IMG('arbres/fusible_sorti.jpg', 'Le fusible dans son porte-fusible sorti', 'The fuse in its pulled-out holder'),
+  gr76:      IMG('arbres/gr76_potentiometre.jpg', 'Carte GR76 : potentiomètre bleu de la vitesse lente (tournevis fin)', 'GR76 board: blue low-speed potentiometer (small screwdriver)'),
+};
 
 export const FICHES = [
+  /* ================================ PC ================================ */
   {
     id: 'pc', family: 'pc', src: ['FI', 'D24 p.10', 'REP'], solutions: ['sol_changer_pc'],
     title: L('Remplacement du PC', 'Replacing the PC'),
-    subtitle: L('PC en bas du châssis, façade ouverte', 'PC at the bottom of the frame, front open'),
-    media: [IMG('arbres/pc_emplacement.jpg', 'Le PC est dans le compartiment du bas (entouré en rouge)', 'The PC is in the bottom compartment (circled in red)')],
-    blocks: [
-      { kind: 'list', title: L('Repères', 'Landmarks'), items: [
-        L('Câbles du PC : alimentation, VGA (écran), USB (lecteur de badge et écran tactile), câble SCSI blanc (carte Advantech), Ethernet vers le modem', 'PC cables: power, VGA (screen), USB (badge reader and touchscreen), white SCSI cable (Advantech board), Ethernet to the modem'),
-        L('Le câble SCSI blanc est fragile : broches à ne pas plier', 'The white SCSI cable is fragile: do not bend the pins'),
-      ] },
-      { kind: 'steps', title: L('Dépose', 'Removal'), items: [
-        L("Couper l'alimentation : interrupteur général rouge O / I sur O (sans voyant, à côté du porte-fusible), ou débrancher la prise", 'Switch off the power: red O / I main switch to O (no indicator, next to the fuse holder), or unplug the machine'),
-        L('Débrancher tous les câbles : alimentation, VGA, USB (badge, écran tactile), SCSI blanc, Ethernet du modem', 'Unplug all the cables: power, VGA, USB (badge, touchscreen), white SCSI, modem Ethernet'),
-        L('Sortir le PC de son logement en partie basse', 'Take the PC out of its housing at the bottom'),
-      ] },
-      { kind: 'steps', title: L('Repose', 'Refitting'), items: [
-        L('Installer le PC fourni et rebrancher tous les câbles ; vérifier que le SCSI blanc est bien enfoncé (broches non pliées)', 'Install the supplied PC and plug all the cables back in; check that the white SCSI cable is fully seated (pins not bent)'),
-        L("Switch arrière sur ON, puis bouton Power : Windows démarre et DistEPI se lance tout seul (sinon C:\\EPI\\DistEPI.exe)", 'Rear switch to ON, then the Power button: Windows starts and DistEPI launches by itself (otherwise C:\\EPI\\DistEPI.exe)'),
-        L('Vérifier le bon fonctionnement avec DEBES, puis faire une distribution test', 'Check that everything works with DEBES, then run a test dispensing'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [L('Test de distribution avec Logimatiq', 'Test dispensing with Logimatiq')] },
+    subtitle: L('Le PC est en bas du châssis, façade ouverte', 'The PC is at the bottom of the frame, front open'),
+    intro: L("Le PC fait tourner DistEPI et pilote toute la machine. On le change seulement quand le SAV l'a désigné : un PC qui ne démarre pas est d'abord un PC qui n'est pas alimenté (multiprise intérieure, interrupteur général).",
+             "The PC runs DistEPI and drives the whole machine. Only replace it when Support has identified it: a PC that does not start is first of all a PC that is not powered (internal power strip, main switch)."),
+    avant: [
+      L('Le PC de remplacement fourni par Logimatiq', 'The replacement PC supplied by Logimatiq'),
+      L('Un clavier USB, pour les tests', 'A USB keyboard, for the tests'),
+      L('Le SAV au téléphone', 'Support on the phone'),
     ],
+    etapes: [
+      STEP(L('Repérer le PC', 'Find the PC'),
+        L("Ouvrir la façade. Le PC est dans le compartiment du bas du châssis.", 'Open the front. The PC is in the bottom compartment of the frame.'), I.pc),
+      STEP(L("Couper l'alimentation", 'Switch off the power'),
+        L("Mettre l'interrupteur général rouge sur O (il est à côté du porte-fusible, sur l'alimentation générale, et n'a pas de voyant), ou débrancher la prise de la machine.", 'Set the red main switch to O (it is next to the fuse holder, on the main power supply, and has no indicator), or unplug the machine.'), I.interG),
+      STEP(L('Débrancher les câbles du PC', 'Unplug the PC cables'),
+        L("Débrancher un par un : alimentation, VGA (écran), USB du lecteur de badge, USB de l'écran tactile, câble SCSI blanc, Ethernet vers le modem. Prendre une photo avant, pour tout remettre à la même place.", 'Unplug one by one: power, VGA (screen), badge reader USB, touchscreen USB, white SCSI cable, Ethernet to the modem. Take a photo first, so that everything goes back in the same place.'),
+        null, L('Le câble SCSI blanc est fragile : le tirer bien droit, sans plier les broches.', 'The white SCSI cable is fragile: pull it straight, without bending the pins.')),
+      STEP(L('Sortir l\'ancien PC', 'Take out the old PC'),
+        L('Dégager le PC de son logement en partie basse.', 'Pull the PC out of its housing at the bottom.')),
+      STEP(L('Installer le nouveau PC', 'Install the new PC'),
+        L('Mettre le PC fourni à la même place et rebrancher tous les câbles, comme sur la photo prise avant.', 'Put the supplied PC in the same place and plug all the cables back in, as on the photo taken before.'),
+        I.epi01, L("Vérifier que le câble SCSI blanc est bien enfoncé des deux côtés (PC et carte EPI 01) : mal enfoncé, il provoque des pannes bizarres (capteurs qui s'allument et d'autres non).", 'Check that the white SCSI cable is fully seated at both ends (PC and EPI 01 board): if not, it causes strange faults (some sensors light up, others do not).')),
+      STEP(L('Rallumer', 'Switch back on'),
+        L("Interrupteur général sur I, switch à l'arrière du PC sur ON, puis bouton Power. Windows démarre et DistEPI se lance tout seul (sinon : C:\\EPI\\DistEPI.exe).", 'Main switch to I, switch at the back of the PC to ON, then the Power button. Windows starts and DistEPI launches by itself (otherwise: C:\\EPI\\DistEPI.exe).')),
+      STEP(L('Tester avec DEBES', 'Test with DEBES'),
+        L('Clavier branché : fermer DistEPI (Maj + F), lancer C:\\EPI\\DebesEPI.exe, vérifier les voyants et une ouverture de trappe, puis fermer DEBES et relancer DistEPI.', 'Keyboard plugged in: close DistEPI (Shift + F), run C:\\EPI\\DebesEPI.exe, check the indicators and one hatch opening, then close DEBES and restart DistEPI.'), I.debes),
+    ],
+    verifier: [
+      L('DistEPI démarre tout seul au lancement de Windows', 'DistEPI starts by itself when Windows starts'),
+      L('Une distribution test fonctionne (badge, famille, article, OK, Terminer)', 'A test dispensing works (badge, family, item, OK, Finish)'),
+      L('La synchronisation fonctionne (Maj + L → « Synchroniser » → « synchro effectué »)', 'Synchronization works (Shift + L → "Synchroniser" → "synchro effectué")'),
+    ],
+    valider: [L('Test de distribution avec Logimatiq', 'Test dispensing with Logimatiq')],
   },
+
+  /* =============================== ÉCRAN =============================== */
   {
     id: 'ecran', family: 'ecran', src: ['D24 p.3', 'E17', 'REP'], solutions: ['sol_changer_ecran'],
     title: L("Remplacement de l'écran", 'Replacing the screen'),
     subtitle: L('Écran tactile 17 pouces (kit extérieur)', '17-inch touchscreen (external kit)'),
-    media: [IMG('arbres/ecran_cables.jpg', "Derrière l'écran : arrivée des câbles USB, alimentation et VGA", 'Behind the screen: USB, power and VGA cable connections')],
-    blocks: [
-      { kind: 'steps', title: L('Dépose', 'Removal'), items: [
-        L('Retirer la plaque protectrice', 'Remove the protective plate'),
-        L("Débrancher les 3 câbles au dos de l'écran : USB (tactile), alimentation, VGA", 'Unplug the 3 cables at the back of the screen: USB (touch), power, VGA'),
-        L("Dévisser l'écran (fixé sur les goujons M4)", 'Unscrew the screen (fixed on the M4 studs)'),
-      ] },
-      { kind: 'steps', title: L('Repose', 'Refitting'), items: [
-        L('Fixer le nouvel écran, rebrancher USB, alimentation et VGA (vis moletées serrées)', 'Fix the new screen, plug USB, power and VGA back in (thumbscrews tightened)'),
-        L("L'écran 17 pouces s'allume tout seul : vérifier le voyant « Power Led » au dos (vert = image)", 'The 17-inch screen turns on by itself: check the "Power Led" indicator at the back (green = image)'),
-        L('Résolution : 1280 × 720 pour le 17 pouces (800 × 600 pour un écran 8 pouces)', 'Resolution: 1280 × 720 for the 17-inch screen (800 × 600 for an 8-inch screen)'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [L("Tester le tactile dans DistEPI", 'Test touch input in DistEPI')] },
+    intro: L("L'écran 17 pouces est fixé sur la façade et relié au PC par 3 câbles : USB (le tactile), alimentation et VGA (l'image). Il s'allume tout seul, il n'y a pas de bouton marche à actionner.",
+             'The 17-inch screen is fixed on the front and linked to the PC by 3 cables: USB (touch), power and VGA (image). It turns on by itself, there is no power button to press.'),
+    avant: [
+      L("L'écran de remplacement", 'The replacement screen'),
+      L('Un tournevis', 'A screwdriver'),
     ],
+    etapes: [
+      STEP(L('Retirer la plaque protectrice', 'Remove the protective plate'),
+        L("La plaque protège l'écran sur la façade : la retirer pour accéder à l'écran.", 'The plate protects the screen on the front: remove it to reach the screen.')),
+      STEP(L('Débrancher les 3 câbles', 'Unplug the 3 cables'),
+        L("Au dos de l'écran : débrancher le câble USB (tactile), l'alimentation et le câble VGA (dévisser ses 2 vis moletées).", 'At the back of the screen: unplug the USB cable (touch), the power and the VGA cable (unscrew its 2 thumbscrews).'), I.cables),
+      STEP(L("Dévisser l'écran", 'Unscrew the screen'),
+        L("Dévisser l'écran (il est fixé sur des goujons M4) et le retirer.", 'Unscrew the screen (it is fixed on M4 studs) and remove it.')),
+      STEP(L('Poser le nouvel écran', 'Fit the new screen'),
+        L('Fixer le nouvel écran au même endroit, puis rebrancher USB, alimentation et VGA (serrer les vis moletées du VGA).', 'Fix the new screen in the same place, then plug USB, power and VGA back in (tighten the VGA thumbscrews).'), I.cables),
+      STEP(L('Contrôler le voyant', 'Check the indicator'),
+        L("Le voyant « Power Led » au dos de l'écran doit passer au vert : l'écran reçoit l'image du PC.", 'The "Power Led" indicator at the back of the screen must turn green: the screen receives the image from the PC.'), I.ledVerte),
+      STEP(L('Vérifier la résolution', 'Check the resolution'),
+        L("Si l'image est trop grande ou coupée : clic droit sur le bureau Windows → « Paramètres d'affichage » → 1280 × 720 pour un écran 17 pouces (800 × 600 pour un 8 pouces).", 'If the image is too large or cut off: right-click on the Windows desktop → "Display settings" → 1280 × 720 for a 17-inch screen (800 × 600 for an 8-inch).')),
+      STEP(L('Remettre la plaque', 'Put the plate back'),
+        L('Remettre la plaque protectrice.', 'Put the protective plate back.')),
+    ],
+    verifier: [
+      L("Le tactile répond dans DistEPI (sinon : vérifier le câble USB de l'écran)", 'Touch works in DistEPI (otherwise: check the screen USB cable)'),
+      L('Image stable, sans scintillement (sinon : vérifier le câble VGA)', 'Stable image, no flickering (otherwise: check the VGA cable)'),
+    ],
+    valider: [L('Signaler la pièce remplacée au SAV', 'Report the replaced part to Support')],
   },
+
+  /* =========================== LECTEUR DE BADGE =========================== */
   {
     id: 'lecteur', family: 'badge', src: ['D24 p.8', 'REP'], solutions: ['sol_changer_lecteur'],
     title: L('Remplacement du lecteur de badge', 'Replacing the badge reader'),
     subtitle: L('Lecteur USB Elatec TWN4, sur la façade', 'Elatec TWN4 USB reader, on the front'),
-    media: [IMG('arbres/lecteur_remplacement.jpg', "Le lecteur vu de l'intérieur de la porte (entouré en orange)", 'The reader seen from inside the door (circled in orange)')],
-    blocks: [
-      { kind: 'steps', title: L('Remplacement', 'Replacement'), items: [
-        L("Débrancher le câble du lecteur et le démonter de la façade", 'Unplug the reader cable and remove the reader from the front'),
-        L('Reporter la connectique sur le nouveau lecteur, le fixer et le rebrancher en USB', 'Move the connector over to the new reader, fix it and plug it back in via USB'),
-        L("Passer un badge : le lecteur doit biper", 'Present a badge: the reader must beep'),
-        L("S'il ne lit pas ce type de badge : le reprogrammer avec AppBlaster (arbre Badge, « Reprogrammer le lecteur »)", 'If it does not read this type of badge: reprogram it with AppBlaster (Badge tree, "Reprogram the reader")'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [L('Badge reconnu dans DistEPI', 'Badge recognized in DistEPI')] },
+    intro: L("Le lecteur est branché en USB sur le PC et fonctionne comme un clavier : il « tape » le numéro du badge. Un lecteur neuf doit parfois être reprogrammé pour le type de badge du client (MIFARE…).",
+             'The reader is connected to the PC via USB and works like a keyboard: it "types" the badge number. A new reader sometimes needs to be reprogrammed for the customer\'s badge type (MIFARE…).'),
+    avant: [
+      L('Le lecteur de remplacement', 'The replacement reader'),
+      L('Un badge du client qui fonctionne', 'A working customer badge'),
+      L('Un clavier USB (test Bloc-notes)', 'A USB keyboard (Notepad test)'),
     ],
+    etapes: [
+      STEP(L('Repérer le lecteur', 'Find the reader'),
+        L('Le lecteur est sur la façade, à côté de l\'écran.', 'The reader is on the front, next to the screen.'), I.lecteur),
+      STEP(L('Accéder au lecteur', 'Reach the reader'),
+        L("Ouvrir la façade : le lecteur se démonte par l'intérieur de la porte.", 'Open the front: the reader is removed from inside the door.'), I.lecteurInt),
+      STEP(L("Débrancher et démonter l'ancien lecteur", 'Unplug and remove the old reader'),
+        L('Débrancher le câble du lecteur, puis le démonter de la façade.', 'Unplug the reader cable, then remove it from the front.')),
+      STEP(L('Poser le nouveau lecteur', 'Fit the new reader'),
+        L('Reporter la connectique sur le nouveau lecteur, le fixer à la même place et le rebrancher en USB sur le PC.', 'Move the connector over to the new reader, fix it in the same place and plug it back into the PC via USB.')),
+      STEP(L('Tester avec le Bloc-notes', 'Test with Notepad'),
+        L("Passer le clavier Windows en anglais (ENG), ouvrir le Bloc-notes et passer un badge : le lecteur doit biper et le numéro doit s'écrire.", 'Switch the Windows keyboard to English (ENG), open Notepad and present a badge: the reader must beep and the number must be typed.'),
+        I.clavier, L('En clavier français, les chiffres sortent mal : le test serait faux.', 'With a French keyboard, the digits come out wrong: the test would be wrong.')),
+      STEP(L('Reprogrammer si besoin', 'Reprogram if needed'),
+        L("Rien ne s'écrit, ou le numéro est faux : reprogrammer le lecteur avec AppBlaster (arbre Badge, « Reprogrammer le lecteur »).", 'Nothing is typed, or the number is wrong: reprogram the reader with AppBlaster (Badge tree, "Reprogram the reader").')),
+    ],
+    verifier: [L('Le badge est reconnu dans DistEPI (bon nom affiché)', 'The badge is recognized in DistEPI (right name displayed)')],
+    valider: [L('Signaler la pièce remplacée au SAV', 'Report the replaced part to Support')],
   },
+
+  /* =============================== MODEM =============================== */
   {
     id: 'modem', family: 'modem', src: ['FI', 'D24 p.4', 'REP'], solutions: ['sol_changer_modem'],
     title: L('Remplacement du modem GSM', 'Replacing the GSM modem'),
-    subtitle: L('Routeur 4G Four-Faith, collé au tableau', 'Four-Faith 4G router, stuck to the panel'),
-    media: [
-      IMG('arbres/modem_emplacement.jpg', 'Emplacement du modem dans la machine (entouré en rouge)', 'Location of the modem in the machine (circled in red)'),
-      IMG('arbres/modem_connecteurs.jpg', 'Connecteurs : 2 antennes, alimentation (PWR), RJ45 du PC sur ETH', 'Connectors: 2 antennas, power (PWR), RJ45 from the PC on ETH'),
+    subtitle: L('Routeur 4G Four-Faith, collé au tableau électrique', 'Four-Faith 4G router, stuck to the electrical panel'),
+    intro: L("Le modem relie la machine à internet par la 4G. Le nouveau modem doit recevoir le même APN que l'ancien si on garde la même carte SIM : on le relève donc avant de débrancher.",
+             'The modem connects the machine to the internet over 4G. The new modem must get the same APN as the old one if the same SIM card is kept: so note it before unplugging.'),
+    avant: [
+      L('Le modem de remplacement', 'The replacement modem'),
+      L('Un stylo ou une pointe (pour la SIM)', 'A pen or a pointed tool (for the SIM)'),
+      L('Les identifiants du modem, fournis par Logimatiq', "The modem's credentials, provided by Logimatiq"),
     ],
-    blocks: [
-      { kind: 'list', title: L('Repères', 'Landmarks'), items: [
-        L('4 câbles : 2 antennes vissées, 1 alimentation (jack rond, pas d\'interrupteur), 1 RJ45 vers le PC', '4 cables: 2 screwed antennas, 1 power (round jack, no switch), 1 RJ45 to the PC'),
-        L('Voyants : PWR bleu fixe = alimenté ; SIM = carte détectée ; Online bleu fixe = internet ; ETH clignote = échange avec le PC', 'Indicators: PWR steady blue = powered; SIM = card detected; Online steady blue = internet; ETH blinking = traffic with the PC'),
-      ] },
-      { kind: 'steps', title: L('Remplacement', 'Replacement'), items: [
-        L("Avant tout : relever l'APN du modem en place (navigateur du PC → 192.168.1.1 → Setup), même s'il n'a plus internet", 'First of all: note the APN of the current modem (PC browser → 192.168.1.1 → Setup), even if it has no internet'),
-        L('Débrancher les 4 câbles', 'Unplug the 4 cables'),
-        L("Décoller l'ancien modem du scratch (il faut forcer) et récupérer la carte SIM", 'Unstick the old modem from the hook-and-loop pad (it takes some force) and recover the SIM card'),
-        L('Insérer la SIM dans le nouveau modem, le coller, rebrancher 2 antennes, alimentation et RJ45', 'Insert the SIM into the new modem, stick it on, plug 2 antennas, power and RJ45 back in'),
-        L("Mettre sous tension et contrôler les voyants ; si Online ne s'allume pas sous 2 minutes : configurer l'APN (fiche suivante), avec le même APN si la SIM n'a pas changé", 'Power on and check the indicators; if Online does not light up within 2 minutes: configure the APN (next sheet), with the same APN if the SIM has not changed'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [
-        L('SIM à réutiliser ou à remplacer', 'SIM to reuse or replace'),
-        L("APN et remontée de la synchronisation dans l'extranet", 'APN and synchronization showing in the extranet'),
-      ] },
+    etapes: [
+      STEP(L("Relever l'APN du modem en place", 'Note the APN of the current modem'),
+        L("Sur le PC de la machine, ouvrir un navigateur à l'adresse 192.168.1.1 (ça marche même si le modem n'a plus internet), se connecter, menu Setup : noter l'APN.", 'On the machine\'s PC, open a browser at 192.168.1.1 (it works even if the modem has no internet), log in, Setup menu: write down the APN.'), I.apnWeb),
+      STEP(L('Repérer le modem', 'Find the modem'),
+        L('Le modem est collé au tableau électrique, sur un scratch.', 'The modem is stuck to the electrical panel, on a hook-and-loop pad.'), I.modemPlace),
+      STEP(L('Débrancher les 4 câbles', 'Unplug the 4 cables'),
+        L("Dévisser les 2 antennes, débrancher le jack d'alimentation (le modem n'a pas d'interrupteur) et le câble RJ45 du PC.", 'Unscrew the 2 antennas, unplug the power jack (the modem has no switch) and the RJ45 cable from the PC.'), I.modemConn),
+      STEP(L("Décoller l'ancien modem et récupérer la SIM", 'Unstick the old modem and recover the SIM'),
+        L("Le décoller du scratch (il faut forcer un peu), puis éjecter la carte SIM avec une pointe.", 'Unstick it from the pad (it takes some force), then eject the SIM card with a pointed tool.'), I.simOut),
+      STEP(L('Préparer le nouveau modem', 'Prepare the new modem'),
+        L('Insérer la SIM dans le bon sens (encoche), puis coller le modem à la place de l\'ancien.', 'Insert the SIM the right way round (notch), then stick the modem in place of the old one.'),
+        I.voyants, L("Toujours insérer la SIM modem débranché, sinon elle peut ne pas être détectée.", 'Always insert the SIM with the modem unplugged, otherwise it may not be detected.')),
+      STEP(L('Rebrancher', 'Plug back in'),
+        L('Revisser les 2 antennes, rebrancher le RJ45 du PC sur ETH, puis l\'alimentation.', 'Screw the 2 antennas back on, plug the PC RJ45 into ETH, then the power.'), I.modemCabl),
+      STEP(L('Contrôler les voyants', 'Check the indicators'),
+        L("PWR bleu fixe = alimenté ; SIM allumée = SIM détectée ; Online bleu fixe = internet. Si Online ne s'allume pas sous 2 minutes : configurer l'APN (fiche « Configuration de l'APN »), avec l'APN relevé.", 'PWR steady blue = powered; SIM on = SIM detected; Online steady blue = internet. If Online does not light up within 2 minutes: configure the APN ("Configuring the APN" sheet), with the APN you noted.'), I.voyants),
+    ],
+    verifier: [
+      L('Voyant Online bleu fixe', 'Online indicator steady blue'),
+      L('Synchronisation réussie (Maj + L → « Synchroniser » → « synchro effectué »)', 'Successful synchronization (Shift + L → "Synchroniser" → "synchro effectué")'),
+    ],
+    valider: [
+      L('SIM à réutiliser ou à remplacer', 'SIM to reuse or replace'),
+      L("APN et remontée de la synchronisation dans l'extranet", 'APN and synchronization showing in the extranet'),
     ],
   },
   {
     id: 'sim', family: 'modem', src: ['FI', 'SIM', 'REP'], solutions: [],
     title: L('Remplacement de la carte SIM', 'Replacing the SIM card'),
-    subtitle: L('Modem alimentation coupée', 'Modem power off'),
-    media: [
-      IMG('sortir_la_sim_du_modem.png', "Faire sortir la SIM avec une pointe dans le trou d'éjection", 'Push the SIM out with a pointed tool in the ejection hole'),
-      IMG('sens_insertion_sim.png', "Voyants du modem et sens d'insertion de la SIM", 'Modem indicators and SIM insertion direction'),
+    subtitle: L('Toujours modem débranché', 'Always with the modem unplugged'),
+    intro: L("Une SIM mal insérée ou insérée modem allumé peut ne pas être détectée (voyant SIM éteint). Avec une nouvelle SIM, il faut aussi son APN : le demander au SAV.",
+             'A SIM inserted badly or with the modem on may not be detected (SIM indicator off). With a new SIM, you also need its APN: ask Support.'),
+    avant: [L('La nouvelle SIM', 'The new SIM'), L('Un stylo ou une pointe', 'A pen or a pointed tool')],
+    etapes: [
+      STEP(L("Couper l'alimentation du modem", 'Switch off the modem'),
+        L("Débrancher le jack d'alimentation du modem.", "Unplug the modem's power jack."), I.modemConn),
+      STEP(L("Éjecter l'ancienne SIM", 'Eject the old SIM'),
+        L("Appuyer avec une pointe dans le trou d'éjection : la SIM sort.", 'Press a pointed tool into the ejection hole: the SIM comes out.'), I.simOut),
+      STEP(L('Insérer la nouvelle SIM', 'Insert the new SIM'),
+        L("Insérer la SIM dans le bon sens (repérer l'encoche) jusqu'au clic.", 'Insert the SIM the right way round (find the notch) until it clicks.'), I.voyants),
+      STEP(L('Rallumer et contrôler', 'Switch on and check'),
+        L("Rebrancher le jack, attendre 2 à 3 minutes : le voyant SIM doit s'allumer, puis Online.", 'Plug the jack back in, wait 2 to 3 minutes: the SIM indicator must light up, then Online.')),
     ],
-    blocks: [
-      { kind: 'warn', title: L('Sécurité', 'Safety'), items: [L("Toujours couper l'alimentation du modem avant de retirer ou d'insérer la SIM (sinon elle peut ne pas être détectée)", 'Always switch the modem power off before removing or inserting the SIM (otherwise it may not be detected)')] },
-      { kind: 'steps', title: L('Remplacement', 'Replacement'), items: [
-        L("Débrancher le jack d'alimentation du modem", "Unplug the modem's power jack"),
-        L("Éjecter la SIM avec un stylo ou une pointe", 'Eject the SIM with a pen or a pointed tool'),
-        L("Insérer la nouvelle SIM dans le bon sens (encoche)", 'Insert the new SIM the right way round (notch)'),
-        L('Rebrancher, vérifier le voyant SIM, puis Online', 'Plug back in, check the SIM indicator, then Online'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [L("Nouvelle SIM : demander son APN au SAV", 'New SIM: ask Support for its APN')] },
-    ],
+    verifier: [L('Voyants SIM et Online allumés', 'SIM and Online indicators on')],
+    valider: [L("Nouvelle SIM : APN à demander au SAV, puis configuration de l'APN", 'New SIM: ask Support for the APN, then configure the APN')],
   },
   {
     id: 'apn', family: 'modem', src: ['FI', 'SIM p.8-10', 'REP'], solutions: [],
     title: L("Configuration de l'APN", 'Configuring the APN'),
     subtitle: L('Après un changement de modem ou de SIM', 'After changing the modem or the SIM'),
-    media: [
-      IMG('arbres/routeur_apn.jpg', "Programme Logimatiq : choisir l'APN dans la liste", 'Logimatiq program: choose the APN from the list'),
-      IMG('interface_web_setup_apn_modem.png', 'Interface du modem (192.168.1.1) : menu Setup, champ APN', 'Modem interface (192.168.1.1): Setup menu, APN field'),
+    intro: L("L'APN dit au modem comment se connecter au réseau de l'opérateur de la SIM. Même SIM = même APN ; nouvelle SIM = APN donné par le SAV.",
+             "The APN tells the modem how to connect to the SIM operator's network. Same SIM = same APN; new SIM = APN given by Support."),
+    avant: [L("L'APN à utiliser (relevé sur l'ancien modem, ou donné par le SAV)", 'The APN to use (noted on the old modem, or given by Support)')],
+    etapes: [
+      STEP(L('Lancer le programme Logimatiq', 'Run the Logimatiq program'),
+        L('Sur le PC de la machine, lancer C:\\EPI\\setup_config_routeur_four_faith_1.0.0.17.exe ; contrôle de compte : Oui, puis Suivant, Suivant, Installer.', 'On the machine\'s PC, run C:\\EPI\\setup_config_routeur_four_faith_1.0.0.17.exe; user account control: "Oui" (Yes), then "Suivant" (Next), "Suivant", "Installer" (Install).')),
+      STEP(L('Confirmer le routeur Logimatiq', 'Confirm the Logimatiq router'),
+        L('« La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ? » : répondre Oui.', '"La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ?" (internet provided by a Logimatiq router?): answer "Oui" (Yes).'), I.routeurOui),
+      STEP(L("Choisir l'APN", 'Choose the APN'),
+        L("Choisir l'APN dans la liste, puis « Enregistrer les paramètres et Fermer ». À la fin : « Non, je préfère redémarrer plus tard », puis Terminer.", 'Choose the APN from the list, then "Enregistrer les paramètres et Fermer" (Save settings and Close). At the end: "Non, je préfère redémarrer plus tard" (restart later), then "Terminer" (Finish).'), I.routeurApn),
+      STEP(L('Si le programme ne suffit pas : interface du modem', 'If the program is not enough: modem interface'),
+        L("Navigateur du PC → 192.168.1.1, identifiants fournis par Logimatiq, menu Setup → saisir l'APN → valider.", 'PC browser → 192.168.1.1, credentials provided by Logimatiq, Setup menu → enter the APN → confirm.'), I.apnWeb),
+      STEP(L('Attendre la connexion', 'Wait for the connection'),
+        L('Attendre 1 à 3 minutes : le voyant Online doit passer au bleu fixe.', 'Wait 1 to 3 minutes: the Online indicator must turn steady blue.'), I.voyants),
     ],
-    blocks: [
-      { kind: 'steps', title: L('Méthode à privilégier : programme Logimatiq', 'Preferred method: Logimatiq program'), items: [
-        L('Sur le PC, lancer C:\\EPI\\setup_config_routeur_four_faith_1.0.0.17.exe', 'On the PC, run C:\\EPI\\setup_config_routeur_four_faith_1.0.0.17.exe'),
-        L("« La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ? » : Oui", '"La connexion à Internet est-elle fournie par un routeur installé par Logimatiq ?" (internet provided by a Logimatiq router?): "Oui" (Yes)'),
-        L("Choisir l'APN dans la liste (le même qu'avant si la SIM n'a pas changé), « Enregistrer les paramètres et Fermer »", 'Choose the APN from the list (the same as before if the SIM has not changed), "Enregistrer les paramètres et Fermer" (Save settings and Close)'),
-      ] },
-      { kind: 'steps', title: L('Secours : interface web du modem', 'Fallback: modem web interface'), items: [
-        L('Navigateur du PC → 192.168.1.1 (identifiants : fournis par Logimatiq)', 'PC browser → 192.168.1.1 (credentials: provided by Logimatiq)'),
-        L("Setup → saisir l'APN → valider", 'Setup → enter the APN → confirm'),
-        L('Attendre le voyant Online bleu fixe (1 à 2 minutes)', 'Wait for the Online indicator to be steady blue (1 to 2 minutes)'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [L('Test de synchronisation par Logimatiq', 'Synchronization test by Logimatiq')] },
-    ],
+    verifier: [L('Synchronisation réussie (« synchro effectué »)', 'Successful synchronization ("synchro effectué")')],
+    valider: [L('Test de synchronisation par Logimatiq', 'Synchronization test by Logimatiq')],
   },
+
+  /* =============================== TRAPPES =============================== */
   {
     id: 'epi05', family: 'trappe', src: ['FI', 'D24 p.5', 'MF12 p.5-6'], solutions: ['sol_changer_epi05'],
     title: L("Remplacement d'une carte de trappe EPI 05", 'Replacing an EPI 05 hatch board'),
     subtitle: L('EPIMAT 13 — une carte par trappe, derrière la façade', 'EPIMAT 13 — one board per hatch, behind the front'),
-    media: [
-      IMG('fiches/epi05_capot_3vis.jpg', 'Capot de protection : 3 vis M4 (clé de 7 mm)', 'Protective cover: 3 M4 screws (7 mm wrench)'),
-      IMG('fiches/epi05_nappe40.jpg', 'Débrancher la nappe 40 fils', 'Unplug the 40-wire ribbon cable'),
-      IMG('fiches/epi05_2vis_fendues.jpg', 'Carte fixée par 2 vis M4 à tête fendue', 'Board held by 2 slotted-head M4 screws'),
-      IMG('fiches/epi05_cavaliers.jpg', "Cavaliers d'adressage (exemple : porte 6)", 'Address jumpers (example: door 6)'),
+    intro: L("Sur l'EPIMAT 13, chaque trappe a sa carte EPI 05 (moteur ou électro-aimant, capteur « trappe fermée »). Les cartes sont reliées par une nappe 40 fils. Point clé : la nouvelle carte doit avoir exactement les mêmes réglages (cavaliers, switches) que l'ancienne.",
+             'On the EPIMAT 13, each hatch has its own EPI 05 board (motor or electromagnet, "hatch closed" sensor). The boards are linked by a 40-wire ribbon cable. Key point: the new board must have exactly the same settings (jumpers, switches) as the old one.'),
+    avant: [
+      L('La carte EPI 05 du kit de dépannage', 'The EPI 05 board from the repair kit'),
+      L('Une clé de 7 mm et un tournevis plat', 'A 7 mm wrench and a flat screwdriver'),
+      L('Machine consignée (débranchée)', 'Machine locked out (unplugged)'),
     ],
-    blocks: [
-      { kind: 'list', title: L('Repères et outils', 'Landmarks and tools'), items: [
-        L("Face intérieure de la façade : une carte EPI 05 par trappe, sous un capot, reliées par la nappe 40 fils", 'Inside of the front: one EPI 05 board per hatch, under a cover, linked by the 40-wire ribbon cable'),
-        L('Clé de 7 mm, tournevis plat, machine consignée', '7 mm wrench, flat screwdriver, machine locked out'),
-      ] },
-      { kind: 'steps', title: L('Dépose', 'Removal'), items: [
-        L('Dévisser les 3 vis M4 du capot (clé de 7 mm)', 'Unscrew the 3 M4 screws of the cover (7 mm wrench)'),
-        L('Débrancher la nappe 40 fils de la carte', 'Unplug the 40-wire ribbon cable from the board'),
-        L('Dévisser les 2 vis M4 à tête fendue ; garder les rondelles grower', 'Unscrew the 2 slotted-head M4 screws; keep the spring washers'),
-      ] },
-      { kind: 'warn', title: L('Adressage', 'Addressing'), items: [L("Avant la repose : reprendre exactement les cavaliers et switches de l'ancienne carte (n° de la porte, broches 1 → 13 de droite à gauche)", 'Before refitting: copy exactly the jumpers and switches of the old board (door number, pins 1 → 13 from right to left)')] },
-      { kind: 'steps', title: L('Repose', 'Refitting'), items: [
-        L('Reposer la carte avec les 2 vis M4 et leurs rondelles', 'Refit the board with the 2 M4 screws and their washers'),
-        L('Rebrancher la nappe 40 fils, puis remonter le capot (3 vis M4)', 'Plug the 40-wire ribbon cable back in, then refit the cover (3 M4 screws)'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [
-        L('N° de porte et configuration des cavaliers', 'Door number and jumper configuration'),
-        L('Test ouverture / fermeture dans DEBES', 'Open / close test in DEBES'),
-      ] },
+    etapes: [
+      STEP(L('Repérer la carte', 'Find the board'),
+        L("Ouvrir la façade : les cartes EPI 05 sont sur sa face intérieure, une par trappe. Repérer celle de la trappe en panne (trappe 1 = en bas).", 'Open the front: the EPI 05 boards are on its inside face, one per hatch. Find the one of the faulty hatch (hatch 1 = bottom).'), I.epi05s),
+      STEP(L('Retirer le capot', 'Remove the cover'),
+        L('Dévisser les 3 vis M4 du capot de protection avec la clé de 7 mm.', 'Unscrew the 3 M4 screws of the protective cover with the 7 mm wrench.'),
+        IMG('fiches/epi05_capot_3vis.jpg', 'Capot de protection : 3 vis M4, clé de 7 mm', 'Protective cover: 3 M4 screws, 7 mm wrench')),
+      STEP(L('Débrancher la nappe', 'Unplug the ribbon cable'),
+        L('Débrancher la nappe 40 fils de la carte, en tirant sur le connecteur (pas sur les fils).', 'Unplug the 40-wire ribbon cable from the board, pulling on the connector (not on the wires).'),
+        IMG('fiches/epi05_nappe40.jpg', 'Débrancher la nappe 40 fils', 'Unplug the 40-wire ribbon cable')),
+      STEP(L('Dévisser la carte', 'Unscrew the board'),
+        L('Dévisser les 2 vis M4 à tête fendue (tournevis plat) et garder les rondelles grower.', 'Unscrew the 2 slotted-head M4 screws (flat screwdriver) and keep the spring washers.'),
+        IMG('fiches/epi05_2vis_fendues.jpg', 'La carte est fixée par 2 vis M4 à tête fendue', 'The board is held by 2 slotted-head M4 screws')),
+      STEP(L('Recopier les réglages sur la nouvelle carte', 'Copy the settings onto the new board'),
+        L("Mettre les 2 cavaliers d'adressage sur le numéro de la porte (broches numérotées 1 → 13, de droite à gauche) et recopier tous les switches de l'ancienne carte.", 'Set the 2 address jumpers to the door number (pins numbered 1 → 13, from right to left) and copy all the switches of the old board.'),
+        IMG('fiches/epi05_cavaliers.jpg', "Cavaliers d'adressage : exemple pour la porte 6", 'Address jumpers: example for door 6'),
+        L("C'est l'étape critique : une carte mal réglée commande la mauvaise trappe ou bloque le tambour. Comparer les deux cartes côte à côte.", 'This is the critical step: a badly set board drives the wrong hatch or blocks the drum. Compare both boards side by side.')),
+      STEP(L('Poser la nouvelle carte', 'Fit the new board'),
+        L('Visser la carte avec les 2 vis M4 et leurs rondelles, rebrancher la nappe 40 fils, puis remonter le capot (3 vis M4).', 'Screw the board in with the 2 M4 screws and their washers, plug the 40-wire ribbon cable back in, then refit the cover (3 M4 screws).'), I.epi05),
+      STEP(L('Tester dans DEBES', 'Test in DEBES'),
+        L("Rebrancher la machine. Clavier branché : Maj + F pour fermer DistEPI, lancer C:\\EPI\\DebesEPI.exe, cliquer « Trappe N Ouvrir » puis « N Fermer », et vérifier que le voyant FCPF de la trappe s'allume quand elle est fermée.", 'Plug the machine back in. Keyboard plugged in: Shift + F to close DistEPI, run C:\\EPI\\DebesEPI.exe, click "Trappe N Ouvrir" (open hatch N) then "N Fermer" (close N), and check that the hatch FCPF indicator lights up when it is closed.'), I.debes),
+    ],
+    verifier: [
+      L("La bonne trappe s'ouvre et se ferme dans DEBES", 'The right hatch opens and closes in DEBES'),
+      L('Le tambour tourne (la sécurité du tambour est libérée)', 'The drum turns (the drum safety is released)'),
+    ],
+    valider: [
+      L('Numéro de porte et réglage des cavaliers', 'Door number and jumper setting'),
+      L('Test ouverture / fermeture dans DEBES', 'Open / close test in DEBES'),
     ],
   },
   {
     id: 'moteur', family: 'trappe', src: ['FI', 'MF12 p.5-7'], solutions: [],
     title: L("Remplacement d'un moteur de trappe", 'Replacing a hatch motor'),
     subtitle: L('EPIMAT 13 — motoréducteur 24 V DC + pignon M1 + équerre', 'EPIMAT 13 — 24 V DC gear motor + M1 pinion + bracket'),
-    media: [
-      IMG('arbres/moteur_trappe.jpg', 'Moteur de trappe et sa carte EPI 05', 'Hatch motor and its EPI 05 board'),
-      IMG('fiches/moteur_trappe_schema.jpg', 'Ensemble moteur de trappe : motoréducteur, pignon M1, équerre', 'Hatch motor assembly: gear motor, M1 pinion, bracket'),
+    intro: L("Sur les trappes motorisées de l'EPIMAT 13, un motoréducteur fait coulisser la trappe grâce à un pignon (M1) qui entraîne une crémaillère blanche. Le réglage important : aucun jeu entre le pignon et la crémaillère.",
+             'On the motorized hatches of the EPIMAT 13, a gear motor slides the hatch with a pinion (M1) driving a white rack. The important adjustment: no play between the pinion and the rack.'),
+    avant: [
+      L('Le moteur de remplacement (24 V DC)', 'The replacement motor (24 V DC)'),
+      L('Une clé plate de 8 mm (et une clé de 7 mm pour le capot)', 'An 8 mm open-end wrench (and a 7 mm wrench for the cover)'),
+      L('Machine consignée', 'Machine locked out'),
     ],
-    blocks: [
-      { kind: 'list', title: L('Outils', 'Tools'), items: [L('Clé plate de 8 mm, machine consignée', '8 mm open-end wrench, machine locked out')] },
-      { kind: 'steps', title: L('Dépose', 'Removal'), items: [
-        L("Accéder à l'ensemble moteur (retirer le capot si besoin, clé de 7 mm)", 'Reach the motor assembly (remove the cover if needed, 7 mm wrench)'),
-        L('Débrancher le connecteur du moteur', 'Unplug the motor connector'),
-        L('Dévisser les 2 vis M5 (clé de 8 mm) ; garder les rondelles contact', 'Unscrew the 2 M5 screws (8 mm wrench); keep the lock washers'),
-      ] },
-      { kind: 'steps', title: L('Repose', 'Refitting'), items: [
-        L("Mettre en place le nouvel ensemble moteur et son équerre, rebrancher le connecteur", 'Fit the new motor assembly and its bracket, plug the connector back in'),
-        L("Aucun jeu entre le pignon M1 et la crémaillère blanche : pousser l'ensemble vers la trappe avant de serrer", 'No play between the M1 pinion and the white rack: push the assembly towards the hatch before tightening'),
-        L('Serrer les 2 vis M5', 'Tighten the 2 M5 screws'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [L('Test ouverture / fermeture complet dans DEBES', 'Full open / close test in DEBES')] },
+    etapes: [
+      STEP(L("Accéder à l'ensemble moteur", 'Reach the motor assembly'),
+        L('Retirer le capot si besoin (3 vis M4, clé de 7 mm).', 'Remove the cover if needed (3 M4 screws, 7 mm wrench).'), I.moteur),
+      STEP(L('Débrancher le moteur', 'Unplug the motor'),
+        L('Débrancher le connecteur du moteur sur la carte EPI 05 (connecteur MOTOR).', 'Unplug the motor connector on the EPI 05 board (MOTOR connector).'), I.epi05),
+      STEP(L("Démonter l'ancien moteur", 'Remove the old motor'),
+        L('Dévisser les 2 vis M5 (clé plate de 8 mm) et garder les rondelles contact.', 'Unscrew the 2 M5 screws (8 mm open-end wrench) and keep the lock washers.'),
+        IMG('fiches/moteur_trappe_schema.jpg', 'Ensemble moteur de trappe : motoréducteur 24 V DC, pignon M1, équerre', 'Hatch motor assembly: 24 V DC gear motor, M1 pinion, bracket')),
+      STEP(L('Poser le nouveau moteur', 'Fit the new motor'),
+        L("Mettre en place le nouvel ensemble moteur avec son équerre, puis rebrancher le connecteur MOTOR.", 'Fit the new motor assembly with its bracket, then plug the MOTOR connector back in.')),
+      STEP(L('Supprimer le jeu, puis serrer', 'Remove the play, then tighten'),
+        L("Pousser l'ensemble vers la trappe pour que le pignon M1 soit bien en prise avec la crémaillère blanche, puis serrer les 2 vis M5.", 'Push the assembly towards the hatch so that the M1 pinion meshes fully with the white rack, then tighten the 2 M5 screws.'),
+        I.moteur, L('Avec du jeu, la trappe force ou ne s\'ouvre qu\'à moitié.', 'With play, the hatch strains or only half opens.')),
+      STEP(L('Tester dans DEBES', 'Test in DEBES'),
+        L('Maj + F, lancer DEBES, « Trappe N Ouvrir » puis « N Fermer » plusieurs fois.', 'Shift + F, run DEBES, "Trappe N Ouvrir" then "N Fermer" several times.'), I.debes),
     ],
+    verifier: [L("La trappe s'ouvre et se ferme entièrement, sans forcer", 'The hatch opens and closes fully, without straining')],
+    valider: [L('Test ouverture / fermeture complet dans DEBES', 'Full open / close test in DEBES')],
   },
+
+  /* ============================= ALIMENTATION ============================= */
   {
     id: 'alim', family: 'alim', src: ['FI', 'MF12 p.10-11', 'REP'], solutions: ['sol_changer_alim_generale'],
     title: L('Alimentation générale et fusibles', 'Main power supply and fuses'),
     subtitle: L('230 V AC → 24 V / 5 V DC, en haut de la platine coulissante', '230 V AC → 24 V / 5 V DC, at the top of the sliding plate'),
-    media: [
-      IMG('arbres/alim_generale_fusibles.jpg', 'Alimentation générale : coupe-circuits 24 V (3 A) et 5 V (1 A)', 'Main power supply: 24 V (3 A) and 5 V (1 A) circuit breakers'),
-      IMG('arbres/fusible_cache_noir.jpg', 'Interrupteur général O / I (sans voyant) et porte-fusible à cache noir', 'O / I main switch (no indicator) and black-cover fuse holder'),
-      IMG('arbres/fusible_sorti.jpg', 'Le fusible dans son porte-fusible', 'The fuse in its holder'),
+    intro: L("L'alimentation générale transforme le 230 V en 24 V (moteurs, tambour) et 5 V (électronique). Elle porte 2 coupe-circuits réarmables, l'interrupteur général et le fusible 4-5 A. On réarme toujours avant de changer quoi que ce soit.",
+             'The main power supply turns 230 V into 24 V (motors, drum) and 5 V (electronics). It carries 2 resettable circuit breakers, the main switch and the 4-5 A fuse. Always reset before replacing anything.'),
+    avant: [
+      L('Un tournevis plat', 'A flat screwdriver'),
+      L('Un fusible 4 A minimum, 5 A maximum', 'A fuse of 4 A minimum, 5 A maximum'),
     ],
-    blocks: [
-      { kind: 'steps', title: L("D'abord réarmer", 'Reset first'), items: [
-        L('Coulisser la platine vers l\'avant ; réarmer le coupe-circuit sorti (24 V = « disjoncteur tambour », ou 5 V)', 'Slide the plate forward; reset the popped-out circuit breaker (24 V = "drum circuit breaker", or 5 V)'),
-        L("S'il redéclenche aussitôt : court-circuit, ne pas insister → SAV", 'If it trips again immediately: short circuit, do not insist → Support'),
-      ] },
-      { kind: 'steps', title: L('Fusible', 'Fuse'), items: [
-        L('Couper le secteur : débrancher la prise de la machine', 'Cut the mains: unplug the machine'),
-        L('Sortir le porte-fusible (cache noir) avec un tournevis plat', 'Pull out the fuse holder (black cover) with a flat screwdriver'),
-        L('Remplacer le fusible grillé : 4 A minimum, 5 A maximum', 'Replace the blown fuse: 4 A minimum, 5 A maximum'),
-      ] },
-      { kind: 'steps', title: L("Changer l'alimentation générale", 'Replacing the main power supply'), items: [
-        L('Machine débranchée, dévisser le bloc', 'Machine unplugged, unscrew the unit'),
-        L('Poser le bloc neuf et rebrancher les borniers en respectant les tensions', 'Fit the new unit and reconnect the terminal blocks, respecting the voltages'),
-        L('Remettre sous tension ; interrupteur général sur I', 'Power on again; main switch on I'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [L('Remplacement du fusible 4-5 A', 'Replacement of the 4-5 A fuse')] },
+    etapes: [
+      STEP(L('Ouvrir le tableau électrique', 'Open the electrical panel'),
+        L("Ouvrir la façade et coulisser la platine du tableau électrique vers l'avant. L'alimentation générale est en haut.", 'Open the front and slide the electrical panel plate forward. The main power supply is at the top.'), I.platine),
+      STEP(L('Réarmer les coupe-circuits', 'Reset the circuit breakers'),
+        L("Si le bouton du 24 V (3 A, le « disjoncteur tambour ») ou du 5 V (1 A) est sorti, appuyer dessus pour le réarmer.", 'If the 24 V (3 A, the "drum circuit breaker") or 5 V (1 A) button has popped out, press it to reset it.'),
+        I.alimFus, L("S'il redéclenche aussitôt : court-circuit ou blocage. Ne pas insister, appeler le SAV.", 'If it trips again immediately: short circuit or jam. Do not insist, call Support.')),
+      STEP(L("Vérifier l'interrupteur général", 'Check the main switch'),
+        L("L'interrupteur rouge O / I, à côté du porte-fusible, doit être sur I. Il n'a pas de voyant : seule sa position compte.", 'The red O / I switch, next to the fuse holder, must be on I. It has no indicator: only its position matters.'), I.interG),
+      STEP(L('Couper le secteur avant le fusible', 'Cut the mains before the fuse'),
+        L('Débrancher la prise de la machine avant de toucher au fusible.', 'Unplug the machine before touching the fuse.'),
+        null, L('Ne jamais sortir le porte-fusible machine branchée.', 'Never pull out the fuse holder with the machine plugged in.')),
+      STEP(L('Contrôler le fusible', 'Check the fuse'),
+        L('Sortir le porte-fusible (cache noir) avec un tournevis plat. Si le fusible est grillé (filament coupé), le remplacer par un 4 A minimum, 5 A maximum, et remettre le porte-fusible.', 'Pull out the fuse holder (black cover) with a flat screwdriver. If the fuse is blown (broken filament), replace it with a 4 A minimum, 5 A maximum fuse, and put the holder back.'), I.fusSorti),
+      STEP(L("Si l'alimentation est à changer", 'If the power supply must be replaced'),
+        L("Machine débranchée : dévisser le bloc, poser le bloc neuf et rebrancher les borniers en respectant les tensions (24 V et 5 V). Rebrancher, interrupteur général sur I.", 'Machine unplugged: unscrew the unit, fit the new unit and reconnect the terminal blocks respecting the voltages (24 V and 5 V). Plug back in, main switch on I.')),
     ],
+    verifier: [
+      L('La machine s\'allume : PC, écran, lecteur de badge', 'The machine turns on: PC, screen, badge reader'),
+      L('Le voyant rouge de la multiprise intérieure est allumé', 'The red indicator of the internal power strip is on'),
+    ],
+    valider: [L('Remplacement du fusible 4-5 A ou de l\'alimentation', 'Replacement of the 4-5 A fuse or of the power supply')],
   },
+
+  /* ========================= CARTES ÉLECTRONIQUES ========================= */
   {
     id: 'epi01', family: 'cartes', src: ['FI', 'CI01'], solutions: [],
     title: L('Remplacement de la carte principale EPI 01', 'Replacing the EPI 01 main board'),
     subtitle: L('Carte des entrées / sorties, en bas de la platine', 'Input / output board, at the bottom of the plate'),
-    media: [
-      IMG('arbres/platine_epi01.jpg', "Platine tirée vers l'avant : la carte EPI 01 à droite", 'Plate pulled forward: the EPI 01 board on the right'),
-      IMG('fiches/epi01_carte.jpg', 'Carte EPI 01 (kit de dépannage)', 'EPI 01 board (repair kit)'),
+    intro: L("La carte EPI 01 fait le lien entre le PC (câble SCSI blanc, carte Advantech) et toute la machine : trappes, tambour, capteurs. Ses connecteurs sont détrompés : ils ne rentrent que dans le bon sens.",
+             'The EPI 01 board links the PC (white SCSI cable, Advantech board) with the whole machine: hatches, drum, sensors. Its connectors are keyed: they only fit the right way.'),
+    avant: [
+      L('La carte EPI 01 du kit', 'The EPI 01 board from the kit'),
+      L('Un tournevis', 'A screwdriver'),
+      L('La hotline en même temps (contrôle à distance)', 'The hotline at the same time (remote check)'),
     ],
-    blocks: [
-      { kind: 'steps', title: L('Procédure', 'Procedure'), items: [
-        L('Éteindre la machine', 'Switch the machine off'),
-        L("Coulisser la platine électrique vers l'avant", 'Slide the electrical plate forward'),
-        L('Débrancher les connecteurs (ils sont détrompés) et retirer la carte EPI 01', 'Unplug the connectors (they are keyed) and remove the EPI 01 board'),
-        L('Brancher la nouvelle carte, sans oublier le câble SCSI blanc du PC', 'Connect the new board, without forgetting the white SCSI cable from the PC'),
-        L('Allumer la machine', 'Switch the machine on'),
-        L("Rebrancher la nappe (intérieur de la façade) sur chaque carte EPI 05 des trappes, avec contrôle de la hotline en simultané", 'Plug the ribbon cable (inside the front) back into each EPI 05 hatch board, with the hotline checking at the same time'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [
-        L('Contrôle en télémaintenance simultanée', 'Simultaneous remote check'),
-        L('Test complet : trappes et rotation du tambour', 'Full test: hatches and drum rotation'),
-      ] },
+    etapes: [
+      STEP(L('Éteindre la machine', 'Switch the machine off'),
+        L('Interrupteur général sur O, ou débrancher la prise.', 'Main switch to O, or unplug the machine.'), I.interG),
+      STEP(L('Sortir la platine', 'Pull out the plate'),
+        L("Coulisser la platine électrique vers l'avant : la carte EPI 01 est en bas.", 'Slide the electrical plate forward: the EPI 01 board is at the bottom.'), I.epi01),
+      STEP(L("Retirer l'ancienne carte", 'Remove the old board'),
+        L('Débrancher les connecteurs (prendre une photo avant), puis retirer la carte.', 'Unplug the connectors (take a photo first), then remove the board.')),
+      STEP(L('Poser la nouvelle carte', 'Fit the new board'),
+        L('Fixer la nouvelle carte et rebrancher tous ses connecteurs, sans oublier le câble SCSI blanc du PC.', 'Fix the new board and plug all its connectors back in, without forgetting the white SCSI cable from the PC.'),
+        IMG('fiches/epi01_carte.jpg', 'Carte EPI 01 (kit de dépannage)', 'EPI 01 board (repair kit)')),
+      STEP(L('Rebrancher la nappe des trappes', 'Reconnect the hatch ribbon cable'),
+        L("Rebrancher la nappe (intérieur de la façade) sur chaque carte EPI 05 des trappes, avec la hotline en simultané.", 'Plug the ribbon cable (inside the front) back into each EPI 05 hatch board, with the hotline at the same time.'),
+        IMG('fiches/epi05_nappe40.jpg', 'La nappe 40 fils sur une carte EPI 05', 'The 40-wire ribbon cable on an EPI 05 board')),
+      STEP(L('Rallumer et tester', 'Switch on and test'),
+        L("Allumer la machine. Dans DEBES, la case STATUS doit afficher « NoDevice … - OK », puis tester trappes et rotation du tambour.", 'Switch the machine on. In DEBES, the STATUS box must show "NoDevice … - OK", then test hatches and drum rotation.'), I.debes),
+    ],
+    verifier: [L('Toutes les trappes et la rotation du tambour fonctionnent dans DEBES', 'All hatches and drum rotation work in DEBES')],
+    valider: [
+      L('Contrôle en télémaintenance simultanée', 'Simultaneous remote check'),
+      L('Test complet : trappes et rotation du tambour', 'Full test: hatches and drum rotation'),
     ],
   },
   {
     id: 'gr76', family: 'cartes', src: ['FI', 'VL p.1', 'REP'], solutions: [],
     title: L('Vitesse du tambour (GR76) et commande de rotation (EPI RT)', 'Drum speed (GR76) and rotation control (EPI RT)'),
     subtitle: L('Cartes du tableau électrique', 'Electrical panel boards'),
-    media: [IMG('arbres/gr76_potentiometre.jpg', 'Carte GR76 : potentiomètre bleu de la vitesse lente', 'GR76 board: blue low-speed potentiometer')],
-    blocks: [
-      { kind: 'list', title: L('Carte GR76 — vitesse lente', 'GR76 board — low speed'), items: [
-        L('Carte à dissipateur noir (« GR 74 » sur les anciennes photos : même carte)', 'Board with a black heat sink ("GR 74" on old photos: same board)'),
-        L("Réglage : potentiomètre bleu 1 tour, sens horaire = plus lent, antihoraire = plus rapide, un quart de tour entre chaque test", 'Adjustment: blue single-turn potentiometer, clockwise = slower, counterclockwise = faster, a quarter turn between each test'),
-      ] },
-      { kind: 'steps', title: L('Changer une carte (GR76 ou EPI RT)', 'Replacing a board (GR76 or EPI RT)'), items: [
-        L('Machine consignée, platine coulissée vers l\'avant', 'Machine locked out, plate slid forward'),
-        L('Repérer et débrancher les connecteurs (détrompés)', 'Mark and unplug the connectors (keyed)'),
-        L('Poser la carte neuve, rebrancher, revisser', 'Fit the new board, plug back in, screw back'),
-      ] },
-      { kind: 'check', title: VALIDER, items: [
-        L("Réglage de vitesse par essais successifs (un quart de tour par test)", 'Speed adjustment by successive tests (a quarter turn per test)'),
-        L('Test de rotation et de la sécurité de façade', 'Rotation and front safety test'),
-      ] },
+    intro: L("La carte GR76 règle la vitesse lente du tambour, celle qui sert à s'arrêter pile devant la colonne. Si le tambour dépasse la colonne ou s'arrête décalé, on règle son potentiomètre. La carte EPI RT commande la rotation et sa sécurité.",
+             'The GR76 board sets the drum low speed, used to stop exactly in front of the column. If the drum overshoots the column or stops off-position, adjust its potentiometer. The EPI RT board controls rotation and its safety.'),
+    avant: [
+      L('Un petit tournevis', 'A small screwdriver'),
+      L('Un clavier branché sur le PC (pour DEBES)', 'A keyboard plugged into the PC (for DEBES)'),
     ],
+    etapes: [
+      STEP(L('Repérer la carte GR76', 'Find the GR76 board'),
+        L("Sur le tableau électrique, la carte à dissipateur noir. Les photos des anciens manuels l'appellent « GR 74 » : c'est la même carte.", 'On the electrical panel, the board with the black heat sink. Old manual photos call it "GR 74": it is the same board.'), I.platine),
+      STEP(L('Régler la vitesse lente', 'Adjust the low speed'),
+        L("Potentiomètre bleu (1 tour) : sens horaire = plus lent, sens antihoraire = plus rapide. Tourner d'un quart de tour seulement entre deux essais.", 'Blue potentiometer (single turn): clockwise = slower, counterclockwise = faster. Turn only a quarter turn between two tests.'), I.gr76),
+      STEP(L('Tester dans DEBES', 'Test in DEBES'),
+        L("Maj + F, lancer DEBES, puis « Vitesse Lente TAMBOUR » et « Rotation TAMBOUR ». Recommencer jusqu'à ce que le tambour s'arrête pile devant chaque colonne.", 'Shift + F, run DEBES, then "Vitesse Lente TAMBOUR" (drum low speed) and "Rotation TAMBOUR" (drum rotation). Repeat until the drum stops exactly in front of each column.'),
+        I.debes, L('Mains hors de la machine pendant la rotation du tambour.', 'Hands out of the machine while the drum is turning.')),
+      STEP(L('Changer une carte (GR76 ou EPI RT)', 'Replace a board (GR76 or EPI RT)'),
+        L('Machine consignée, platine coulissée : repérer et débrancher les connecteurs (détrompés), poser la carte neuve, rebrancher et revisser. Pour la GR76, refaire le réglage de vitesse.', 'Machine locked out, plate slid out: mark and unplug the connectors (keyed), fit the new board, plug back in and screw back. For the GR76, redo the speed adjustment.')),
+    ],
+    verifier: [
+      L("Le tambour s'arrête pile devant chaque colonne", 'The drum stops exactly in front of each column'),
+      L('Le tambour ne tourne pas façade ouverte (hors maintenance)', 'The drum does not turn with the front open (outside maintenance)'),
+    ],
+    valider: [L('Réglage de vitesse validé par essais successifs', 'Speed adjustment validated by successive tests')],
   },
+
+  /* ============================== RÉFÉRENCES ============================== */
   {
     id: 'references', family: 'annexe', src: ['KIT', 'MF12'], solutions: [],
     title: L('Références des pièces et localisation', 'Part references and location'),
     subtitle: L('Kit de dépannage EPIMAT', 'EPIMAT repair kit'),
-    media: [IMG('fiches/kit_detail.jpg', 'Contenu du kit de dépannage', 'Contents of the repair kit')],
-    blocks: [
-      { kind: 'list', title: L('Références (kit de dépannage)', 'References (repair kit)'), items: [
-        L('EPI 01 : carte principale (entrées / sorties)', 'EPI 01: main board (inputs / outputs)'),
-        L('EPI 05 : carte de trappe (ouverture / fermeture)', 'EPI 05: hatch board (open / close)'),
-        L('LOG 03 : capteurs optiques de position du tambour', 'LOG 03: drum position optical sensors'),
-        L('LOG 04 : arrêt du tambour en position (CP1)', 'LOG 04: drum stop on position (CP1)'),
-        L('EPI RT : rotation manuelle et sécurité', 'EPI RT: manual rotation and safety'),
-        L('GR76 : vitesse lente du tambour', 'GR76: drum low speed'),
-        L('FLAPPER SOLENOID : électro-aimant du verrou de trappe', 'FLAPPER SOLENOID: hatch lock electromagnet'),
-        L('T HANDLE : serrure à poignée ¼ de tour', 'T HANDLE: quarter-turn handle lock'),
-        L('NAPPE40-8HE10-2700 : nappe 40 fils des trappes', 'NAPPE40-8HE10-2700: 40-wire hatch ribbon cable'),
-        L('NAPPE14-3HE10-2400 : nappe 14 fils du tambour', 'NAPPE14-3HE10-2400: 14-wire drum ribbon cable'),
-      ] },
-      { kind: 'list', title: L('Où sont les pièces', 'Where the parts are'), items: [
-        L('Bas du châssis : PC', 'Bottom of the frame: PC'),
-        L('Tableau électrique (platine coulissante) : alimentation, EPI 01, GR76, modem', 'Electrical panel (sliding plate): power supply, EPI 01, GR76, modem'),
-        L('Façade : écran, lecteur de badge, cartes EPI 05, moteurs de trappe', 'Front: screen, badge reader, EPI 05 boards, hatch motors'),
-        L('Haut du châssis (sous le toit) : LOG 03 / LOG 04, moteur du tambour M1, bouton de rotation', 'Top of the frame (under the roof): LOG 03 / LOG 04, M1 drum motor, rotation button'),
-      ] },
+    intro: L('Les pièces du kit de dépannage, et où les trouver dans la machine.', 'The parts of the repair kit, and where to find them in the machine.'),
+    avant: [],
+    etapes: [
+      STEP(L('Le contenu du kit', 'Kit contents'),
+        L("EPI 01 (carte principale), EPI 05 (carte de trappe), LOG 03 (capteurs de position du tambour), LOG 04 (arrêt en position, CP1), EPI RT (rotation et sécurité), GR76 (vitesse lente), électro-aimant de trappe (FLAPPER SOLENOID), serrure ¼ de tour (T HANDLE), LED, nappe 40 fils des trappes (NAPPE40-8HE10-2700), nappe 14 fils du tambour (NAPPE14-3HE10-2400).", 'EPI 01 (main board), EPI 05 (hatch board), LOG 03 (drum position sensors), LOG 04 (stop on position, CP1), EPI RT (rotation and safety), GR76 (low speed), hatch electromagnet (FLAPPER SOLENOID), quarter-turn lock (T HANDLE), LED, 40-wire hatch ribbon cable (NAPPE40-8HE10-2700), 14-wire drum ribbon cable (NAPPE14-3HE10-2400).'),
+        IMG('fiches/kit_detail.jpg', 'Contenu du kit de dépannage', 'Contents of the repair kit')),
+      STEP(L('Où sont les pièces', 'Where the parts are'),
+        L("Bas du châssis : PC. Tableau électrique (platine coulissante) : alimentation, EPI 01, GR76, modem. Façade : écran, lecteur de badge, cartes EPI 05, moteurs de trappe. Haut du châssis (sous le toit) : LOG 03 / LOG 04, moteur du tambour M1, bouton de rotation.", 'Bottom of the frame: PC. Electrical panel (sliding plate): power supply, EPI 01, GR76, modem. Front: screen, badge reader, EPI 05 boards, hatch motors. Top of the frame (under the roof): LOG 03 / LOG 04, M1 drum motor, rotation button.'),
+        IMG('arbres/epimat13_trappes.jpg', 'Vue générale : châssis, tambour, façade et platine (EPIMAT 13)', 'Overview: frame, drum, front and plate (EPIMAT 13)')),
     ],
+    verifier: [],
+    valider: [],
   },
 ];
-
-export { HOTLINE };

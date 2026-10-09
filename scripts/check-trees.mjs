@@ -102,15 +102,18 @@ const { FICHES, FICHE_FAMILIES } = await import(pathToFileURL(path.join(app, 'sr
 const pair = (p) => p && typeof p.fr === 'string' && p.fr && typeof p.en === 'string' && p.en;
 for (const f of FICHES) {
   if (!FICHE_FAMILIES[f.family]) err('fiches', f.id, `famille « ${f.family} » inconnue`);
-  if (!pair(f.title) || !pair(f.subtitle)) err('fiches', f.id, 'titre ou sous-titre sans FR / EN');
-  for (const m of f.media) {
-    if (!pair(m)) err('fiches', f.id, `légende sans FR / EN : ${m.file}`);
-    if (!fs.existsSync(path.join(app, 'public', m.file))) err('fiches', f.id, `« public/${m.file} » introuvable`);
-  }
-  for (const b of f.blocks) {
-    if (!pair(b.title)) err('fiches', f.id, `bloc « ${b.kind} » sans titre FR / EN`);
-    b.items.forEach((it, i) => { if (!pair(it)) err('fiches', f.id, `bloc « ${b.kind} », ligne ${i + 1} sans FR / EN`); });
-  }
+  if (!pair(f.title) || !pair(f.subtitle) || !pair(f.intro)) err('fiches', f.id, 'titre, sous-titre ou introduction sans FR / EN');
+  if (!f.etapes.length) err('fiches', f.id, 'aucune étape');
+  for (const [k, list] of Object.entries({ avant: f.avant, verifier: f.verifier, valider: f.valider }))
+    list.forEach((it, i) => { if (!pair(it)) err('fiches', f.id, `${k}, ligne ${i + 1} sans FR / EN`); });
+  f.etapes.forEach((s, i) => {
+    if (!pair(s.titre) || !pair(s.texte)) err('fiches', f.id, `étape ${i + 1} : titre ou texte sans FR / EN`);
+    if (s.attention && !pair(s.attention)) err('fiches', f.id, `étape ${i + 1} : point d'attention sans FR / EN`);
+    if (s.img) {
+      if (!pair(s.img)) err('fiches', f.id, `étape ${i + 1} : légende sans FR / EN`);
+      if (!fs.existsSync(path.join(app, 'public', s.img.file))) err('fiches', f.id, `« public/${s.img.file} » introuvable`);
+    }
+  });
   for (const s of f.solutions) if (!nodes[s]) warnings.push(`fiche ${f.id} : la conclusion « ${s} » n'est pas dans les arbres codés`);
 }
 
