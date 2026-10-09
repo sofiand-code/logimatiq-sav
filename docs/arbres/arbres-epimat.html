@@ -120,19 +120,14 @@ flowchart TD
   </section>
 
   <section class="panel" id="p-s">
-    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 23 questions · 14 actions · 5 conclusions · 6 photos</span></h2>
+    <div class="bar"><h2>Écran noir / pas d'image / écran figé <span class="sub mono">· 23 questions · 14 actions · 5 conclusions · 7 photos</span></h2>
       <div class="tools"><button class="tool" data-z="-">−</button><span class="zoomv">100 %</span><button class="tool" data-z="+">+</button><button class="tool" data-z="0">Réinitialiser</button></div></div>
     <div class="scroll"><pre class="mermaid">
 flowchart TD
-  s_debut("La machine est-elle branchée au secteur ?"):::ques
-  s_debut -->|"Oui, branchée"| s_led_ecran
-  s_debut -->|"Non, débranchée"| s_brancher
-  s_led_ecran("Quelle est la couleur du voyant LED de l'écran ?"):::ques
-  s_led_ecran -->|"Rouge"| s_rouge_pc_led
-  s_led_ecran -->|"Éteint (aucune LED)"| s_eteint_machine
-  s_led_ecran -->|"Vert (image visible, autre problème)"| s_vert_symptome
-  s_brancher["Brancher la machine au secteur"]:::act
-  s_brancher --> s_led_ecran
+  s_debut("Quelle est la couleur du voyant de l'écran ?"):::ques
+  s_debut -->|"Rouge"| s_rouge_pc_led
+  s_debut -->|"Éteint (aucune LED)"| s_eteint_machine
+  s_debut -->|"Vert (image visible, autre problème)"| s_vert_symptome
   s_rouge_pc_led("La LED du PC est-elle allumée ?"):::ques
   s_rouge_pc_led -->|"Oui, LED PC allumée"| s_rouge_rebrancher_vga
   s_rouge_pc_led -->|"Non, PC éteint"| s_rouge_pc_ventilo
@@ -164,12 +159,12 @@ flowchart TD
   s_vert_distepi --> s_vert_distepi_result
   s_vert_redemarrer["Redémarrer la machine"]:::act
   s_vert_redemarrer --> s_vert_redemarrer_result
-  s_vert_erreur["Noter le message, puis redémarrer le distributeur"]:::act
+  s_vert_erreur["Noter le message, puis redémarrer la machine"]:::act
   s_vert_erreur --> s_vert_erreur_result
   s_rouge_vga_result("L'image est-elle revenue sur l'écran ?"):::ques
   sol_resolved__2(["Problème résolu"]):::resolved
   s_rouge_vga_result -->|"Oui, image OK"| sol_resolved__2
-  s_rouge_vga_result -->|"Non, toujours rouge"| s_rouge_changer_vga
+  s_rouge_vga_result -->|"Non, toujours rouge"| s_rouge_pc_verif
   s_rouge_pc_demarre("Le PC a-t-il démarré ? (LED allumée)"):::ques
   s_rouge_pc_demarre -->|"Oui, LED allumée"| s_rouge_rebrancher_vga
   s_rouge_pc_demarre -->|"Non, toujours éteint"| s_rouge_multiprise
@@ -182,28 +177,29 @@ flowchart TD
   s_vert_usb_result("L'écran tactile répond-il maintenant ?"):::ques
   sol_resolved__4(["Problème résolu"]):::resolved
   s_vert_usb_result -->|"Oui, tactile OK"| sol_resolved__4
-  sol_changer_ecran__5(["Changer l'écran"]):::replace
-  s_vert_usb_result -->|"Non, toujours inactif"| sol_changer_ecran__5
+  s_vert_usb_result -->|"Non, toujours inactif"| s_vert_usb_detecte
   s_vert_vga["Vérifier le câble VGA"]:::act
   s_vert_vga --> s_vert_vga_result
   s_vert_resolution["Corriger la résolution de l'écran"]:::act
   s_vert_resolution --> s_vert_resolution_result
   s_vert_distepi_result("DistEPI s'est-il lancé correctement ?"):::ques
-  sol_resolved__6(["Problème résolu"]):::resolved
-  s_vert_distepi_result -->|"Oui, DistEPI lancé"| sol_resolved__6
+  sol_resolved__5(["Problème résolu"]):::resolved
+  s_vert_distepi_result -->|"Oui, DistEPI lancé"| sol_resolved__5
   s_vert_distepi_result -->|"Non, ne s'ouvre pas"| s_redemarrer_distrib
   s_vert_redemarrer_result("La machine fonctionne-t-elle correctement après redémarrage ?"):::ques
-  sol_resolved__7(["Problème résolu"]):::resolved
-  s_vert_redemarrer_result -->|"Oui, tout est OK"| sol_resolved__7
-  sol_changer_pc__8(["Changer le PC intégré"]):::replace
-  s_vert_redemarrer_result -->|"Non, problème persiste"| sol_changer_pc__8
+  sol_resolved__6(["Problème résolu"]):::resolved
+  s_vert_redemarrer_result -->|"Oui, tout est OK"| sol_resolved__6
+  sol_changer_pc__7(["Changer le PC intégré"]):::replace
+  s_vert_redemarrer_result -->|"Non, problème persiste"| sol_changer_pc__7
   s_vert_erreur_result("Le message d'erreur a-t-il disparu ?"):::ques
-  sol_resolved__9(["Problème résolu"]):::resolved
-  s_vert_erreur_result -->|"Oui"| sol_resolved__9
-  sol_changer_pc__10(["Changer le PC intégré"]):::replace
-  s_vert_erreur_result -->|"Non, il revient"| sol_changer_pc__10
-  s_rouge_changer_vga["Remplacer le câble VGA"]:::act
-  s_rouge_changer_vga --> s_rouge_apres_changer_vga
+  sol_resolved__8(["Problème résolu"]):::resolved
+  s_vert_erreur_result -->|"Oui"| sol_resolved__8
+  sol_changer_pc__9(["Changer le PC intégré"]):::replace
+  s_vert_erreur_result -->|"Non, il revient"| sol_changer_pc__9
+  s_rouge_pc_verif("Le PC est-il bien allumé et en marche ?"):::ques
+  sol_changer_ecran__10(["Changer l'écran"]):::replace
+  s_rouge_pc_verif -->|"Oui, le PC est en marche"| sol_changer_ecran__10
+  s_rouge_pc_verif -->|"Non, ou je ne sais pas"| s_rouge_pc_relancer
   s_rouge_multiprise("La LED rouge de la multiprise intérieure est-elle allumée ?"):::ques
   sol_changer_pc__11(["Changer le PC intégré"]):::replace
   s_rouge_multiprise -->|"Oui, LED rouge allumée"| sol_changer_pc__11
@@ -215,6 +211,8 @@ flowchart TD
   sol_resolved__13(["Problème résolu"]):::resolved
   s_eteint_cable_result -->|"Oui"| sol_resolved__13
   s_eteint_cable_result -->|"Non"| s_eteint_multiprise
+  s_vert_usb_detecte["Vérifier que Windows détecte l'écran tactile"]:::act
+  s_vert_usb_detecte --> s_vert_usb_detecte_result
   s_vert_vga_result("Le problème d'image a-t-il disparu ?"):::ques
   sol_resolved__14(["Problème résolu"]):::resolved
   s_vert_vga_result -->|"Oui, image stable"| sol_resolved__14
@@ -224,34 +222,37 @@ flowchart TD
   sol_resolved__16(["Problème résolu"]):::resolved
   s_vert_resolution_result -->|"Oui, affichage correct"| sol_resolved__16
   s_vert_resolution_result -->|"Non, toujours incorrecte"| s_redemarrer_distrib
-  s_redemarrer_distrib["Redémarrer le distributeur"]:::act
+  s_redemarrer_distrib["Redémarrer la machine"]:::act
   s_redemarrer_distrib --> s_redemarrer_distrib_result
-  s_rouge_apres_changer_vga("L'image est-elle maintenant visible ?"):::ques
-  sol_resolved__17(["Problème résolu"]):::resolved
-  s_rouge_apres_changer_vga -->|"Oui, image OK"| sol_resolved__17
-  s_rouge_apres_changer_vga -->|"Non, écran rouge"| s_rouge_pc_verif
+  s_rouge_pc_relancer["Relancer le PC"]:::act
+  s_rouge_pc_relancer --> s_rouge_pc_relancer_result
   s_eteint_alim_result("L'écran s'est-il allumé ?"):::ques
-  sol_changer_alim__18(["Changer le bloc d'alimentation de l'écran"]):::replace
-  s_eteint_alim_result -->|"Oui, écran allumé"| sol_changer_alim__18
+  sol_changer_alim__17(["Changer le bloc d'alimentation de l'écran"]):::replace
+  s_eteint_alim_result -->|"Oui, écran allumé"| sol_changer_alim__17
+  sol_changer_ecran__18(["Changer l'écran"]):::replace
+  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__18
+  s_vert_usb_detecte_result("« Écran tactile HID » apparaît-il ?"):::ques
+  s_vert_usb_detecte_result -->|"Oui, il apparaît"| s_tactile_redemarrer
   sol_changer_ecran__19(["Changer l'écran"]):::replace
-  s_eteint_alim_result -->|"Non, toujours éteint"| sol_changer_ecran__19
+  s_vert_usb_detecte_result -->|"Non, il n'apparaît pas"| sol_changer_ecran__19
   s_redemarrer_distrib_result("Après redémarrage, DistEPI s'affiche-t-il correctement ?"):::ques
   sol_resolved__20(["Problème résolu"]):::resolved
   s_redemarrer_distrib_result -->|"Oui"| sol_resolved__20
   sol_sav__21(["Contacter le SAV"]):::sav
   s_redemarrer_distrib_result -->|"Non"| sol_sav__21
-  s_rouge_pc_verif("Le PC est-il bien allumé et en marche ?"):::ques
-  sol_changer_ecran__22(["Changer l'écran"]):::replace
-  s_rouge_pc_verif -->|"Oui, le PC est en marche"| sol_changer_ecran__22
-  s_rouge_pc_verif -->|"Non, ou je ne sais pas"| s_rouge_pc_relancer
-  s_rouge_pc_relancer["Relancer le PC"]:::act
-  s_rouge_pc_relancer --> s_rouge_pc_relancer_result
   s_rouge_pc_relancer_result("Que se passe-t-il ?"):::ques
-  sol_resolved__23(["Problème résolu"]):::resolved
-  s_rouge_pc_relancer_result -->|"L'image est revenue"| sol_resolved__23
-  sol_changer_ecran__24(["Changer l'écran"]):::replace
-  s_rouge_pc_relancer_result -->|"Le PC a démarré, mais toujours pas d'image"| sol_changer_ecran__24
+  sol_resolved__22(["Problème résolu"]):::resolved
+  s_rouge_pc_relancer_result -->|"L'image est revenue"| sol_resolved__22
+  sol_changer_ecran__23(["Changer l'écran"]):::replace
+  s_rouge_pc_relancer_result -->|"Le PC a démarré, mais toujours pas d'image"| sol_changer_ecran__23
   s_rouge_pc_relancer_result -->|"Le PC reste éteint"| s_rouge_multiprise
+  s_tactile_redemarrer["Redémarrer la machine"]:::act
+  s_tactile_redemarrer --> s_tactile_redemarrer_result
+  s_tactile_redemarrer_result("L'écran tactile répond-il maintenant ?"):::ques
+  sol_resolved__24(["Problème résolu"]):::resolved
+  s_tactile_redemarrer_result -->|"Oui, tactile OK"| sol_resolved__24
+  sol_changer_ecran__25(["Changer l'écran"]):::replace
+  s_tactile_redemarrer_result -->|"Non, toujours inactif"| sol_changer_ecran__25
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C
   classDef link fill:#EEF0FF,stroke:#5B5FC7,color:#22265E,stroke-dasharray:5 3
@@ -760,14 +761,14 @@ flowchart TD
   ld_debut -->|"DistEPI se ferme tout seul ou se bloque"| ld_redemarrer_distepi
   t_rotation_manuelle__1[["→ Le tambour tourne-t-il avec le bouton « Drum rotation » (rotation manuelle) ?"]]:::link
   ld_debut -->|"L'écran indique « EN PANNE »"| t_rotation_manuelle__1
-  s_vert_erreur__2[["→ Noter le message, puis redémarrer le distributeur"]]:::link
+  s_vert_erreur__2[["→ Noter le message, puis redémarrer la machine"]]:::link
   ld_debut -->|"Message d'erreur Windows ou BIOS"| s_vert_erreur__2
   ld_redemarrer_distepi["Redémarrer DistEPI"]:::act
   ld_redemarrer_distepi --> ld_redemarrer_result
   ld_redemarrer_result("DistEPI fonctionne-t-il normalement ?"):::ques
   sol_resolved__3(["Problème résolu"]):::resolved
   ld_redemarrer_result -->|"Oui"| sol_resolved__3
-  s_redemarrer_distrib__4[["→ Redémarrer le distributeur"]]:::link
+  s_redemarrer_distrib__4[["→ Redémarrer la machine"]]:::link
   ld_redemarrer_result -->|"Non"| s_redemarrer_distrib__4
   classDef ques fill:#E8EEFB,stroke:#3B5BA9,color:#16264D,stroke-width:1.5px
   classDef act fill:#F3F4F6,stroke:#8A8F98,color:#22262C

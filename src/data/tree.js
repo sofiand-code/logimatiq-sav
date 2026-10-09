@@ -64,29 +64,8 @@ export const DATA = {
        ==================================================================== */
     s_debut: {
       type: 'question',
-      title: 'La machine est-elle branchée au secteur ?',
-      help: "Vérifier que le câble d'alimentation de la machine est bien branché à la prise du local.",
-      answers: [
-        { label: 'Oui, branchée', next: 's_led_ecran' },
-        { label: 'Non, débranchée', next: 's_brancher' },
-      ],
-      src: ['T', 'REP'],
-    },
-    s_brancher: {
-      type: 'action',
-      title: 'Brancher la machine au secteur',
-      steps: [
-        "Brancher fermement le câble d'alimentation côté machine (câble fourni, sortie en partie basse)",
-        "Brancher l'autre extrémité dans la prise du local",
-        'Patienter 10 secondes',
-      ],
-      next: 's_led_ecran',
-      src: ['T', 'MU18 p.4', 'REP'],
-    },
-    s_led_ecran: {
-      type: 'question',
-      title: "Quelle est la couleur du voyant LED de l'écran ?",
-      help: "Voyant « Power Led » au dos de l'écran, au-dessus des boutons de réglage (voir les photos).",
+      title: "Quelle est la couleur du voyant de l'écran ?",
+      help: "Voyant « Power Led » au dos de l'écran, au-dessus des boutons de réglage (voir les photos). Éteint et tout le reste de la machine éteint : l'arbre Alimentation vérifie la prise et le câble secteur.",
       media: [
         { type: 'photo', label: 'Voyant éteint', file: 'arbres/led_ecran_eteinte.jpg' },
         { type: 'photo', label: 'Voyant rouge', file: 'arbres/led_ecran_rouge.jpg' },
@@ -166,31 +145,9 @@ export const DATA = {
       title: "L'image est-elle revenue sur l'écran ?",
       answers: [
         { label: 'Oui, image OK', next: 'sol_resolved' },
-        { label: 'Non, toujours rouge', next: 's_rouge_changer_vga' },
+        { label: 'Non, toujours rouge', next: 's_rouge_pc_verif' },
       ],
       src: ['T'],
-    },
-    s_rouge_changer_vga: {
-      type: 'action',
-      title: 'Remplacer le câble VGA',
-      steps: [
-        "Débrancher l'ancien câble VGA des deux côtés",
-        'Brancher un câble VGA neuf côté PC, puis côté écran',
-        'Serrer les vis moletées',
-        "Attendre le retour de l'image (10 secondes)",
-      ],
-      media: { type: 'photo', label: "Derrière l'écran (kit 17 pouces) : arrivée des câbles USB, alimentation et VGA", file: 'arbres/ecran_cables.jpg' },
-      next: 's_rouge_apres_changer_vga',
-      src: ['T'],
-    },
-    s_rouge_apres_changer_vga: {
-      type: 'question',
-      title: "L'image est-elle maintenant visible ?",
-      answers: [
-        { label: 'Oui, image OK', next: 'sol_resolved' },
-        { label: 'Non, écran rouge', next: 's_rouge_pc_verif' },
-      ],
-      src: ['T', 'REP'],
     },
     s_rouge_pc_verif: {
       type: 'question',
@@ -353,7 +310,7 @@ export const DATA = {
       steps: [
         "Localiser le câble USB reliant l'écran au PC (nécessaire pour le tactile)",
         'Débrancher et rebrancher fermement des deux côtés',
-        'Si possible, essayer un autre port USB sur le PC',
+        'Brancher le câble USB dans un autre port USB du PC',
       ],
       media: { type: 'photo', label: "Derrière l'écran (kit 17 pouces) : arrivée des câbles USB, alimentation et VGA", file: 'arbres/ecran_cables.jpg' },
       next: 's_vert_usb_result',
@@ -364,9 +321,53 @@ export const DATA = {
       title: "L'écran tactile répond-il maintenant ?",
       answers: [
         { label: 'Oui, tactile OK', next: 'sol_resolved' },
+        { label: 'Non, toujours inactif', next: 's_vert_usb_detecte' },
+      ],
+      src: ['T', 'REP'],
+    },
+    s_vert_usb_detecte: {
+      type: 'action',
+      title: "Vérifier que Windows détecte l'écran tactile",
+      steps: [
+        'Brancher un clavier sur le PC et fermer DistEPI (Maj + F)',
+        'Clic droit sur le bouton Démarrer → « Gestionnaire de périphériques »',
+        "Ouvrir « Périphériques d'interface utilisateur »",
+        'Chercher « Écran tactile HID »',
+      ],
+      next: 's_vert_usb_detecte_result',
+      src: ['REP'],
+    },
+    s_vert_usb_detecte_result: {
+      type: 'question',
+      title: '« Écran tactile HID » apparaît-il ?',
+      answers: [
+        { label: 'Oui, il apparaît', next: 's_tactile_redemarrer' },
+        { label: "Non, il n'apparaît pas", next: 'sol_changer_ecran' },
+      ],
+      src: ['REP'],
+    },
+    s_tactile_redemarrer: {
+      type: 'action',
+      title: 'Redémarrer la machine',
+      steps: [
+        "Ouvrir la façade et coulisser la platine du tableau électrique vers l'avant",
+        "Mettre l'interrupteur général rouge sur O",
+        'Attendre 30 secondes',
+        "Remettre l'interrupteur général sur I : le PC, l'écran et le modem redémarrent",
+        'Attendre que Windows et DistEPI redémarrent seuls (sinon lancer C:\\EPI\\DistEPI.exe)',
+      ],
+      media: { type: 'photo', label: "L'interrupteur général rouge O / I (sans voyant), à côté du porte-fusible", file: 'arbres/fusible_cache_noir.jpg' },
+      next: 's_tactile_redemarrer_result',
+      src: ['REP'],
+    },
+    s_tactile_redemarrer_result: {
+      type: 'question',
+      title: "L'écran tactile répond-il maintenant ?",
+      answers: [
+        { label: 'Oui, tactile OK', next: 'sol_resolved' },
         { label: 'Non, toujours inactif', next: 'sol_changer_ecran' },
       ],
-      src: ['T'],
+      src: ['REP'],
     },
     s_vert_distepi: {
       type: 'action',
@@ -411,14 +412,17 @@ export const DATA = {
     },
     s_redemarrer_distrib: {
       type: 'action',
-      title: 'Redémarrer le distributeur',
+      title: 'Redémarrer la machine',
       steps: [
-        'Démarrer → Arrêter → Redémarrer',
-        "Si l'écran est figé : maintenir le bouton Power du PC 5 secondes, puis rallumer",
-        'Attendre le démarrage complet de Windows et de DistEPI',
+        "Ouvrir la façade et coulisser la platine du tableau électrique vers l'avant",
+        "Mettre l'interrupteur général rouge sur O",
+        'Attendre 30 secondes',
+        "Remettre l'interrupteur général sur I : le PC, l'écran et le modem redémarrent",
+        'Attendre que Windows et DistEPI redémarrent seuls (sinon lancer C:\\EPI\\DistEPI.exe)',
       ],
+      media: { type: 'photo', label: "L'interrupteur général rouge O / I (sans voyant), à côté du porte-fusible", file: 'arbres/fusible_cache_noir.jpg' },
       next: 's_redemarrer_distrib_result',
-      src: ['D24 p.1', 'T'],
+      src: ['D24 p.1', 'REP'],
     },
     s_redemarrer_distrib_result: {
       type: 'question',
@@ -432,15 +436,17 @@ export const DATA = {
     s_vert_redemarrer: {
       type: 'action',
       title: 'Redémarrer la machine',
+      help: "On redémarre toute la machine avec l'interrupteur général, pas seulement le PC.",
       steps: [
-        'Cliquer sur Démarrer → Arrêter → Redémarrer',
-        "Si l'écran est figé : maintenir le bouton Power 5 secondes pour forcer l'arrêt",
-        'Rallumer avec le bouton Power',
-        'Attendre le redémarrage complet de Windows',
-        'Vérifier que DistEPI se relance automatiquement',
+        "Ouvrir la façade et coulisser la platine du tableau électrique vers l'avant",
+        "Mettre l'interrupteur général rouge sur O",
+        'Attendre 30 secondes',
+        "Remettre l'interrupteur général sur I : le PC, l'écran et le modem redémarrent",
+        'Attendre que Windows et DistEPI redémarrent seuls (sinon lancer C:\\EPI\\DistEPI.exe)',
       ],
+      media: { type: 'photo', label: "L'interrupteur général rouge O / I (sans voyant), à côté du porte-fusible", file: 'arbres/fusible_cache_noir.jpg' },
       next: 's_vert_redemarrer_result',
-      src: ['T'],
+      src: ['T', 'REP'],
     },
     s_vert_redemarrer_result: {
       type: 'question',
@@ -453,14 +459,15 @@ export const DATA = {
     },
     s_vert_erreur: {
       type: 'action',
-      title: 'Noter le message, puis redémarrer le distributeur',
+      title: 'Noter le message, puis redémarrer la machine',
       steps: [
         "Photographier ou noter le message d'erreur",
-        'Démarrer → Arrêter → Redémarrer (ou bouton Power 5 secondes)',
-        'Attendre le démarrage complet',
+        "Ouvrir la façade et coulisser la platine du tableau électrique vers l'avant",
+        "Mettre l'interrupteur général rouge sur O, attendre 30 secondes, puis le remettre sur I",
+        'Attendre que Windows et DistEPI redémarrent',
       ],
       next: 's_vert_erreur_result',
-      src: ['D24 p.1'],
+      src: ['D24 p.1', 'REP'],
     },
     s_vert_erreur_result: {
       type: 'question',

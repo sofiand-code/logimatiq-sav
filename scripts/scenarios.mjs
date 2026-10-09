@@ -9,17 +9,23 @@
 export const SCENARIOS = [
   /* ---- Écran ---- */
   { nom: 'Écran rouge, VGA neuf, PC en marche → changer l\'écran (E3)', statut: 'validé',
-    symptome: 't.epimat.screen', reponses: ['Oui, branchée', 'Rouge', 'Oui, LED PC allumée', 'Non, toujours rouge', 'Non, écran rouge', 'Oui, le PC est en marche'],
+    symptome: 't.epimat.screen', reponses: ['Rouge', 'Oui, LED PC allumée', 'Non, toujours rouge', 'Oui, le PC est en marche'],
     attendu: 'sol_changer_ecran' },
   { nom: 'Écran rouge, PC qui reste éteint, multiprise intérieure éteinte → arbre Alimentation', statut: 'validé',
-    symptome: 't.epimat.screen', reponses: ['Oui, branchée', 'Rouge', 'Non, PC éteint', 'Non, toujours éteint', 'Non, multiprise éteinte'],
+    symptome: 't.epimat.screen', reponses: ['Rouge', 'Non, PC éteint', 'Non, toujours éteint', 'Non, multiprise éteinte'],
     attendu: 'a_debut' },
   { nom: 'Écran éteint seul, câble branché, multiprise intérieure éteinte → arbre Alimentation (E1)', statut: 'validé',
-    symptome: 't.epimat.screen', reponses: ['Oui, branchée', 'Éteint', "seul l'écran", 'Oui, branché', 'Non, multiprise éteinte'],
+    symptome: 't.epimat.screen', reponses: ['Éteint', "seul l'écran", 'Oui, branché', 'Non, multiprise éteinte'],
     attendu: 'a_debut' },
   { nom: 'Écran vert, mauvaise résolution → corriger la résolution (E4)', statut: 'validé',
-    symptome: 't.epimat.screen', reponses: ['Oui, branchée', 'Vert', 'Image abîmée', 'Mauvaise résolution'],
+    symptome: 't.epimat.screen', reponses: ['Vert', 'Image abîmée', 'Mauvaise résolution'],
     attendu: 's_vert_resolution' },
+  { nom: 'Tactile muet, autre port USB sans effet, « Écran tactile HID » absent → changer l\'écran (É3, É6)', statut: 'validé',
+    symptome: 't.epimat.screen', reponses: ['Vert', 'tactile ne répond pas', 'Non, toujours inactif', "Non, il n'apparaît pas"], attendu: 'sol_changer_ecran' },
+  { nom: 'Tactile muet mais détecté par Windows, redémarrage de la machine sans effet → changer l\'écran (É7)', statut: 'validé',
+    symptome: 't.epimat.screen', reponses: ['Vert', 'tactile ne répond pas', 'Non, toujours inactif', 'Oui, il apparaît', 'Non, toujours inactif'], attendu: 'sol_changer_ecran' },
+  { nom: 'Écran figé, redémarrage de la machine (interrupteur général) sans effet → changer le PC (É2, É5)', statut: 'validé',
+    symptome: 't.epimat.screen', reponses: ['Vert', 'figé', 'Non, problème persiste'], attendu: 'sol_changer_pc' },
 
   /* ---- Alimentation ---- */
   { nom: 'Prise du local sans courant, disjoncteur réarmé sans effet → problème secteur', statut: 'validé',

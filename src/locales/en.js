@@ -201,21 +201,8 @@ export const EN = {
 
     /* === ARBRE ÉCRAN === */
     s_debut: {
-      title: 'Is the machine plugged into the power outlet?',
-      help: "Check that the machine's power cable is properly plugged into the room's wall outlet.",
-      answers: ['Yes, plugged in', 'No, unplugged'],
-    },
-    s_brancher: {
-      title: 'Connect the machine to the power outlet',
-      steps: [
-        'Firmly connect the power cable on the machine side (supplied cable, exits at the bottom)',
-        "Plug the other end into the room's wall outlet",
-        'Wait 10 seconds',
-      ],
-    },
-    s_led_ecran: {
-      title: 'What is the color of the screen LED indicator?',
-      help: 'The "Power Led" indicator on the back of the screen, above the adjustment buttons (see the photos).',
+      title: "What color is the screen's indicator?",
+      help: 'The "Power Led" indicator on the back of the screen, above the adjustment buttons (see the photos). Off, with the rest of the machine off too: the Power tree checks the wall outlet and the mains cable.',
       answers: ['Red', 'Off (no LED)', 'Green (image visible, other problem)'],
       media: [
         'Indicator off',
@@ -265,20 +252,6 @@ export const EN = {
     s_rouge_vga_result: {
       title: 'Has the image returned on the screen?',
       answers: ['Yes, image OK', 'No, still red'],
-    },
-    s_rouge_changer_vga: {
-      title: 'Replace the VGA cable',
-      steps: [
-        'Unplug the old VGA cable from both sides',
-        'Connect a new VGA cable on the PC side, then on the screen side',
-        'Tighten the thumbscrews',
-        'Wait for the image to return (10 seconds)',
-      ],
-      media: 'Behind the screen (17-inch kit): USB, power and VGA cable connections',
-    },
-    s_rouge_apres_changer_vga: {
-      title: 'Is the image now visible?',
-      answers: ['Yes, image OK', 'No, screen red'],
     },
     s_rouge_pc_verif: {
       title: 'Is the PC really on and running?',
@@ -376,15 +349,43 @@ export const EN = {
     s_vert_usb: {
       title: 'Check the USB cable between screen and PC',
       steps: [
-        'Locate the USB cable connecting the screen to the PC (needed for touch)',
-        'Unplug and firmly reconnect on both sides',
-        'If possible, try another USB port on the PC',
+        'Find the USB cable linking the screen to the PC (needed for touch)',
+        'Unplug it and plug it back in firmly at both ends',
+        'Plug the USB cable into another USB port of the PC',
       ],
       media: 'Behind the screen (17-inch kit): USB, power and VGA cable connections',
     },
     s_vert_usb_result: {
-      title: 'Is the touchscreen responding now?',
-      answers: ['Yes, touch OK', 'No, still inactive'],
+      title: 'Does the touchscreen respond now?',
+      answers: ['Yes, touch OK', 'No, still unresponsive'],
+    },
+    s_vert_usb_detecte: {
+      title: 'Check that Windows detects the touchscreen',
+      steps: [
+        'Plug a keyboard into the PC and close DistEPI (Shift + F)',
+        'Right-click the Start button → "Device Manager"',
+        'Open "Human Interface Devices"',
+        'Look for "HID-compliant touch screen"',
+      ],
+    },
+    s_vert_usb_detecte_result: {
+      title: 'Does "HID-compliant touch screen" appear?',
+      answers: ['Yes, it appears', 'No, it does not appear'],
+    },
+    s_tactile_redemarrer: {
+      title: 'Restart the machine',
+      steps: [
+        'Open the front and slide the electrical panel plate forward',
+        'Set the red main switch to O',
+        'Wait 30 seconds',
+        'Set the main switch back to I: the PC, the screen and the modem restart',
+        'Wait for Windows and DistEPI to restart by themselves (otherwise run C:\\EPI\\DistEPI.exe)',
+      ],
+      media: 'The red O / I main switch (no indicator light), next to the fuse holder',
+    },
+    s_tactile_redemarrer_result: {
+      title: 'Does the touchscreen respond now?',
+      answers: ['Yes, touch OK', 'No, still unresponsive'],
     },
     s_vert_distepi: {
       title: 'Launch the DistEPI software',
@@ -412,12 +413,15 @@ export const EN = {
       answers: ['Yes, display correct', 'No, still incorrect'],
     },
     s_redemarrer_distrib: {
-      title: 'Restart the dispenser',
+      title: 'Restart the machine',
       steps: [
-        'Start → Shut down → Restart',
-        'If the screen is frozen: hold the PC Power button for 5 seconds, then turn it back on',
-        'Wait for Windows and DistEPI to fully start',
+        'Open the front and slide the electrical panel plate forward',
+        'Set the red main switch to O',
+        'Wait 30 seconds',
+        'Set the main switch back to I: the PC, the screen and the modem restart',
+        'Wait for Windows and DistEPI to restart by themselves (otherwise run C:\\EPI\\DistEPI.exe)',
       ],
+      media: 'The red O / I main switch (no indicator light), next to the fuse holder',
     },
     s_redemarrer_distrib_result: {
       title: 'After the restart, is DistEPI displayed correctly?',
@@ -425,24 +429,27 @@ export const EN = {
     },
     s_vert_redemarrer: {
       title: 'Restart the machine',
+      help: 'Restart the whole machine with the main switch, not just the PC.',
       steps: [
-        'Click Start → Shut down → Restart',
-        'If screen is frozen: hold the Power button for 5 seconds to force shutdown',
-        'Turn back on with the Power button',
-        'Wait for Windows to fully restart',
-        'Check that DistEPI restarts automatically',
+        'Open the front and slide the electrical panel plate forward',
+        'Set the red main switch to O',
+        'Wait 30 seconds',
+        'Set the main switch back to I: the PC, the screen and the modem restart',
+        'Wait for Windows and DistEPI to restart by themselves (otherwise run C:\\EPI\\DistEPI.exe)',
       ],
+      media: 'The red O / I main switch (no indicator light), next to the fuse holder',
     },
     s_vert_redemarrer_result: {
       title: 'Is the machine working correctly after restart?',
       answers: ['Yes, everything OK', 'No, problem persists'],
     },
     s_vert_erreur: {
-      title: 'Note the message, then restart the dispenser',
+      title: 'Note the message, then restart the machine',
       steps: [
         'Photograph or write down the error message',
-        'Start → Shut down → Restart (or hold the Power button for 5 seconds)',
-        'Wait for the full startup',
+        'Open the front and slide the electrical panel plate forward',
+        'Set the red main switch to O, wait 30 seconds, then set it back to I',
+        'Wait for Windows and DistEPI to restart',
       ],
     },
     s_vert_erreur_result: {
